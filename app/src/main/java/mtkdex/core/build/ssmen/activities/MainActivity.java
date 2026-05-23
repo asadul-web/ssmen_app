@@ -402,13 +402,11 @@ public class MainActivity extends MainBaseActivity implements
                     ConnectionStats stats = get_connection_stats();
                     hLogStatus.updateByteCount(stats.bytes_in, stats.bytes_out);
                 } else if (getConfig().getServerType().equals(SERVER_TYPE_V2RAY)) {
-                    // V2Ray stats are now pushed via broadcasts from the service process
-                    // to MainViewModel, which updates hLogStatus.
-                    // No direct query needed here as it would fail across processes.
+                    // Handled via broadcasts
                 } else if (getConfig().getServerType().equals(SERVER_TYPE_UDP_HYSTERIA_V1)) {
-                    m_ReceivedBytes += getUpDateBytes().getBytesReceived();
-                    m_SentBytes += getUpDateBytes().getBytesSent();
-                    hLogStatus.updateByteCount(m_ReceivedBytes, m_SentBytes);
+                    // Just pass the current incremental values, hLogStatus handles the diffs
+                    // and updateByteCount accumulates the total session usage.
+                    hLogStatus.updateByteCount(getUpDateBytes().getTotalBytesReceived(), getUpDateBytes().getTotalBytesSent());
                 } else {
                     hLogStatus.updateByteCount(getUpDateBytes().getTotalBytesReceived(), getUpDateBytes().getTotalBytesSent());
                 }
@@ -1530,8 +1528,6 @@ public class MainActivity extends MainBaseActivity implements
         checkAppUpdate();
         
         hasConnectedOnce = getPref().getBoolean("hasConnectedOnce", false);
-        m_SentBytes = 0;
-        m_ReceivedBytes = 0;
         if (trafficGraph != null) {
             trafficGraph.clear();
             trafficGraph.setShowPath(false); // Always hidden on launch

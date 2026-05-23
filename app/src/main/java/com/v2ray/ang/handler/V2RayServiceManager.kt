@@ -81,6 +81,7 @@ object V2RayServiceManager {
         // context.toast(R.string.toast_services_stop)
         hLogStatus.updateStateString(hLogStatus.VPN_DISCONNECTED, "Disconnected")
         MessageUtil.sendMsg2Service(context, AppConfig.MSG_STATE_STOP, "")
+        NotificationManager.resetSessionStats()
     }
 
     /**
@@ -384,18 +385,6 @@ object V2RayServiceManager {
 
                 AppConfig.MSG_MEASURE_DELAY -> {
                     measureV2rayDelay()
-                }
-            }
-
-            when (intent?.action) {
-                Intent.ACTION_SCREEN_OFF -> {
-                    Log.i(AppConfig.TAG, "SCREEN_OFF, stop querying stats")
-                    NotificationManager.stopSpeedNotification(currentConfig)
-                }
-
-                Intent.ACTION_SCREEN_ON -> {
-                    Log.i(AppConfig.TAG, "SCREEN_ON, start querying stats")
-                    NotificationManager.startSpeedNotification(currentConfig)
                 }
             }
         }
