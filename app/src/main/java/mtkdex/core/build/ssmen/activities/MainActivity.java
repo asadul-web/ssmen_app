@@ -330,15 +330,12 @@ public class MainActivity extends MainBaseActivity implements
     private boolean liveDataBlink = false;
     private final Runnable stats_timer_task = new Runnable() {
         public void run() {
-            boolean active = hLogStatus.isTunnelActive();
-            if (active) {
-                duration_view.setText(getUpDateBytes().isConnected() ? getUpDateBytes().elapsedTimeToDisplay(getUpDateBytes().getElapsedTime()) : "00h:00m:00s");
-            }
-            
-            // Update status labels every second to keep them "Live"
-            updateLiveStatusLabels();
-            
+            // This loop now only triggers manual stat fetching for non-broadcast services (like OVPN)
             MainActivity.this.show_stats();
+            
+            // Note: duration_view is now driven by updateByteCount to ensure perfect sync 
+            // with traffic values. No manual tick needed here.
+            
             MainActivity.this.schedule_stats();
         }
     };
@@ -424,6 +421,8 @@ public class MainActivity extends MainBaseActivity implements
         boolean isRunning = hLogStatus.isTunnelActive();
         if (serverDialog != null) serverDialog.setEnabled(!isRunning);
         if (networkDialog != null) networkDialog.setEnabled(!isRunning);
+        
+        updateLiveStatusLabels();
         
         // Disable server and payload spinners when VPN is connected
         LinearLayout serverSpinner = findViewById(R.id.server_spinner);
@@ -543,6 +542,10 @@ public class MainActivity extends MainBaseActivity implements
                     trafficGraph.setShowPath(true);
                     trafficGraph.setFrozen(false);
                 }
+                
+                // Trigger immediate UI refresh when connected
+                updateLiveStatusLabels();
+                show_stats();
                 
                 if (getConfig().getServerType().equals(SERVER_TYPE_V2RAY)) {
                     String success = "V2ray Connected";
@@ -693,7 +696,7 @@ public class MainActivity extends MainBaseActivity implements
     @Override
     public void updateByteCount(long in, long out, long diffIn, long diffOut) {
         boolean active = hLogStatus.isTunnelActive();
-
+        
         if (active) {
             // Multiply by 8 to convert bytes to bits for the graph labels
             inValue = (float) diffIn * 8;
@@ -705,12 +708,19 @@ public class MainActivity extends MainBaseActivity implements
             final String totalOutStr = ConfigUtil.render_bandwidth(out, false);
 
             runOnUiThread(() -> {
+                // Update all values in a single UI frame to ensure synchronization
+                updateLiveStatusLabels();
+                
                 if (byteIn_view != null) byteIn_view.setText(totalInStr);
                 if (byteOut_view != null) byteOut_view.setText(totalOutStr);
                 if (mDataInTv != null) mDataInTv.setText(inStr);
                 if (mDataOutTv != null) mDataOutTv.setText(outStr);
                 if (val1 != null) val1.setText(inStr);
                 if (val2 != null) val2.setText(outStr);
+                
+                if (duration_view != null && getUpDateBytes().isConnected()) {
+                    duration_view.setText(getUpDateBytes().elapsedTimeToDisplay(getUpDateBytes().getElapsedTime()));
+                }
             });
         } else {
             // Only reset if NOT active.
@@ -2132,6 +2142,10 @@ public class MainActivity extends MainBaseActivity implements
             m_ReceivedBytes = 0;
             if (byteIn_view != null) byteIn_view.setText("0 B");
             if (byteOut_view != null) byteOut_view.setText("0 B");
+            if (mDataInTv != null) mDataInTv.setText("0 bit");
+            if (mDataOutTv != null) mDataOutTv.setText("0 bit");
+            if (val1 != null) val1.setText("0 bit");
+            if (val2 != null) val2.setText("0 bit");
             if (trafficGraph != null) {
                 trafficGraph.clear();
                 trafficGraph.setShowPath(true);
@@ -2285,6 +2299,16 @@ public class MainActivity extends MainBaseActivity implements
     }
 
     private void startTunnelService() {
+        m_SentBytes = 0;
+        m_ReceivedBytes = 0;
+        hLogStatus.resetTrafficHistory();
+        if (byteIn_view != null) byteIn_view.setText("0 B");
+        if (byteOut_view != null) byteOut_view.setText("0 B");
+        if (mDataInTv != null) mDataInTv.setText("0 bit");
+        if (mDataOutTv != null) mDataOutTv.setText("0 bit");
+        if (val1 != null) val1.setText("0 bit");
+        if (val2 != null) val2.setText("0 bit");
+
         if (trafficGraph != null) {
             trafficGraph.setShowPath(true);
             trafficGraph.setFrozen(false);

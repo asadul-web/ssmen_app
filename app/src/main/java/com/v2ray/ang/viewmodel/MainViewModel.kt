@@ -467,6 +467,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 AppConfig.MSG_STATE_START_SUCCESS -> {
                     //updateTestResultAction.isInitialized
                     hLogStatus.updateStateString(hLogStatus.VPN_CONNECTED, "Connected")
+                    val stats = intent?.serializable<LongArray>("content")
+                    if (stats != null && stats.size >= 2) {
+                        hLogStatus.updateByteCount(stats[0], stats[1])
+                    }
                     if (!mtkdex.core.build.ssmen.view.StatisticGraphData.getStatisticData().dataTransferStats.isConnected) {
                         mtkdex.core.build.ssmen.view.StatisticGraphData.getStatisticData().dataTransferStats.startConnected()
                     }

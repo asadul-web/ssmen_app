@@ -189,7 +189,9 @@ object V2RayServiceManager {
         }
 
         try {
-            MessageUtil.sendMsg2UI(service, AppConfig.MSG_STATE_START_SUCCESS, "")
+            val up = queryStats(AppConfig.TAG_PROXY, AppConfig.UPLINK)
+            val down = queryStats(AppConfig.TAG_PROXY, AppConfig.DOWNLINK)
+            MessageUtil.sendMsg2UI(service, AppConfig.MSG_STATE_START_SUCCESS, longArrayOf(down, up))
             hLogStatus.updateStateString(hLogStatus.VPN_CONNECTED, "Connected")
             NotificationManager.showNotification(currentConfig)
             NotificationManager.startSpeedNotification(currentConfig)

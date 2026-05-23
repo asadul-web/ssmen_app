@@ -53,9 +53,19 @@ object NotificationManager {
         lastUp = V2RayServiceManager.queryStats(AppConfig.TAG_PROXY, AppConfig.UPLINK)
         lastDown = V2RayServiceManager.queryStats(AppConfig.TAG_PROXY, AppConfig.DOWNLINK)
 
+        // Send initial stats immediately to UI
+        getService()?.let {
+            MessageUtil.sendMsg2UI(it, AppConfig.MSG_STATE_STATS, longArrayOf(lastDown, lastUp))
+        }
+
+        val loopStartTime = System.currentTimeMillis()
         speedNotificationJob = CoroutineScope(Dispatchers.IO).launch {
             while (isActive) {
-                delay(1000)
+                val now = System.currentTimeMillis()
+                val elapsedSinceStart = now - loopStartTime
+                val nextTick = ((elapsedSinceStart / 1000) + 1) * 1000
+                delay(nextTick - elapsedSinceStart)
+
                 val queryTime = System.currentTimeMillis()
                 val sinceLastQueryInSeconds = (queryTime - lastQueryTime) / 1000.0
                 if (sinceLastQueryInSeconds < 0.1) continue

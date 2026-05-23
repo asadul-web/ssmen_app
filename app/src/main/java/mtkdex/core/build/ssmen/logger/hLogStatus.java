@@ -107,6 +107,10 @@ public class hLogStatus
         trafficHistory = _trafficHistory;
     }
 
+    public static void resetTrafficHistory() {
+        trafficHistory = new TrafficHistory();
+    }
+
     public interface ByteCountListener {
         public void updateByteCount(long in, long out, long diffIn, long diffOut);
     }
