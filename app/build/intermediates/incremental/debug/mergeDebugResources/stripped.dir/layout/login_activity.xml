@@ -1,0 +1,278 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@color/white"
+    android:fitsSystemWindows="true">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/top_box"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:id="@+id/banner"
+                        android:layout_width="110dp"
+                        android:layout_height="110dp"
+                        android:src="@drawable/icon_icon" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="serif"
+                        android:text="FIGHTER V2RAY"
+                        android:textColor="@color/white"
+                        android:textSize="23sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+        <LinearLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="50dp"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="LOGIN YOUR ACCOUNT"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="17sp"
+                    android:fontFamily="@font/google_sans_flex"
+                    android:layout_marginBottom="20dp"
+                    android:gravity="center"/>
+
+                <TextView
+                    android:id="@+id/warning_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="24dp"
+                    android:text="Enter your credentials to access your account"
+                    android:textColor="@color/grey_800"
+                    android:textSize="13sp"
+                    android:visibility="gone"
+                    android:fontFamily="@font/google_sans_flex" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="53dp"
+                    android:layout_marginBottom="25dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="5dp"
+                    app:cardBackgroundColor="#FFFFFF">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp">
+
+                        <!-- ICON -->
+                        <ImageView
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:src="@drawable/user_icon"
+                            android:tint="@color/colorPrimary"
+                            android:layout_marginEnd="12dp"/>
+
+                        <!-- INPUT FIELD -->
+                        <EditText
+                            android:id="@+id/login_username"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+
+                            android:hint="Username"
+                            android:background="@null"
+
+                            android:textSize="18sp"
+                            android:textColor="#000000"
+
+                            android:fontFamily="@font/google_sans_flex"
+
+                            android:inputType="text"/>
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="53dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginBottom="15dp"
+
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="5dp"
+                    app:cardBackgroundColor="#FFFFFF">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp">
+
+                        <!-- LEFT ICON -->
+                        <ImageView
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:src="@drawable/key"
+                            android:tint="@color/colorPrimary"
+                            android:layout_marginEnd="12dp"/>
+
+                        <!-- PASSWORD INPUT -->
+                        <EditText
+                            android:id="@+id/login_password"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:hint="Password"
+                            android:background="@null"
+                            android:textSize="18sp"
+                            android:textColor="#000000"
+                            android:fontFamily="@font/google_sans_flex"
+                            android:inputType="textPassword"/>
+
+                        <!-- TOGGLE ICON (EYE) -->
+                        <ImageView
+                            android:id="@+id/toggle_password"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@drawable/ic_eye"
+                            android:tint="@color/colorPrimary"
+                            android:visibility="gone"
+                            android:padding="4dp"
+                            android:contentDescription="Show Password" />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <CheckBox
+                    android:id="@+id/login_checkbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:buttonTint="@color/colorPrimary"
+                    android:text="Remember me"
+                    android:textColor="@color/grey_800"
+                    android:textSize="13sp"
+                    android:visibility="gone"
+                    android:fontFamily="@font/google_sans_flex" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/login_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="53dp"
+                    android:layout_margin="5dp"
+                    android:letterSpacing="0.15"
+                    android:text="LOGIN"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:fontFamily="@font/google_sans_flex"
+                    app:backgroundTint="@color/colorPrimary"
+                    app:cornerRadius="10dp"
+                    app:elevation="5dp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="20dp"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/ivWhatsapp"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_centerHorizontal="true"
+                        android:clickable="true"
+                        android:contentDescription="Whatsapp"
+                        android:focusable="true"
+                        android:foreground="?attr/selectableItemBackgroundBorderless"
+                        android:src="@drawable/whatsapp" />
+
+                    <ImageView
+                        android:id="@+id/ivFacebook"
+                        android:layout_width="31dp"
+                        android:layout_height="31dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginLeft="20dp"
+                        android:clickable="true"
+                        android:contentDescription="Facebook"
+                        android:focusable="true"
+                        android:foreground="?attr/selectableItemBackgroundBorderless"
+                        android:src="@drawable/facebook" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/foter_box"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <!-- Footer -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="0dp"
+            android:alpha="0.7"
+            android:fontFamily="serif"
+            android:text="© 2026 SSMen. All rights reserved."
+            android:textColor="@color/white"
+            android:textSize="8sp" />
+
+    </LinearLayout>
+
+    <include
+        layout="@layout/progdialog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" />
+</RelativeLayout>

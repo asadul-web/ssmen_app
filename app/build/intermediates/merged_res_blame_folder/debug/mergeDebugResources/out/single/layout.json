@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "com.v2ray.ang.app-mergeDebugResources-58:/layout/activity_bypass_list.xml",
+        "source": "com.v2ray.ang.app-main-61:/layout/activity_bypass_list.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-mergeDebugResources-58:/layout/item_recycler_bypass_list.xml",
+        "source": "com.v2ray.ang.app-main-61:/layout/item_recycler_bypass_list.xml"
+    }
+]

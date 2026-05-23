@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawerLayoutMain"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/main_window_bg"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:fitsSystemWindows="true">
+
+        <include layout="@layout/ssmen" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <com.google.android.material.navigation.NavigationView
+        android:layout_gravity="start"
+        android:id="@+id/drawerNavigationView"
+        android:background="@drawable/drawer_bg"
+        android:layout_width="280dp"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        app:itemIconTint="@color/colorPrimary"
+        app:itemTextColor="@color/black_light"
+        app:itemTextAppearance="@style/NavTextAppearance"
+        app:itemRippleColor="#1F000000"
+        app:itemBackground="@drawable/nav_item_bg"
+        app:itemIconPadding="25dp"
+        app:itemIconSize="24dp"
+        app:menu="@menu/drawer_menu"
+        app:headerLayout="@layout/navheader">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="bottom|center"
+            android:orientation="vertical"
+            android:paddingBottom="15dp">
+
+            <TextView
+                android:id="@+id/drawer_app_version"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:alpha="0.5"
+                android:fontFamily="@font/google_sans_flex"
+                android:text="Version 1.0.0"
+                android:textSize="10sp"
+                app:fontVariationSettings="'wght' 500" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:alpha="0.5"
+                android:fontFamily="@font/google_sans_flex"
+                android:text="© 2026 SSMen. All rights reserved."
+                android:textSize="10sp" />
+        </LinearLayout>
+    </com.google.android.material.navigation.NavigationView>
+
+</androidx.drawerlayout.widget.DrawerLayout>

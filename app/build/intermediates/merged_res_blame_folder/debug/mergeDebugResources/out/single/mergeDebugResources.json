@@ -1,0 +1,1426 @@
+[
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_list_item_log_drawer.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/list_item_log_drawer.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_bg_create_btn.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/bg_create_btn.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_setting_bg.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/setting_bg.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_buttonx.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/buttonx.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_design_snackbar_out.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/design_snackbar_out.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_shake.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/shake.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_btn_checkbox_to_unchecked_check_path_merged_animation.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/btn_checkbox_to_unchecked_check_path_merged_animation.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_rdm.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/rdm.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_stc.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_stc.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_dialog_server_spinner.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/dialog_server_spinner.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_snackbar.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/snackbar.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_round_3d_circle.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/round_3d_circle.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_abc_tooltip_enter.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/abc_tooltip_enter.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_bg_world_map_layer.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/bg_world_map_layer.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_stat_proxy.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_stat_proxy.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_curved_background.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/curved_background.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_status_disconnected.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_status_disconnected.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_download_arrow.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_download_arrow.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_ssmen.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/ssmen.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_upload_arrow.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_upload_arrow.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/mipmap-mdpi_ic_launcher_round.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/mipmap-mdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_setting.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_setting.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_cloud_off.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_cloud_off.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_ping_dialog.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/ping_dialog.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_colorchooser.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/colorchooser.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_ovpn_settings.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/ovpn_settings.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_slide_in_bottom.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/slide_in_bottom.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_dialog_clear_data.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/dialog_clear_data.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_fix_spin_frame_light.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/fix_spin_frame_light.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_fix_box_icon_frame.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/fix_box_icon_frame.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_bg_btn_card_white.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/bg_btn_card_white.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_shadow.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/shadow.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_fragment_fast_out_extra_slow_in.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/fragment_fast_out_extra_slow_in.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_login_btn.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/login_btn.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_radio_dot.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_radio_dot.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_toast_ping.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/toast_ping.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/raw_animation_exit.json.flat",
+        "source": "com.v2ray.ang.app-main-61:/raw/animation_exit.json"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_nav_bg2_dark.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/nav_bg2_dark.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_shape.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/shape.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_btn_checkbox_to_unchecked_box_inner_merged_animation.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/btn_checkbox_to_unchecked_box_inner_merged_animation.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_fade_out.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/fade_out.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_stc_free.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_stc_free.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_bg_btn_card_frame.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/bg_btn_card_frame.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_zoom_in.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/zoom_in.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_signal_pulse.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/signal_pulse.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_notification_dialog.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/notification_dialog.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_battery_75.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/battery_75.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/menu_drawer_menu.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/menu/drawer_menu.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_typing_animation.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/typing_animation.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_arrow_d.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/arrow_d.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_btn_radio_to_on_mtrl_dot_group_animation.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/btn_radio_to_on_mtrl_dot_group_animation.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_bg_close_btn.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/bg_close_btn.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_dns_resolver.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/dns_resolver.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_item_recycler_bypass_list.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/item_recycler_bypass_list.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_message.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_message.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_bg_status_green.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/bg_status_green.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_user_icon.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/user_icon.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_input_icon.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/input_icon.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_loginbkg.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/loginbkg.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_edittext_bg.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/edittext_bg.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_custom_edittext.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/custom_edittext.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_dns.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_dns.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_user_icon_bg.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/user_icon_bg.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_pulse_animation.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/pulse_animation.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_abc_popup_exit.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/abc_popup_exit.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_tool_bar.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/tool_bar.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_card_frame6.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/card_frame6.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_top_box.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/top_box.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/mipmap-anydpi-v26_ic_banner.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/mipmap-anydpi-v26/ic_banner.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_jx_toolbar_bg.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/jx_toolbar_bg.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_ids_id.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_ids_id.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_auto_server_list.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/auto_server_list.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_btn_radio_to_off_mtrl_dot_group_animation.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/btn_radio_to_off_mtrl_dot_group_animation.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_delete_24dp.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_delete_24dp.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_visibility_grey_900_24dp.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_visibility_grey_900_24dp.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_border_list_item.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/border_list_item.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_badge_triangle.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/badge_triangle.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_about_24dp.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_about_24dp.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_dialog_add_payload.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/dialog_add_payload.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/mipmap-xhdpi_ic_banner.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/mipmap-xhdpi/ic_banner.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_tele.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_tele.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_clip_dialog.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/clip_dialog.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_copy.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_copy.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_download.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_download.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_nav_header_bg.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/nav_header_bg.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_blink.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/blink.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_edittext_icon_bg.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/edittext_icon_bg.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_dark_background.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/dark_background.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_bg_status_disconnected.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/bg_status_disconnected.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_design_bottom_sheet_slide_out.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/design_bottom_sheet_slide_out.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_cloud_off.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/cloud_off.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_rounded_corner_inactive.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_rounded_corner_inactive.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_shape_rectangle_normal.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/shape_rectangle_normal.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_activity_log.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/activity_log.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_slr.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/slr.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_baseline_account_box_24.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/baseline_account_box_24.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_username.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_username.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_password.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_password.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_three_dot_menu.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/three_dot_menu.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/menu_dev_menu.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/menu/dev_menu.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_scale_bounce.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/scale_bounce.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_bg_round_d.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/bg_round_d.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_modern_upload.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_modern_upload.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_bg_search_container.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/bg_search_container.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_login_page_banner.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/login_page_banner.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_border_item_selected.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/border_item_selected.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_user.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_user.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_navheader.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/navheader.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_border_transparent.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/border_transparent.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_item_selected.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_item_selected.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_description_24dp.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_description_24dp.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable-v31_fix_vip_tag.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable-v31/fix_vip_tag.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_jx_radius.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/jx_radius.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_btn_radio_to_off_mtrl_ring_outer_animation.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/btn_radio_to_off_mtrl_ring_outer_animation.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_activity_web.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/activity_web.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_network_option.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/network_option.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_hunt.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_hunt.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_radio_button.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_radio_button.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_abc_slide_out_top.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/abc_slide_out_top.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/mipmap-mdpi_ic_launcher_foreground.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/mipmap-mdpi/ic_launcher_foreground.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/raw_notification.json.flat",
+        "source": "com.v2ray.ang.app-main-61:/raw/notification.json"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_background.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/background.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_dialog_background.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/dialog_background.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_add_pass_config.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/add_pass_config.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_foter_box.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/foter_box.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_fix_ic_switch_bg.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/fix_ic_switch_bg.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_setup.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_setup.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_card_frame5.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/card_frame5.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_rlb_card_top_shape.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/rlb_card_top_shape.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/mipmap-xhdpi_ic_launcher_foreground.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/mipmap-xhdpi/ic_launcher_foreground.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/raw_mobile_vpn.json.flat",
+        "source": "com.v2ray.ang.app-main-61:/raw/mobile_vpn.json"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_btn_checkbox_to_checked_box_inner_merged_animation.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/btn_checkbox_to_checked_box_inner_merged_animation.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_bg_box_card_rounded_light.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/bg_box_card_rounded_light.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/raw_ovpn_cert.ovpn.flat",
+        "source": "com.v2ray.ang.app-main-61:/raw/ovpn_cert.ovpn"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_web_server.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/web_server.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_fix_tag_roundless_frame.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/fix_tag_roundless_frame.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_bg_world_map.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/bg_world_map.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_v2ray_settings.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/v2ray_settings.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_dialog_add_server.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/dialog_add_server.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/xml_cache_paths.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/xml/cache_paths.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_bg_tab_selected.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/bg_tab_selected.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_btn_checkbox_to_checked_icon_null_animation.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/btn_checkbox_to_checked_icon_null_animation.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_eye.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_eye.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/xml_v2rey_preferences.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/xml/v2rey_preferences.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/xml_app_widget_provider.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/xml/app_widget_provider.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_stats_duration.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_stats_duration.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_webhook.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_webhook.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_main_adapters.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/main_adapters.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_login_activity_old.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/login_activity_old.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_abc_shrink_fade_out_from_bottom.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/abc_shrink_fade_out_from_bottom.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_pstore.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/pstore.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_border_item_normal.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/border_item_normal.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_map2.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/map2.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_card_frame4.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/card_frame4.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_wifi_on.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_wifi_on.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_bg_box_card_frame.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/bg_box_card_frame.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_arrow_down.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/arrow_down.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_card_frame.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/card_frame.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_border_normal.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/border_normal.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_design_bottom_sheet_slide_in.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/design_bottom_sheet_slide_in.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_key.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/key.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_config_btn.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/config_btn.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/font_google_sans_flex.ttf.flat",
+        "source": "com.v2ray.ang.app-main-61:/font/google_sans_flex.ttf"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_abc_grow_fade_in_from_bottom.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/abc_grow_fade_in_from_bottom.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_bsr.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/bsr.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_vollam.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/vollam.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_btn_checkbox_to_checked_box_outer_merged_animation.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/btn_checkbox_to_checked_box_outer_merged_animation.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_main.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/main.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_fragment_tethering.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/fragment_tethering.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_fix_box_card_frame_light.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/fix_box_card_frame_light.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/mipmap-hdpi_ic_launcher_foreground.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/mipmap-hdpi/ic_launcher_foreground.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_fix_btn_card_frame.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/fix_btn_card_frame.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_bg_flags.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/bg_flags.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_livedata_dot_red.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/livedata_dot_red.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_bg_box_card_thick.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/bg_box_card_thick.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/mipmap-xxhdpi_ic_launcher_foreground.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/mipmap-xxhdpi/ic_launcher_foreground.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_bg_search_capsule.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/bg_search_capsule.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_pass_icon.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/pass_icon.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_tunnel_dialog.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/tunnel_dialog.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_whatsapp.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/whatsapp.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_facebook.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/facebook.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_colors.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_colors.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_fix_bg_track.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/fix_bg_track.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/mipmap-xhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/mipmap-xxxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/mipmap-xxxhdpi_ic_launcher_foreground.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/mipmap-xxxhdpi/ic_launcher_foreground.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_stat_name.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_stat_name.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_connet_icon.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/connet_icon.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_btn_radio_to_on_mtrl_ring_outer_animation.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/btn_radio_to_on_mtrl_ring_outer_animation.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_round1.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/round1.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_abc_slide_in_top.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/abc_slide_in_top.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_bq5.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/bq5.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_toast_frame_error.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/toast_frame_error.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_bg_button_primary.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/bg_button_primary.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/mipmap-xhdpi_ic_banner_foreground.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/mipmap-xhdpi/ic_banner_foreground.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_bounce.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/bounce.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_modern_download.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_modern_download.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_card_frame2.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/card_frame2.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_stat_direct.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_stat_direct.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_e44.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/e44.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_login_page_button.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/login_page_button.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_auto_sel_server.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/auto_sel_server.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_arrow_up.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/arrow_up.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_radius.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/radius.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_custom_port_spinner.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/custom_port_spinner.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_import.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_import.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_connect_button.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/connect_button.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_play_24dp.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_play_24dp.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_jx_main_bg.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/jx_main_bg.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/raw_pdnsd_local.flat",
+        "source": "com.v2ray.ang.app-main-61:/raw/pdnsd_local"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_bg_white_container_top_rounded.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/bg_white_container_top_rounded.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_spinner_bg.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/spinner_bg.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_progress_ring.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/progress_ring.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_nav_bg_light.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/nav_bg_light.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_design_snackbar_in.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/design_snackbar_in.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_cloud_on.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_cloud_on.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_baseline_signal_cellular_alt_24.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_baseline_signal_cellular_alt_24.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_card_frame3.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/card_frame3.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_server_locations.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/server_locations.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_close.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_close.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_drawer_bg.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/drawer_bg.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_abc_slide_out_bottom.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/abc_slide_out_bottom.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_bug_report.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_bug_report.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_fix_ic_switch_off.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/fix_ic_switch_off.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_loadingpoint.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/loadingpoint.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic11.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic11.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_drag_item_recycler_view.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/drag_item_recycler_view.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_custom_port_spinner_dropdown.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/custom_port_spinner_dropdown.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/mipmap-xhdpi_ic_launcher_round.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/mipmap-xhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_activity_settings.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/activity_settings.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_clear.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_clear.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/xml_ovpn_preferences.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/xml/ovpn_preferences.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_img_clouds.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/img_clouds.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_preference_with_help_link.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/preference_with_help_link.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_img_moon.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/img_moon.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_launchvpn.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/launchvpn.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_btn_radio_to_off_mtrl_ring_outer_path_animation.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/btn_radio_to_off_mtrl_ring_outer_path_animation.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_arrow_l.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/arrow_l.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_abc_popup_enter.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/abc_popup_enter.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/mipmap-mdpi_ic_launcher.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/mipmap-mdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_button_disconnect.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/button_disconnect.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_drag.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_drag.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_visibility_off_grey_900_24dp.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_visibility_off_grey_900_24dp.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/menu_nav_menu.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/menu/nav_menu.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_status_connected.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_status_connected.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_bg_status_connected.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/bg_status_connected.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_app_main_logo.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/app_main_logo.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_bg_edittext_rounded.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/bg_edittext_rounded.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_login_activity.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/login_activity.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_timer.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_timer.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/mipmap-xxhdpi_ic_launcher_round.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/mipmap-xxhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_radio.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_radio.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_menu.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/menu.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_list_layout.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/list_layout.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_nav_bg_dark.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/nav_bg_dark.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_dialog_udp_maker.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/dialog_udp_maker.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_shape_oval_normal.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/shape_oval_normal.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_notif2.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/notif2.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_bg_connect_button.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/bg_connect_button.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/mipmap-hdpi_ic_launcher.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/mipmap-hdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_window.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/window.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_toast_frame_success.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/toast_frame_success.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_rounded_corner_active.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_rounded_corner_active.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_layout_apps_item.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/layout_apps_item.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_error.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_error.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_disconnect_icon.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/disconnect_icon.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_custom_divider.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/custom_divider.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_hide_set.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_hide_set.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_select_all_24dp.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_select_all_24dp.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_bg_box_list_item.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/bg_box_list_item.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_fix_ic_switch_on.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/fix_ic_switch_on.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_abc_fade_out.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/abc_fade_out.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/mipmap-xxxhdpi_ic_launcher_round.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/mipmap-xxxhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_gradient01.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/gradient01.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_bg_round_l.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/bg_round_l.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_logout.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_logout.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/raw_pdnsd_conf.flat",
+        "source": "com.v2ray.ang.app-main-61:/raw/pdnsd_conf"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_svg_download_upload.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/svg_download_upload.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_xupdate.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/xupdate.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_border_selected.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/border_selected.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_baseline_whatsapp_24.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/baseline_whatsapp_24.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_bg_card_rounded.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/bg_card_rounded.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_abc_fade_in.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/abc_fade_in.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_img_sun.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/img_sun.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ads_logo.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ads_logo.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_progress_.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/progress_.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_android.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_android.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_activity_launch.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/activity_launch.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_auto.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/auto.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_fix_vip_tag.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/fix_vip_tag.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_activity_splash_logged_in.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/activity_splash_logged_in.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_abc_slide_in_bottom.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/abc_slide_in_bottom.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_disconnect_button.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/disconnect_button.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_spinner_bg_input.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/spinner_bg_input.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_dialog_add_ssl.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/dialog_add_ssl.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_nav_item_bg.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/nav_item_bg.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_bg_status_connecting.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/bg_status_connecting.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_btn_shdow.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/btn_shdow.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_bg_tab_outline.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/bg_tab_outline.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_whatsapp.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_whatsapp.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_layout_apps.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/layout_apps.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_more_set.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/more_set.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_cloud_on.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/cloud_on.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_progdialog.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/progdialog.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_graph.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/graph.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/mipmap-hdpi_ic_launcher_round.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/mipmap-hdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_advance_settings.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/advance_settings.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_bg_transparent.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/bg_transparent.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_activity_bypass_list.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/activity_bypass_list.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_bg_header_rounded.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/bg_header_rounded.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_spinner_bg_title.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/spinner_bg_title.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_jx_radius_nav.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/jx_radius_nav.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_dialog_exit_show_layout.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/dialog_exit_show_layout.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/xml_pref_settings.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/xml/pref_settings.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_main_bg.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/main_bg.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_config_added.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_config_added.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_fade_in_out.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/fade_in_out.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_fix_basic_button_border.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/fix_basic_button_border.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_cg.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_cg.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_dialog_network_spinner.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/dialog_network_spinner.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/mipmap-xxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_card1.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/card1.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_fix_ic_thumb.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/fix_ic_thumb.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_border_item_gray.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/border_item_gray.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_nav_bg2_light.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/nav_bg2_light.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_user_pass_holder_bg.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/user_pass_holder_bg.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_abc_tooltip_exit.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/abc_tooltip_exit.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_bmh.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/bmh.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_bg_auto_badge.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/bg_auto_badge.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_btn_update_bg.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/btn_update_bg.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_list_item.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/list_item.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_map_bg1.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/map_bg1.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_exit.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/exit.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_btn_checkbox_to_unchecked_icon_null_animation.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/btn_checkbox_to_unchecked_icon_null_animation.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_modern_main_content.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/modern_main_content.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_dialog_update.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/dialog_update.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_back_left.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_back_left.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/anim_btn_radio_to_on_mtrl_ring_outer_path_animation.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/anim/btn_radio_to_on_mtrl_ring_outer_path_animation.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_shield.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_shield.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_book.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_book.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_stop_24dp.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_stop_24dp.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic_random.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic_random.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_fix_tag_frame.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/fix_tag_frame.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_menu_burger.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/menu_burger.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_bg_spin.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/bg_spin.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_icon_icon.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/icon_icon.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_list_box.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/list_box.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/mipmap-anydpi-v26/ic_launcher_round.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_button_connect.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/button_connect.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_logout_button.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/logout_button.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_fix_login_background_shape.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/fix_login_background_shape.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_ic12.png.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/ic12.png"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_widget_switch.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/widget_switch.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/layout_activity_splash.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/layout/activity_splash.xml"
+    },
+    {
+        "merged": "com.v2ray.ang.app-debug-59:/drawable_livedata_dot_green.xml.flat",
+        "source": "com.v2ray.ang.app-main-61:/drawable/livedata_dot_green.xml"
+    }
+]

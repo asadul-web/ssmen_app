@@ -1,0 +1,201 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+plugins {
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    id("checkstyle")
+}
+
+android {
+    namespace 'com.v2ray.ang'
+    compileSdk 35
+    ndkVersion  "28.2.13676358"
+
+    defaultConfig {
+        applicationId "site.asalo.ssmen"
+        minSdk 21
+        targetSdk 35
+        versionCode 40
+        versionName "4.6.29"
+
+        setProperty("archivesBaseName", "app")
+
+        vectorDrawables {
+            useSupportLibrary true
+        }
+
+        ndk {
+            abiFilters "armeabi-v7a", "arm64-v8a"
+        }
+    }
+
+    signingConfigs {
+        release {
+//            storeFile file("C:/keystore/mtkgenuineprov2.jks")
+//            storePassword "mtkgenuineprov2"
+//            keyAlias "mtkgenuineprov2"
+//            keyPassword "mtkgenuineprov2"
+
+            enableV1Signing true
+            enableV2Signing true
+            enableV3Signing true
+            enableV4Signing true
+        }
+    }
+
+    buildTypes {
+        debug {
+            ndk.debugSymbolLevel = "FULL"
+        }
+
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles(
+                    getDefaultProguardFile("proguard-android-optimize.txt"),
+                    "proguard-rules.pro"
+            )
+            ndk.debugSymbolLevel = "SYMBOL_TABLE"
+
+            signingConfig signingConfigs.release
+
+            packaging {
+                jniLibs {
+                    keepDebugSymbols += [
+                            "libdns.so",
+                            "libh3.so",
+                            "libovpncli.so",
+                            "libpdnsd.so",
+                            "libtun2socksv.so",
+                            "libtun2socks.so"
+                    ]
+                }
+            }
+        }
+    }
+
+    android {
+        packaging {
+            jniLibs {
+                useLegacyPackaging = true
+
+                // Apply to ALL builds: debug & release.
+                pickFirsts += [
+                        "lib/arm64-v8a/libgojni.so",
+                        "lib/armeabi-v7a/libgojni.so",
+                        "lib/arm64-v8a/libmmkv.so",
+                        "lib/armeabi-v7a/libmmkv.so",
+
+                ]
+            }
+
+            resources {
+                // No duplicate resource files
+            }
+        }
+    }
+
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+        coreLibraryDesugaringEnabled true
+    }
+
+    buildFeatures {
+        aidl true
+        buildConfig true
+        dataBinding true
+    }
+    kotlinOptions {
+        jvmTarget = kotlinJvmTarget
+    }
+
+
+    lint {
+        checkOnly.addAll(["ImpliedQuantity", "MissingQuantity"])
+        disable.addAll(["MissingTranslation", "UnsafeNativeCodeLocation"])
+        enable.addAll(["BackButton", "EasterEgg", "StopShip", "IconExpectedSize",
+                       "GradleDynamicVersion", "NewerVersionAvailable"])
+        abortOnError false
+        checkAllWarnings true
+        checkDependencies true
+        checkReleaseBuilds true
+        quiet true
+    }
+
+    publishing {
+        singleVariant("release") {
+            withJavadocJar()
+            withSourcesJar()
+        }
+    }
+    buildToolsVersion '35.0.0'
+
+    signingConfigs {
+        release {
+            storeFile file("keystore.jks")
+            storePassword System.getenv("KEYSTORE_PASSWORD")
+            keyAlias System.getenv("KEY_ALIAS")
+            keyPassword System.getenv("KEY_PASSWORD")
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            signingConfig signingConfigs.release
+            proguardFiles(
+                    getDefaultProguardFile("proguard-android-optimize.txt"),
+                    "proguard-rules.pro"
+            )
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.aar", "*.jar"])
+    implementation libs.appcompat
+    implementation libs.material
+    implementation libs.constraintlayout
+    implementation libs.lifecycle.livedata.ktx
+    implementation libs.lifecycle.viewmodel.ktx
+    implementation libs.palette.ktx
+    implementation libs.minidns.hla
+    implementation libs.okhttp
+    implementation libs.mmkv.static
+    implementation libs.gson
+    implementation libs.core
+    implementation libs.rxjava
+    implementation libs.rxandroid
+    implementation libs.preference.ktx
+    implementation libs.junit
+    implementation libs.neumorphism
+    implementation libs.lottie
+    implementation libs.toggle
+    implementation libs.xor
+    implementation libs.swiperefreshlayout
+    implementation libs.multidex
+    implementation libs.work.runtime.ktx
+    implementation libs.work.multiprocess
+    implementation libs.toasty
+    implementation libs.activity
+    implementation libs.splashscreen
+    coreLibraryDesugaring libs.desugar.jdk.libs
+    implementation "com.android.volley:volley:1.2.1"
+    implementation "com.github.PhilJay:MPAndroidChart:v3.1.0"
+    implementation "com.airbnb.android:lottie:6.2.0"
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs.clear()            // remove previous flags
+    options.compilerArgs.add("-Xlint:none") // disable all warnings
+    options.deprecation = false             // disable deprecation messages
+}
+
+tasks.withType(KotlinCompile).configureEach {
+    //noinspection GrDeprecatedAPIUsage
+    kotlinOptions.jvmTarget = JavaVersion.VERSION_17.toString()
+}

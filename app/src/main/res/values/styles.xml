@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/white</item>
+        <item name="windowSplashScreenAnimatedIcon">@android:color/transparent</item>
+        <item name="postSplashScreenTheme">@style/AppTheme</item>
+    </style>
+
+    <style name="NavTextAppearance" parent="TextAppearance.AppCompat.Body1">
+        <item name="android:textSize">10sp</item>
+        <item name="android:fontFamily">@font/google_sans_flex</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="AppThemeDialogLight" parent="Theme.MaterialComponents.Light.Dialog">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.4</item>
+        <item name="android:windowBackground">@drawable/bg_round_l</item>
+        <item name="colorAccent">@color/black</item>
+        <item name="android:letterSpacing">0.1</item>
+        <item name="android:fontFamily">@font/google_sans_flex</item>
+        <item name="android:textSize">10.0sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textColorHint">#292929</item>
+        <item name="popupMenuStyle">@style/mPopupOverlay_l</item>
+        <item name="alertDialogTheme">@style/AppAlertDialog_Light</item>
+        <item name="android:windowMinWidthMajor">90%</item>
+        <item name="android:windowMinWidthMinor">90%</item>
+    </style>
+
+
+    <style name="AppThemeDialogDark" parent="Theme.MaterialComponents.Dialog">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.4</item>
+        <item name="android:windowBackground">@drawable/bg_round_d</item>
+        <item name="colorAccent">@color/white</item>
+        <item name="android:letterSpacing">0.1</item>
+        <item name="android:fontFamily">@font/google_sans_flex</item>
+        <item name="android:textSize">10.0sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textColorHint">#D9D9D9</item>
+        <item name="alertDialogTheme">@style/AppAlertDialog_Dark</item>
+        <item name="popupMenuStyle">@style/mPopupOverlay_d</item>
+        <item name="android:windowMinWidthMajor">90%</item>
+        <item name="android:windowMinWidthMinor">90%</item>
+    </style>
+    <style name="AppTheme_dark" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorAccent">@color/white</item>
+        <item name="android:letterSpacing">0.1</item>
+        <item name="android:fontFamily">@font/google_sans_flex</item>
+        <item name="android:textSize">11.0sp</item>
+        <item name="alertDialogTheme">@style/AppAlertDialog_Dark</item>
+        <item name="popupMenuStyle">@style/mPopupOverlay_d</item>
+        <item name="android:windowBackground">@color/windowBackground_dark</item>
+        <item name="titleTextAppearance">@style/ToolbarTitleTheme</item>
+        <item name="subtitleTextAppearance">@style/ToolbarSubtitleTheme</item>
+    </style>
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/windowBackground_light</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">@color/white</item>
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="colorAccent">@color/black</item>
+        <item name="android:letterSpacing">0.1</item>
+        <item name="android:fontFamily">@font/google_sans_flex</item>
+        <item name="android:textSize">11.0sp</item>
+        <item name="popupMenuStyle">@style/mPopupOverlay_l</item>
+        <item name="alertDialogTheme">@style/AppAlertDialog_Light</item>
+        <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
+        <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
+        <item name="android:windowBackground">@color/windowBackground_light</item>
+        <item name="titleTextAppearance">@style/ToolbarTitleTheme</item>
+        <item name="subtitleTextAppearance">@style/ToolbarSubtitleTheme</item>
+    </style>
+    <style name="PositiveButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">#d81b60</item>
+        <item name="android:textSize">12sp</item>
+        <item name="rippleColor">#ad1457</item>
+    </style>
+    <style name="NegativeButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">12sp</item>
+        <item name="rippleColor">#a4a4a4</item>
+    </style>
+
+    <style name="AppAlertDialog_Light" parent="Theme.MaterialComponents.Light.Dialog.Alert">
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.4</item>
+        <item name="android:windowBackground">@drawable/bg_round_l</item>
+        <item name="colorAccent">@color/black</item>
+        <item name="android:letterSpacing">0.1</item>
+        <item name="android:fontFamily">@font/google_sans_flex</item>
+        <item name="android:textSize">10.0sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textColorHint">#292929</item>
+        <item name="android:shadowColor">@color/white</item>
+        <item name="android:shadowDy">2</item>
+        <item name="android:shadowDx">2</item>
+        <item name="android:shadowRadius">2.5</item>
+        <item name="android:windowMinWidthMajor">85%</item>
+        <item name="android:windowMinWidthMinor">85%</item>
+    </style>
+    <style name="AppAlertDialog_Dark" parent="Theme.MaterialComponents.Dialog.Alert">
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.4</item>
+        <item name="android:windowBackground">@drawable/bg_round_d</item>
+        <item name="colorAccent">@color/black</item>
+        <item name="android:letterSpacing">0.1</item>
+        <item name="android:fontFamily">@font/google_sans_flex</item>
+        <item name="android:textSize">10.0sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textColorHint">#D9D9D9</item>
+        <item name="android:shadowColor">@color/black</item>
+        <item name="android:shadowDy">2</item>
+        <item name="android:shadowDx">2</item>
+        <item name="android:shadowRadius">2.5</item>
+        <item name="android:windowMinWidthMajor">85%</item>
+        <item name="android:windowMinWidthMinor">85%</item>
+    </style>
+    <style name="AppAlertDialog_full_Light" parent="@android:style/Theme.Light.NoTitleBar.Fullscreen">
+        <item name="android:windowFullscreen">true</item>
+        <item name="colorAccent">@color/black</item>
+        <item name="android:letterSpacing">0.1</item>
+        <item name="android:fontFamily">@font/google_sans_flex</item>
+        <item name="android:textSize">10.0sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textColorHint">#292929</item>
+        <item name="android:shadowColor">@color/white</item>
+        <item name="android:shadowDy">2</item>
+        <item name="android:shadowDx">2</item>
+        <item name="android:shadowRadius">2.5</item>
+        <item name="android:windowBackground">@color/white</item>
+    </style>
+    <style name="AppAlertDialog_full_Dark" parent="@android:style/Theme.NoTitleBar.Fullscreen">
+        <item name="android:windowFullscreen">true</item>
+        <item name="colorAccent">@color/black</item>
+        <item name="android:letterSpacing">0.1</item>
+        <item name="android:fontFamily">@font/google_sans_flex</item>
+        <item name="android:textSize">10.0sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textColorHint">#D9D9D9</item>
+        <item name="android:shadowColor">@color/black</item>
+        <item name="android:shadowDy">2</item>
+        <item name="android:shadowDx">2</item>
+        <item name="android:shadowRadius">2.5</item>
+        <item name="android:windowBackground">@color/black_light</item>
+    </style>
+    <style name="ToolbarTitleTheme" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:letterSpacing">0.1</item>
+        <item name="android:fontFamily">@font/google_sans_flex</item>
+        <item name="android:textSize">15.0sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:shadowColor">@color/grey_800</item>
+        <item name="android:shadowDy">2.0</item>
+        <item name="android:shadowRadius">2.0</item>
+    </style>
+
+    <style name="ToolbarSubtitleTheme" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
+        <item name="android:letterSpacing">0.1</item>
+        <item name="android:textSize">10.0sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:fontFamily">@font/google_sans_flex</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:shadowColor">@color/grey_800</item>
+        <item name="android:shadowDy">1.0</item>
+        <item name="android:shadowRadius">1.0</item>
+    </style>
+    <style name="SplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorAccent">@color/white</item>
+        <item name="android:letterSpacing">0.1</item>
+        <item name="android:fontFamily">@font/google_sans_flex</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:statusBarColor">@color/white</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:navigationBarColor" tools:targetApi="21">@color/white</item>
+    </style>
+    <style name="TextViewTheme_dark" parent="@style/TextAppearance.AppCompat.Small">
+        <item name="android:letterSpacing">0.1</item>
+        <item name="android:fontFamily">@font/google_sans_flex</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textColorHint">@color/grey_500</item>
+        <item name="android:shadowColor">@color/black</item>
+        <item name="android:shadowDy">1.0</item>
+        <item name="android:shadowRadius">1.0</item>
+    </style>
+    <style name="TextViewTheme_light" parent="@style/TextAppearance.AppCompat.Small">
+        <item name="android:letterSpacing">0.1</item>
+        <item name="android:fontFamily">@font/google_sans_flex</item>
+        <item name="android:textSize">12.0sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textColorHint">@color/grey_500</item>
+        <item name="android:shadowColor">@color/white</item>
+        <item name="android:shadowDy">1.0</item>
+        <item name="android:shadowRadius">1.0</item>
+    </style>
+    <style name="alertDialog">
+        <item name="android:windowEnterAnimation">@anim/bounce</item>
+        <item name="android:windowExitAnimation">@anim/fade_out</item>
+    </style>
+    <style name="mPopupOverlay_d" parent="Widget.AppCompat.PopupMenu">
+        <item name="android:popupBackground">#484848</item>
+        <item name="android:letterSpacing">0.1</item>
+        <item name="android:fontFamily">@font/google_sans_flex</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:windowBackground">#212121</item>
+    </style>
+    <style name="mPopupOverlay_l" parent="Widget.AppCompat.Light.PopupMenu">
+        <item name="android:popupBackground">@color/white</item>
+        <item name="android:letterSpacing">0.1</item>
+        <item name="android:fontFamily">@font/google_sans_flex</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:windowBackground">@color/white</item>
+    </style>
+    <style name="ToolbarTheme" parent="ThemeOverlay.AppCompat">
+        <item name="android:letterSpacing">0.1</item>
+        <item name="android:fontFamily">@font/google_sans_flex</item>
+        <item name="android:textColorPrimary">@color/black</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorControlNormal">@color/black</item>
+        <item name="android:textColorHint">#6B6B6B</item>
+        <item name="actionMenuTextColor">@color/white</item>
+        <item name="colorControlHighlight">@color/colorAccent</item>
+    </style>
+    <style name="MenuStyle" parent="@style/Widget.AppCompat.Light.PopupMenu">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:itemBackground">@color/background_color</item>
+        <item name="android:popupBackground">@color/background_color</item>
+        <item name="colorControlNormal">@color/white</item>
+    </style>
+    <style name="fix_dialog_alert_style" parent="@style/Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:windowBackground">@drawable/window</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowTitleStyle">@style/WindowTitleStyle</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+    <style name="WindowTitleStyle" parent="@style/TextAppearance.AppCompat.Title">
+        <item name="android:fontFamily">@font/google_sans_flex</item>
+        <item name="android:textColor">@color/colorBtnStroke</item>
+    </style>
+    <style name="TransparentDialog" parent="Theme.MaterialComponents.Light.Dialog.Alert">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+</resources>

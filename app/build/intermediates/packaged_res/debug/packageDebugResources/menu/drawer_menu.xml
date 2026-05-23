@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/item06"
+        android:icon="@drawable/xupdate"
+        android:title="Update Config" />
+    <item
+        android:id="@+id/item0"
+        android:icon="@drawable/ic_setting"
+        android:title="Settings" />
+    <item
+        android:id="@+id/item09"
+        android:icon="@drawable/ic_wifi_on"
+        android:title="Wifi Tethering" />
+    <item
+        android:id="@+id/item02"
+        android:icon="@drawable/ic_book"
+        android:title="Release Note" />
+    <item
+        android:id="@+id/item08"
+        android:icon="@drawable/ic_radio"
+        android:title="Mobile Network" />
+    <item
+        android:id="@+id/item11"
+        android:icon="@drawable/ic_android"
+        android:title="Filter Apps" />
+    <item
+        android:id="@+id/item05"
+        android:icon="@drawable/ic_hunt"
+        android:title="IP Hunt" />
+    <item
+        android:id="@+id/item07"
+        android:icon="@drawable/ic_colors"
+        android:title="App Colors" />
+    <item
+        android:id="@+id/item10"
+        android:icon="@drawable/ic_dns"
+        android:title="DNS Test" />
+    <item
+        android:id="@+id/item01"
+        android:icon="@drawable/ic_webhook"
+        android:title="Auto Ping" />
+    <item
+        android:id="@+id/item_battery_optimizer"
+        android:icon="@drawable/battery_75"
+        android:title="Battery Optimizer" />
+    <item
+        android:id="@+id/logout"
+        android:icon="@drawable/logout_button"
+        android:title="LOGOUT" />
+</menu>

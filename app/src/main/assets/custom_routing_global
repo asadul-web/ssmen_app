@@ -1,0 +1,36 @@
+[
+  {
+    "remarks": "阻断udp443",
+    "outboundTag": "block",
+    "port": "443",
+    "network": "udp"
+  },
+  {
+    "remarks": "绕过局域网IP",
+    "outboundTag": "direct",
+    "ip": [
+      "10.0.0.0/8",
+      "172.16.0.0/12",
+      "192.168.0.0/16",
+      "127.0.0.0/8",
+      "169.254.0.0/16",
+      "224.0.0.0/4",
+      "240.0.0.0/4",
+      "fc00::/7",
+      "fe80::/10",
+      "::1/128"
+    ]
+  },
+  {
+    "remarks": "绕过局域网域名",
+    "outboundTag": "direct",
+    "domain": [
+      "geosite:private"
+    ]
+  },
+  {
+    "remarks": "最终代理",
+    "port": "0-65535",
+    "outboundTag": "proxy"
+  }
+]

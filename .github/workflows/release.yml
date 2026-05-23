@@ -1,0 +1,59 @@
+
+name: Build and Release APK
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > app/keystore.jks
+
+      - name: Extract versionName
+        id: version
+        run: |
+          VERSION=$(grep versionName app/build.gradle | head -1 | awk -F\" '{print $2}')
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Build Release APK
+        run: ./gradlew assembleRelease
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+
+      - name: Rename APK
+        run: |
+          mv app/build/outputs/apk/release/app-release.apk \
+          app/build/outputs/apk/release/FIGHTER-V2RAY.apk
+
+      - name: Create Release in Public Repo
+        uses: softprops/action-gh-release@v1
+        with:
+          repository: asadul-web/SSMen-Release
+          tag_name: v${{ env.VERSION }}
+          name: FIGHTER-V2RAY v${{ env.VERSION }}
+          files: app/build/outputs/apk/release/FIGHTER-V2RAY.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}

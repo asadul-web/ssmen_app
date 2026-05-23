@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="30dp"
+    android:height="35dp"
+    android:viewportWidth="70"
+    android:viewportHeight="35">
+    <!-- Blue triangle shape with a sharper slice to match the photo -->
+    <path
+        android:fillColor="@color/colorPrimary"
+        android:pathData="M35,0 L58,0 Q70,0 70,12 L70,35 Z" />
+</vector>
