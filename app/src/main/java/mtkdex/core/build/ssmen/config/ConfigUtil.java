@@ -562,7 +562,7 @@ public class ConfigUtil implements SettingsConstants {
             bytes = bytes *8;
         int unit = mbit ? 1000 : 1024;
         if (bytes < unit)
-            return bytes + (mbit ? " bit" : " B");
+            return String.format(Locale.getDefault(), "%.1f %s", (float) bytes, (mbit ? "bit" : "B"));
 
         int exp = (int) (Math.log(bytes) / Math.log(unit));
         String pre = (mbit ? "kMGTPE" : "KMGTPE").charAt(exp-1) + ("");
