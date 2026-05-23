@@ -467,7 +467,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 AppConfig.MSG_STATE_START_SUCCESS -> {
                     //updateTestResultAction.isInitialized
                     hLogStatus.updateStateString(hLogStatus.VPN_CONNECTED, "Connected")
-                    mtkdex.core.build.ssmen.view.StatisticGraphData.getStatisticData().dataTransferStats.startConnected()
+                    if (!mtkdex.core.build.ssmen.view.StatisticGraphData.getStatisticData().dataTransferStats.isConnected) {
+                        mtkdex.core.build.ssmen.view.StatisticGraphData.getStatisticData().dataTransferStats.startConnected()
+                    }
                     testCurrentServerRealPing()
                   //  getApplication<AngApplication>().toastSuccess(R.string.toast_services_success)
                     isRunning.value = true
