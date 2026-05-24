@@ -330,6 +330,7 @@ public class LoginActivity extends MainBaseActivity {
     public void onExpireDate(String expiry) {
         if (expiry == null || expiry.equals("none")) {
             getEditor().putString("_AccountXp", "Expiry: none").apply();
+            getEditor().putString("_AccountRawXp", "none").apply();
             return;
         }
 
@@ -338,6 +339,7 @@ public class LoginActivity extends MainBaseActivity {
 
         String dateStr = "Expiry: " + formattedDate + " | " + daysLeft;
         getEditor().putString("_AccountXp", dateStr).apply();
+        getEditor().putString("_AccountRawXp", expiry).apply();
         mWarningText.setText("Account Validity: " + daysLeft);
     }
 

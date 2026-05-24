@@ -688,7 +688,7 @@
                     android:id="@+id/ac_xp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Expires: January 22, 2026 | 28 Days"
+                    android:text="Expiry: --/--/---- | 0 Days"
                     android:textSize="10sp"
                     android:textStyle="bold"
                     android:textColor="@color/colorPrimary"
@@ -698,7 +698,6 @@
                     android:paddingEnd="10dp"
                     android:layout_marginTop="4dp"
                     android:layout_marginBottom="5dp"
-                    android:maxLines="1"
                     android:fontFamily="@font/google_sans_flex" />
             </LinearLayout>
 

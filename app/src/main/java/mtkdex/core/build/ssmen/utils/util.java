@@ -60,17 +60,49 @@ public class util implements SettingsConstants {
             return "none";
         }
         try {
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Date expiry = format.parse(expiryDate);
-            long now = System.currentTimeMillis();
+            // Most panels use UTC for expiry dates
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.US);
+            format.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
+            
+            Date expiry;
+            try {
+                expiry = format.parse(expiryDate);
+            } catch (ParseException e) {
+                format = new SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US);
+                format.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
+                expiry = format.parse(expiryDate);
+            }
 
-            if (expiry == null || expiry.getTime() <= now) {
+            if (expiry == null) {
+                return "0 Days";
+            }
+
+            long now = System.currentTimeMillis();
+            // Add a small 10-second grace period for clock sync
+            if (expiry.getTime() + 10000 <= now) {
                 return "Expired";
             }
 
             long diff = expiry.getTime() - now;
-            // Round up to show the current day as 1 day remaining
-            long days = (long) Math.ceil((double) diff / (1000 * 60 * 60 * 24));
+            long days = diff / (1000 * 60 * 60 * 24);
+
+            if (days < 1) {
+                long totalHours = diff / (1000 * 60 * 60);
+                long totalMins = diff / (1000 * 60);
+                
+                if (totalHours > 0) {
+                    long remainingMins = (diff % (1000 * 60 * 60)) / (1000 * 60);
+                    if (remainingMins > 0) {
+                        return totalHours + (totalHours == 1 ? " Hr " : " Hrs ") + remainingMins + " Min";
+                    }
+                    return totalHours + (totalHours == 1 ? " Hour" : " Hours");
+                } else {
+                    if (totalMins > 0) {
+                        return totalMins + (totalMins == 1 ? " Minute" : " Minutes");
+                    }
+                    return "Expiring soon...";
+                }
+            }
 
             return days + (days == 1 ? " Day" : " Days");
         } catch (Exception e) {
@@ -80,15 +112,28 @@ public class util implements SettingsConstants {
 
     public static String getExpireDateFormatted(String date) {
         if (date == null || date.equals("none") || date.isEmpty()) {
-            return "--/--/--";
+            return "--/--/----";
         }
         try {
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Date newDate = format.parse(date);
-            format = new SimpleDateFormat("MMMM dd, yyyy");
-            assert newDate != null;
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.US);
+            format.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
+            
+            Date newDate;
+            try {
+                newDate = format.parse(date);
+            } catch (ParseException e) {
+                format = new SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US);
+                format.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
+                newDate = format.parse(date);
+            }
+
+            if (newDate == null) return date;
+
+            // Display in local time for the user's convenience
+            format = new SimpleDateFormat("dd/MMM/yyyy", java.util.Locale.US);
+            format.setTimeZone(java.util.TimeZone.getDefault());
             return format.format(newDate);
-        } catch (ParseException e) {
+        } catch (Exception e) {
             return date;
         }
     }

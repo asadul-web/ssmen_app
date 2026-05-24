@@ -227,7 +227,7 @@ public class MainActivity extends MainBaseActivity implements
     private boolean isCheckUpdateIsRunning = false;
     private boolean _stop = false;
     private boolean showGraphOnDisconnect = false;
-    private String date = "Expiry: --/--/-- | 0 Days";
+    private String date = "Expiry: --/--/---- | 0 Days";
     private LogsAdapter mAdapter;
     private ImageView showLog;
     TrafficGraphView trafficGraph;
@@ -335,6 +335,29 @@ public class MainActivity extends MainBaseActivity implements
             
             // Note: duration_view is now driven by updateByteCount to ensure perfect sync 
             // with traffic values. No manual tick needed here.
+            
+            // Check for real-time account expiry and update UI
+            String rawExpiry = getPref().getString("_AccountRawXp", "");
+            if (!rawExpiry.isEmpty() && !rawExpiry.equals("none")) {
+                String daysLeft = util.getDaysLeft(rawExpiry);
+                if (daysLeft.equals("Expired")) {
+                    if (hLogStatus.isTunnelActive()) {
+                        addlogInfo("<font color = #d50000>Account expired! Disconnecting...");
+                        stopTunnelService();
+                        showToast("Expired", "Your account has just expired.");
+                    }
+                    if (ac_xp != null) {
+                        String fDate = util.getExpireDateFormatted(rawExpiry);
+                        ac_xp.setText("Expiry: " + fDate + " | Expired");
+                    }
+                } else {
+                    // Update label in real-time for short trial users
+                    if (ac_xp != null && i11 % 5 == 0) { // Update every 5 seconds to save battery
+                        String fDate = util.getExpireDateFormatted(rawExpiry);
+                        ac_xp.setText("Expiry: " + fDate + " | " + daysLeft);
+                    }
+                }
+            }
             
             MainActivity.this.schedule_stats();
         }
@@ -2104,6 +2127,16 @@ public class MainActivity extends MainBaseActivity implements
             showToast("Oppss...!", "Please connect to the internet");
             return false;
         }
+
+        String rawExpiry = getPref().getString("_AccountRawXp", "");
+        if (!rawExpiry.isEmpty() && !rawExpiry.equals("none")) {
+            if (util.getDaysLeft(rawExpiry).equals("Expired")) {
+                showToast("Account Expired", "Your account has expired. Please renew to continue.");
+                addlogInfo("<font color = #d50000>Account expired. Connection rejected.");
+                return false;
+            }
+        }
+
         if (getPref().getBoolean(CONFIG_EXP_KEY, false)) {
             addlogInfo("<font color = #FFFF002E>Oppss sorry! Your server is now expired,click the renew button to create new and fresh server");
             showRenewServDialog();
@@ -2235,7 +2268,17 @@ public class MainActivity extends MainBaseActivity implements
         doUpdateLayout();
         V2RAY_TYPE();
 
-        if (ac_xp != null) ac_xp.setText(getPref().getString("_AccountXp", date));
+        if (ac_xp != null) {
+            String rawExp = getPref().getString("_AccountRawXp", "");
+            if (!rawExp.isEmpty() && !rawExp.equals("none")) {
+                String fDate = util.getExpireDateFormatted(rawExp);
+                String dLeft = util.getDaysLeft(rawExp);
+                date = "Expiry: " + fDate + " | " + dLeft;
+                ac_xp.setText(date);
+            } else {
+                ac_xp.setText(getPref().getString("_AccountXp", date));
+            }
+        }
         
         // Refresh account details if needed
         if (shouldFetchAccountDetails) {
@@ -3265,6 +3308,7 @@ public class MainActivity extends MainBaseActivity implements
         if (expiry == null || expiry.equals("none")) {
             ac_xp.setText("Expiry: none");
             getEditor().putString("_AccountXp", "Expiry: none").apply();
+            getEditor().putString("_AccountRawXp", "none").apply();
             return;
         }
 
@@ -3273,7 +3317,12 @@ public class MainActivity extends MainBaseActivity implements
 
         date = "Expiry: " + formattedDate + " | " + daysLeft;
         getEditor().putString("_AccountXp", date).apply();
+        getEditor().putString("_AccountRawXp", expiry).apply();
         ac_xp.setText(date);
+
+        if (daysLeft.equals("Expired")) {
+            if (hLogStatus.isTunnelActive()) stopTunnelService();
+        }
 
         shouldFetchAccountDetails = false;
     }
