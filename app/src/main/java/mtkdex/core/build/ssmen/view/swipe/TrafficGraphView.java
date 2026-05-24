@@ -257,7 +257,7 @@ public class TrafficGraphView extends View {
         if (isFrozen) return;
 
         // Smoothing filter to prevent sharp jumps
-        float filter = 0.5f; 
+        float filter = 0.5f;
         float lastIn = currentIn.isEmpty() ? 0 : currentIn.get(currentIn.size() - 1);
         float lastOut = currentOut.isEmpty() ? 0 : currentOut.get(currentOut.size() - 1);
         
@@ -397,7 +397,7 @@ public class TrafficGraphView extends View {
         float left = dp(1 );         // Start of the graph lines from the left
         float top = dp(0);          // Top margin of the graph area
         float right = w - dp(0);    // Initial gap for labels on the right
-        
+
         // ADJUST THIS VALUE: Increase it (e.g., dp(3)) to move the graph higher up from the baseline
         float bottom = h - dp(3);    // The "Floor" or Zero-line of the graph
 
@@ -427,7 +427,7 @@ public class TrafficGraphView extends View {
         axisPaint.setStrokeWidth(horizontalStrokeWidth);
         float baselineY = viewHeight;
         canvas.drawLine(horizontalStart, baselineY, drawingArea.right + horizontalEnd, baselineY, axisPaint);
-        
+
         // 2. Draw Vertical Axis Line
         axisPaint.setStrokeWidth(verticalStrokeWidth);
         canvas.drawLine(drawingArea.right, verticalTop, drawingArea.right, baselineY, axisPaint);
@@ -447,7 +447,7 @@ public class TrafficGraphView extends View {
         }
 
         // Labels - ALWAYS DRAWN IF NOT HIDDEN BY OUTSIDE LOGIC
-        drawLabels(canvas);
+        // drawLabels(canvas);
     }
 
     private void drawPath(Canvas canvas,
@@ -541,9 +541,9 @@ public class TrafficGraphView extends View {
             // 0.25f controls the vertical distance between the 4 labels
             // 0.10f controls the starting height (Top padding)
             float percent = (i * 0.25f) + 0.10f;
-            
+
             // Labels use viewHeight so they don't move when graph 'bottom' changes
-            float y = viewHeight * percent; 
+            float y = viewHeight * percent;
             float drawY = y - textHeightOffset;
 
             canvas.drawText(
