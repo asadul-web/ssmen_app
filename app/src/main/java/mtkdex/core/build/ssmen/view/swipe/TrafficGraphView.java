@@ -113,18 +113,18 @@ public class TrafficGraphView extends View {
             smoothedOut = lastOut;
         }
 
-        // 3rd and 4th labels: bit only with 2 decimals
-        displayInStr = String.format(java.util.Locale.US, "%.2f bit", smoothedIn);
-        displayOutStr = String.format(java.util.Locale.US, "%.2f bit", smoothedOut);
+        // 3rd and 4th labels: bit only with 1 decimal
+        displayInStr = String.format(java.util.Locale.US, "%.1f bit", smoothedIn);
+        displayOutStr = String.format(java.util.Locale.US, "%.1f bit", smoothedOut);
 
-        // 1st and 2nd labels: scaled bits with 0 decimals
+        // 1st and 2nd labels: scaled bits with 1 decimal
         float pIn = 0.0f;
         for (float v : currentIn) if (v > pIn) pIn = v;
         float pOut = 0.0f;
         for (float v : currentOut) if (v > pOut) pOut = v;
 
-        peakInStr = formatSpeed(pIn, 0);
-        peakOutStr = formatSpeed(pOut, 0);
+        peakInStr = formatSpeed(pIn, 1);
+        peakOutStr = formatSpeed(pOut, 1);
     }
 
     public void setOnAxisOffsetListener(OnAxisOffsetListener listener) {
@@ -237,8 +237,8 @@ public class TrafficGraphView extends View {
         smoothedIn = smoothedIn + (lastIn - smoothedIn) * 0.15f;
         smoothedOut = smoothedOut + (lastOut - smoothedOut) * 0.15f;
 
-        displayInStr = String.format(java.util.Locale.US, "%.2f bit", smoothedIn);
-        displayOutStr = String.format(java.util.Locale.US, "%.2f bit", smoothedOut);
+        displayInStr = String.format(java.util.Locale.US, "%.1f bit", smoothedIn);
+        displayOutStr = String.format(java.util.Locale.US, "%.1f bit", smoothedOut);
 
         // Calculate dynamic offset based on the NEW strings
         float maxLabelWidth = getMaxLabelWidth();
@@ -257,7 +257,7 @@ public class TrafficGraphView extends View {
         if (isFrozen) return;
 
         // Smoothing filter to prevent sharp jumps
-        float filter = 0.5f;
+        float filter = 0.5f; 
         float lastIn = currentIn.isEmpty() ? 0 : currentIn.get(currentIn.size() - 1);
         float lastOut = currentOut.isEmpty() ? 0 : currentOut.get(currentOut.size() - 1);
         
@@ -302,8 +302,8 @@ public class TrafficGraphView extends View {
         showPath = false; // HIDE the graph lines on clear (reopen/fresh launch)
         smoothedIn = 0f;
         smoothedOut = 0f;
-        displayInStr = "0.00 bit";
-        displayOutStr = "0.00 bit";
+        displayInStr = "0.0 bit";
+        displayOutStr = "0.0 bit";
         peakInStr = "0 bit";
         peakOutStr = "0 bit";
         minValue = 0f;
@@ -336,8 +336,8 @@ public class TrafficGraphView extends View {
         for (float v : currentIn) if (v > pIn) pIn = v;
         float pOut = 0.0f;
         for (float v : currentOut) if (v > pOut) pOut = v;
-        peakInStr = formatSpeed(pIn, 0);
-        peakOutStr = formatSpeed(pOut, 0);
+        peakInStr = formatSpeed(pIn, 1);
+        peakOutStr = formatSpeed(pOut, 1);
 
         updateLabelsAndOffset();
 
@@ -354,8 +354,8 @@ public class TrafficGraphView extends View {
         if (isZeroState && !isFrozen) {
             labels[0] = "0 bit";
             labels[1] = "0 bit";
-            labels[2] = "0.00 bit";
-            labels[3] = "0.00 bit";
+            labels[2] = "0.0 bit";
+            labels[3] = "0.0 bit";
         } else {
             labels[0] = peakInStr;
             labels[1] = peakOutStr;
@@ -397,7 +397,7 @@ public class TrafficGraphView extends View {
         float left = dp(1 );         // Start of the graph lines from the left
         float top = dp(0);          // Top margin of the graph area
         float right = w - dp(0);    // Initial gap for labels on the right
-
+        
         // ADJUST THIS VALUE: Increase it (e.g., dp(3)) to move the graph higher up from the baseline
         float bottom = h - dp(3);    // The "Floor" or Zero-line of the graph
 
@@ -427,7 +427,7 @@ public class TrafficGraphView extends View {
         axisPaint.setStrokeWidth(horizontalStrokeWidth);
         float baselineY = viewHeight;
         canvas.drawLine(horizontalStart, baselineY, drawingArea.right + horizontalEnd, baselineY, axisPaint);
-
+        
         // 2. Draw Vertical Axis Line
         axisPaint.setStrokeWidth(verticalStrokeWidth);
         canvas.drawLine(drawingArea.right, verticalTop, drawingArea.right, baselineY, axisPaint);
@@ -447,7 +447,7 @@ public class TrafficGraphView extends View {
         }
 
         // Labels - ALWAYS DRAWN IF NOT HIDDEN BY OUTSIDE LOGIC
-        // drawLabels(canvas);
+        drawLabels(canvas);
     }
 
     private void drawPath(Canvas canvas,
@@ -511,8 +511,8 @@ public class TrafficGraphView extends View {
     private float smoothedIn = 0f;
     private float smoothedOut = 0f;
     private long lastLabelUpdateTime = 0;
-    private String displayInStr = "0.00 bit";
-    private String displayOutStr = "0.00 bit";
+    private String displayInStr = "0.0 bit";
+    private String displayOutStr = "0.0 bit";
     private String peakInStr = "0 bit";
     private String peakOutStr = "0 bit";
 
@@ -524,8 +524,8 @@ public class TrafficGraphView extends View {
         if (isZeroState && !isFrozen) {
             labels[0] = "0 bit";
             labels[1] = "0 bit";
-            labels[2] = "0.00 bit";
-            labels[3] = "0.00 bit";
+            labels[2] = "0.0 bit";
+            labels[3] = "0.0 bit";
         } else {
             labels[0] = peakInStr;
             labels[1] = peakOutStr;
@@ -541,9 +541,9 @@ public class TrafficGraphView extends View {
             // 0.25f controls the vertical distance between the 4 labels
             // 0.10f controls the starting height (Top padding)
             float percent = (i * 0.25f) + 0.10f;
-
+            
             // Labels use viewHeight so they don't move when graph 'bottom' changes
-            float y = viewHeight * percent;
+            float y = viewHeight * percent; 
             float drawY = y - textHeightOffset;
 
             canvas.drawText(
@@ -558,6 +558,7 @@ public class TrafficGraphView extends View {
     private String formatSpeed(float value, int decimalCount) {
         if (value <= 0) {
             if (decimalCount == 0) return "0 bit";
+            if (decimalCount == 1) return "0.0 bit";
             if (decimalCount == 2) return "0.00 bit";
             return "0 bit";
         }
