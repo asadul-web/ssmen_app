@@ -509,6 +509,7 @@ public class MainActivity extends MainBaseActivity implements
             if (isConnected) {
                 if (getConfig().getServerType().equals(SERVER_TYPE_V2RAY)) {
                     layout_test.setVisibility(View.GONE);
+                    teststate1();
                 } else {
                     layout_test.setVisibility(View.GONE);
                 }
@@ -569,6 +570,7 @@ public class MainActivity extends MainBaseActivity implements
                     String success = "V2ray Connected";
                     hLogStatus.logInfo(success);
                     layout_test.setVisibility(View.GONE);
+                    teststate1();
                 } else {
                     layout_test.setVisibility(View.GONE);
                 }
@@ -588,6 +590,7 @@ public class MainActivity extends MainBaseActivity implements
                 if (getConfig().getServerType().equals(SERVER_TYPE_V2RAY)) {
                     layout_test.setVisibility(View.GONE);
                     tv_test_state.setText(this.getString(R.string.connection_connected));
+                    teststate1();
                 } else {
                     layout_test.setVisibility(View.GONE);
                 }
@@ -632,13 +635,7 @@ public class MainActivity extends MainBaseActivity implements
         if (level.equals(ConnectionStatus.LEVEL_CONNECTED)) {
             statusValue = "CONNECTED";
             statusColor = ContextCompat.getColor(this, R.color.connected_color);
-            
-            // Only run generic ICMP ping for non-V2Ray services
-            // V2Ray uses the Real Handshake test which is more accurate for the protocol
-            if (!getConfig().getServerType().equals(SERVER_TYPE_V2RAY)) {
-                testServerPing();
-            }
-
+            testServerPing();
             isConnected = true; // Set connected state
         } else if (level.equals(ConnectionStatus.LEVEL_CONNECTING_SERVER_REPLIED) || 
                    level.equals(ConnectionStatus.LEVEL_CONNECTING_NO_SERVER_REPLY_YET) ||
@@ -704,7 +701,7 @@ public class MainActivity extends MainBaseActivity implements
                 if (ping <= 0) {
                     pingText = "~ ms";
                 } else {
-                    pingText = ping + " ms";
+                    pingText = ping + "ms";
                 }
                 
                 runOnUiThread(() -> updateServerPing(pingText));
@@ -1229,42 +1226,30 @@ public class MainActivity extends MainBaseActivity implements
     }
 
     public void setTestState(String content) {
-        if (content == null || content.isEmpty()) return;
+        if (content == null) return;
 
         tv_test_state.setText(content);
 
-        // Extract and display handshake ping value
-        if (content.contains("Success") && content.contains("handshake")) {
+        // Extract and display ping value
+        if (content.contains("Success")) {
             try {
-                // Robust extraction: find digits immediately followed by optional space and "ms"
-                java.util.regex.Matcher matcher = java.util.regex.Pattern.compile("(\\d+)\\s*ms").matcher(content);
-                if (matcher.find()) {
-                    String pingValue = matcher.group(1);
-                    if (pingValue != null && !pingValue.isEmpty()) {
-                        // Ensure card and toast use the EXACT same numeric value
-                        String unifiedPing = pingValue + " ms";
-                        updateServerPing(unifiedPing);
-                        showHandshakeToast(pingValue);
-                    }
+                // Extract ping value from content like "✔ Success: 123ms"
+                String pingValue = content.replaceAll("[^0-9]", "");
+                if (!pingValue.isEmpty()) {
+                    updateServerPing(pingValue + " ms");
+
+                    // Show custom toast/snackbar
+                    showHandshakeToast(pingValue);
                 }
             } catch (Exception e) {
-                Log.e("MainActivity", "Handshake parse error", e);
+                Log.e("MainActivity", "Failed to extract ping value", e);
             }
         }
     }
 
-    private Toast lastHandshakeToast;
-    private String lastPingValue = "";
     private void showHandshakeToast(String ms) {
-        if (ms.equals(lastPingValue)) return;
-        lastPingValue = ms;
-        
         runOnUiThread(() -> {
             try {
-                if (lastHandshakeToast != null) {
-                    lastHandshakeToast.cancel();
-                }
-                
                 View layout = getLayoutInflater().inflate(R.layout.snackbar, null);
                 TextView title = layout.findViewById(R.id.itemtoastTv1);
                 TextView subtitle = layout.findViewById(R.id.itemtoastTv2);
@@ -1272,11 +1257,11 @@ public class MainActivity extends MainBaseActivity implements
                 if (title != null) title.setText("Handshake");
                 if (subtitle != null) subtitle.setText("Success: HTTPS handshake took " + ms + " ms");
 
-                lastHandshakeToast = new Toast(getApplicationContext());
-                lastHandshakeToast.setDuration(Toast.LENGTH_LONG);
-                lastHandshakeToast.setGravity(Gravity.BOTTOM, 0, 150);
-                lastHandshakeToast.setView(layout);
-                lastHandshakeToast.show();
+                Toast toast = new Toast(getApplicationContext());
+                toast.setDuration(Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.BOTTOM, 0, 150);
+                toast.setView(layout);
+                toast.show();
             } catch (Exception e) {
                 util.showToast("Handshake", "Success: HTTPS handshake took " + ms + " ms");
             }
