@@ -136,91 +136,87 @@ public class ConfigSpinnerAdapter extends AppCompatActivity implements SettingsC
 		randonSpaceLay.setVisibility(mPref.getBoolean(CONFIG_PASSCODE_KEY, false) ?View.VISIBLE:View.GONE);
 		ConfigListView.getRecyclerView().setVerticalScrollBarEnabled(false);
 
-		// Load data in background to prevent UI freeze
-		new Thread(() -> {
-			final ArrayList<Pair<Long, JSONObject>> initialData = getConfigAdapter(ConfigType);
+		// Load data instantly instead of background thread to avoid "empty menu" delay
+		final ArrayList<Pair<Long, JSONObject>> initialData = getConfigAdapter(ConfigType);
 
-			runOnUiThread(() -> {
-				ConfigListView.setLayoutManager(mLinearLayoutManager);
-				listAdapter = new ItemAdapter(ConfigSpinnerAdapter.this, initialData, R.layout.list_item, R.id.dragHandle, Integer.parseInt(ConfigType));
-				ConfigListView.setAdapter(listAdapter, true);
-				ConfigListView.setCanDragHorizontally(false);
-				ConfigListView.setCanDragVertically(true);
+		ConfigListView.setLayoutManager(mLinearLayoutManager);
+		listAdapter = new ItemAdapter(ConfigSpinnerAdapter.this, initialData, R.layout.list_item, R.id.dragHandle, Integer.parseInt(ConfigType));
+		ConfigListView.setAdapter(listAdapter, true);
+		ConfigListView.setCanDragHorizontally(false);
+		ConfigListView.setCanDragVertically(true);
 
-				ConfigListView.setDragListListener(new DragListView.DragListListenerAdapter() {
-					@Override
-					public void onItemDragEnded(int fromPosition, int toPosition) {
-						loadNewJS(listAdapter.getNewJS(), toPosition);
-					}
-				});
+		ConfigListView.setDragListListener(new DragListView.DragListListenerAdapter() {
+			@Override
+			public void onItemDragEnded(int fromPosition, int toPosition) {
+				loadNewJS(listAdapter.getNewJS(), toPosition);
+			}
+		});
 
-				listAdapter.setOnSelectedSerListener(new ItemAdapter.OnSelectedSerListener() {
-					@Override
-					public void onSelectSer(String positionStr) {
-						int p = Integer.parseInt(positionStr);
-						if (Objects.equals(ConfigType, "0")) {
-							mEditor.putInt(SERVER_POSITION, p);
-							mEditor.putBoolean("isRandom", false);
-						} else if (Objects.equals(ConfigType, "1")) {
-							mEditor.putInt(NETWORK_POSITION, p);
-							try {
-								JSONArray jar = getNetworkArrayDragaPosition();
-								if (jar != null && p < jar.length()) {
-									JSONObject js = jar.getJSONObject(p);
-									if (js.has("proto_spin")) {
-										int proto = js.getInt("proto_spin");
-										int currentCat = mPref.getInt(manual_tunnel_radio_key, 0);
+		listAdapter.setOnSelectedSerListener(new ItemAdapter.OnSelectedSerListener() {
+			@Override
+			public void onSelectSer(String positionStr) {
+				int p = Integer.parseInt(positionStr);
+				if (Objects.equals(ConfigType, "0")) {
+					mEditor.putInt(SERVER_POSITION, p);
+					mEditor.putBoolean("isRandom", false);
+				} else if (Objects.equals(ConfigType, "1")) {
+					mEditor.putInt(NETWORK_POSITION, p);
+					try {
+						JSONArray jar = getNetworkArrayDragaPosition();
+						if (jar != null && p < jar.length()) {
+							JSONObject js = jar.getJSONObject(p);
+							if (js.has("proto_spin")) {
+								int proto = js.getInt("proto_spin");
+								int currentCat = mPref.getInt(manual_tunnel_radio_key, 0);
 
-										if (proto == 1) { // Hysteria
-											if (currentCat != 1) {
-												mEditor.putInt(manual_tunnel_radio_key, 1);
-												mEditor.putInt(SERVER_POSITION, 0);
-											}
-										} else if (proto == 2) { // SLOWDNS
-											if (currentCat != 3) {
-												mEditor.putInt(manual_tunnel_radio_key, 3);
-												mEditor.putInt(SERVER_POSITION, 0);
-											}
-										} else if (proto == 6) { // V2ray
-											if (currentCat < 4 || currentCat > 6) {
-												mEditor.putInt(manual_tunnel_radio_key, 4);
-												mEditor.putInt(SERVER_POSITION, 0);
-											}
-										} else {
-											// Generic payloads (HTTP, SSL, etc.)
-											// If we are in a specialized category, default back to OVPN (0)
-											if (currentCat == 1 || currentCat == 3 || (currentCat >= 4 && currentCat <= 6)) {
-												mEditor.putInt(manual_tunnel_radio_key, 0);
-												mEditor.putInt(SERVER_POSITION, 0);
-											}
-										}
+								if (proto == 1) { // Hysteria
+									if (currentCat != 1) {
+										mEditor.putInt(manual_tunnel_radio_key, 1);
+										mEditor.putInt(SERVER_POSITION, 0);
+									}
+								} else if (proto == 2) { // SLOWDNS
+									if (currentCat != 3) {
+										mEditor.putInt(manual_tunnel_radio_key, 3);
+										mEditor.putInt(SERVER_POSITION, 0);
+									}
+								} else if (proto == 6) { // V2ray
+									if (currentCat < 4 || currentCat > 6) {
+										mEditor.putInt(manual_tunnel_radio_key, 4);
+										mEditor.putInt(SERVER_POSITION, 0);
+									}
+								} else {
+									// Generic payloads (HTTP, SSL, etc.)
+									// If we are in a specialized category, default back to OVPN (0)
+									if (currentCat == 1 || currentCat == 3 || (currentCat >= 4 && currentCat <= 6)) {
+										mEditor.putInt(manual_tunnel_radio_key, 0);
+										mEditor.putInt(SERVER_POSITION, 0);
 									}
 								}
-							} catch (Exception e) {
-								android.util.Log.e("ConfigSpinner", "Error updating tunnel category", e);
 							}
 						}
-						mEditor.commit();
-						finish();
-					}
-
-					@Override
-					public void onReloadConfig(int position) {
-						setupListRecyclerView(ConfigListView, listAdapter);
-					}
-				});
-
-				// Apply initial filter if exists
-				String savedSearch = mPref.getString("my_config_research_" + ConfigType, "");
-				if (!savedSearch.isEmpty()) {
-					search.setText(savedSearch);
-					listAdapter.filter(savedSearch);
-					if (Objects.equals(ConfigType, "0")) {
-						show_random_ly.setVisibility(listAdapter.getItemCount() > 0 ? View.VISIBLE : View.GONE);
+					} catch (Exception e) {
+						android.util.Log.e("ConfigSpinner", "Error updating tunnel category", e);
 					}
 				}
-			});
-		}).start();
+				mEditor.commit();
+				finish();
+			}
+
+			@Override
+			public void onReloadConfig(int position) {
+				setupListRecyclerView(ConfigListView, listAdapter);
+			}
+		});
+
+		// Apply initial filter if exists
+		String savedSearch = mPref.getString("my_config_research_" + ConfigType, "");
+		if (!savedSearch.isEmpty()) {
+			search.setText(savedSearch);
+			listAdapter.filter(savedSearch);
+			if (Objects.equals(ConfigType, "0")) {
+				show_random_ly.setVisibility(listAdapter.getItemCount() > 0 ? View.VISIBLE : View.GONE);
+			}
+		}
 
 		clear_btn = findViewById(R.id.clear_btn);
 		search_btn = findViewById(R.id.search_btn);
@@ -282,7 +278,9 @@ public class ConfigSpinnerAdapter extends AppCompatActivity implements SettingsC
 		clear_btn.setOnClickListener(v -> {
 			search.getText().clear();
 			mEditor.putString("my_config_research_"+ConfigType,"").apply();
-			if (reloadAdapterView())mLinearLayoutManager.scrollToPosition(Objects.equals(ConfigType, "0")?mPref.getInt(SERVER_POSITION,0):mPref.getInt(NETWORK_POSITION,0));
+			if (reloadAdapterView()) {
+				mLinearLayoutManager.scrollToPosition(Objects.equals(ConfigType, "0") ? mPref.getInt(SERVER_POSITION, 0) : mPref.getInt(NETWORK_POSITION, 0));
+			}
 		});
 		search_btn.setOnClickListener(v -> {
 			String newText = search.getText().toString().trim();
