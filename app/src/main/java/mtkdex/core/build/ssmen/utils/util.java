@@ -60,16 +60,16 @@ public class util implements SettingsConstants {
             return "none";
         }
         try {
-            // Panel uses Saudi Arabia (Riyadh) Time (GMT+3)
+            // Most panels use UTC for expiry dates
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.US);
-            format.setTimeZone(java.util.TimeZone.getTimeZone("Asia/Riyadh"));
+            format.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
             
             Date expiry;
             try {
                 expiry = format.parse(expiryDate);
             } catch (ParseException e) {
                 format = new SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US);
-                format.setTimeZone(java.util.TimeZone.getTimeZone("Asia/Riyadh"));
+                format.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
                 expiry = format.parse(expiryDate);
             }
 
@@ -116,14 +116,14 @@ public class util implements SettingsConstants {
         }
         try {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.US);
-            format.setTimeZone(java.util.TimeZone.getTimeZone("Asia/Riyadh"));
+            format.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
             
             Date newDate;
             try {
                 newDate = format.parse(date);
             } catch (ParseException e) {
                 format = new SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US);
-                format.setTimeZone(java.util.TimeZone.getTimeZone("Asia/Riyadh"));
+                format.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
                 newDate = format.parse(date);
             }
 
