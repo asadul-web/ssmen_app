@@ -183,6 +183,7 @@ public class TrafficGraphView extends View {
         textPaint.setColor(0xFF757575);
         textPaint.setTextSize(dp(8f));
         textPaint.setTextAlign(Paint.Align.LEFT);
+        textPaint.setLetterSpacing(0.05f);
         try {
             textPaint.setTypeface(ResourcesCompat.getFont(getContext(), R.font.google_sans_flex));
         } catch (Exception e) {
