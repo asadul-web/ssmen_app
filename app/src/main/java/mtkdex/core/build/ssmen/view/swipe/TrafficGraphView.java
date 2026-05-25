@@ -443,18 +443,10 @@ public class TrafficGraphView extends View {
         axisPaint.setStrokeWidth(verticalStrokeWidth);
         canvas.drawLine(drawingArea.right, verticalTop, drawingArea.right, baselineY, axisPaint);
 
-        // Paths - Only draw if showPath is true AND we have non-zero data
+        // Draw graph paths if enabled
         if (showPath) {
-            boolean hasData = false;
-            for (Float f : currentIn) if (f > 0) { hasData = true; break; }
-            if (!hasData) {
-                for (Float f : currentOut) if (f > 0) { hasData = true; break; }
-            }
-
-            if (hasData || isFrozen) {
-                drawPath(canvas, currentIn, previousIn, inPaint);
-                drawPath(canvas, currentOut, previousOut, outPaint);
-            }
+            drawPath(canvas, currentIn, previousIn, inPaint);
+            drawPath(canvas, currentOut, previousOut, outPaint);
         }
 
         // Labels - ALWAYS DRAWN IF NOT HIDDEN BY OUTSIDE LOGIC
@@ -532,19 +524,13 @@ public class TrafficGraphView extends View {
     private void drawLabels(Canvas canvas) {
         if (currentIn.isEmpty() || currentOut.isEmpty()) return;
 
-        // Strings are now updated in updateLabelsAndOffset() to ensure correct measurement
-        String[] labels = new String[4];
-        if (isZeroState && !isFrozen) {
-            labels[0] = "0 bit";
-            labels[1] = "0 bit";
-            labels[2] = "0.00 bit";
-            labels[3] = "0.00 bit";
-        } else {
-            labels[0] = peakInStr;
-            labels[1] = peakOutStr;
-            labels[2] = displayInStr;
-            labels[3] = displayOutStr;
-        }
+        // Use the calculated strings (which include smoothing and units)
+        String[] labels = {
+            peakInStr,
+            peakOutStr,
+            displayInStr,
+            displayOutStr
+        };
 
         Paint.FontMetrics fm = textPaint.getFontMetrics();
         float textHeightOffset = (fm.ascent + fm.descent) / 2;

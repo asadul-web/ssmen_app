@@ -330,11 +330,8 @@ public class MainActivity extends MainBaseActivity implements
     private boolean liveDataBlink = false;
     private final Runnable stats_timer_task = new Runnable() {
         public void run() {
-            // This loop now only triggers manual stat fetching for non-broadcast services (like OVPN)
+            // This loop triggers stat fetching for services
             MainActivity.this.show_stats();
-            
-            // Note: duration_view is now driven by updateByteCount to ensure perfect sync
-            // with traffic values. No manual tick needed here.
             
             // Check for real-time account expiry and update UI
             String rawExpiry = getPref().getString("_AccountRawXp", "");
@@ -421,16 +418,16 @@ public class MainActivity extends MainBaseActivity implements
     public void show_stats() {
         try {
             if (hLogStatus.isTunnelActive()) {
-                if (getConfig().getServerType().equals(SERVER_TYPE_OVPN)) {
+                String serverType = getConfig().getServerType();
+                if (serverType.equals(SERVER_TYPE_OVPN)) {
                     ConnectionStats stats = get_connection_stats();
-                    hLogStatus.updateByteCount(stats.bytes_in, stats.bytes_out);
-                } else if (getConfig().getServerType().equals(SERVER_TYPE_V2RAY)) {
-                    // Handled via broadcasts
-                } else if (getConfig().getServerType().equals(SERVER_TYPE_UDP_HYSTERIA_V1)) {
-                    // Just pass the current incremental values, hLogStatus handles the diffs
-                    // and updateByteCount accumulates the total session usage.
-                    hLogStatus.updateByteCount(getUpDateBytes().getTotalBytesReceived(), getUpDateBytes().getTotalBytesSent());
+                    if (stats != null) {
+                        hLogStatus.updateByteCount(stats.bytes_in, stats.bytes_out);
+                    }
+                } else if (serverType.equals(SERVER_TYPE_V2RAY)) {
+                    // Handled via broadcasts from NotificationManager (MainViewModel)
                 } else {
+                    // For SSH/UDP types that might update StatisticGraphData
                     hLogStatus.updateByteCount(getUpDateBytes().getTotalBytesReceived(), getUpDateBytes().getTotalBytesSent());
                 }
             }
@@ -740,6 +737,7 @@ public class MainActivity extends MainBaseActivity implements
                 if (val1 != null) val1.setText(inStr);
                 if (val2 != null) val2.setText(outStr);
                 
+                // Keep timer updating with every traffic tick
                 if (duration_view != null && getUpDateBytes().isConnected()) {
                     duration_view.setText(getUpDateBytes().elapsedTimeToDisplay(getUpDateBytes().getElapsedTime()));
                 }
@@ -2350,8 +2348,10 @@ public class MainActivity extends MainBaseActivity implements
         if (mDataOutTv != null) mDataOutTv.setText("0 bit");
         if (val1 != null) val1.setText("0 bit");
         if (val2 != null) val2.setText("0 bit");
+        if (duration_view != null) duration_view.setText("00h:00m:00s");
 
         if (trafficGraph != null) {
+            trafficGraph.clear();
             trafficGraph.setShowPath(true);
             trafficGraph.setFrozen(false);
         }
@@ -2366,8 +2366,9 @@ public class MainActivity extends MainBaseActivity implements
         }
         
         TunnelUtils.restartRotateAndRandom();
-        schedule_stats();
         StatisticGraphData.getStatisticData().getDataTransferStats().startConnected();
+        schedule_stats();
+        show_stats(); // Trigger first UI update immediately
         
         // 3. Move heavy config loading and service start to background to avoid UI lag
         if (statsExecutor != null && !statsExecutor.isShutdown()) {
