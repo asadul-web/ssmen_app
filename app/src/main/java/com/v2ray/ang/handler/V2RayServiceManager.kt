@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
 import android.util.Log
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.v2ray.ang.AppConfig
 import com.v2ray.ang.R
@@ -285,9 +284,6 @@ object V2RayServiceManager {
             }
             // 🔔 Send back to UI
             MessageUtil.sendMsg2UI(service, AppConfig.MSG_MEASURE_DELAY_SUCCESS, result)
-            withContext(Dispatchers.Main) {
-                Toast.makeText(service, result, Toast.LENGTH_SHORT).show()
-            }
         }
     }
 
