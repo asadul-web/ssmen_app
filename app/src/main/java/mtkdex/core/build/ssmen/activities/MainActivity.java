@@ -1419,6 +1419,10 @@ public class MainActivity extends MainBaseActivity implements
         animation = AnimationUtils.loadAnimation(this, R.anim.blink);
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
         mainViewModel.reloadServerList();
+        
+        // Start listening for service broadcasts immediately to restore state
+        teststate1();
+
         doBindService();
         LoadDefaultConfig();
         findViewById(R.id.main_window_bg).setBackgroundColor(getConfig().getMainLayoutBG());
@@ -2234,13 +2238,13 @@ public class MainActivity extends MainBaseActivity implements
         if (isDrawerOpen()) close();
         autoUpdate();
         
-        // Only reload configs if VPN is NOT active to prevent accidental disconnects
+        // Ensure UI is populated correctly even when VPN is active (e.g. after process kill)
+        reLoad_Configs();
+        loadServers();
+        loadNetwork();
+        updateTunnelTypeText();
+        
         if (!isActive) {
-            reLoad_Configs();
-            loadServers();
-            loadNetwork();
-            updateTunnelTypeText();
-            
             // Auto connect on app resume if enabled
             if (getPref().getBoolean("auto_connect_enabled", false)) {
                 new Handler().postDelayed(() -> {

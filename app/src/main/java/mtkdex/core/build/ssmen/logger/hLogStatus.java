@@ -20,6 +20,7 @@ public class hLogStatus
     private static String mLaststatemsg = "";
     private static String mLaststate = "Disconnected";
     private static int mLastStateresid = R.string.state_disconnected;
+    private static int mProgress = 0;
     static final int MAXLOGENTRIES = 1000;
     public static TrafficHistory trafficHistory;
     private static final Vector<ByteCountListener> byteCountListener;
@@ -78,6 +79,18 @@ public class hLogStatus
         stateListener = new Vector<>();
         byteCountListener = new Vector<>();
         trafficHistory = new TrafficHistory();
+
+        // Try to restore last known state from SharedPreferences to handle process kills
+        try {
+            android.content.SharedPreferences sp = com.v2ray.ang.MainApplication.getApp().getSharedPreferences("vpn_status", android.content.Context.MODE_PRIVATE);
+            mLaststate = sp.getString("last_state", "Disconnected");
+            mLaststatemsg = sp.getString("last_msg", "");
+            mLastStateresid = sp.getInt("last_res_id", R.string.state_disconnected);
+            String levelStr = sp.getString("last_level", ConnectionStatus.LEVEL_NOTCONNECTED.name());
+            mLastLevel = ConnectionStatus.valueOf(levelStr);
+            mProgress = sp.getInt("last_progress", 0);
+        } catch (Exception ignored) {}
+
         logInformation();
     }
 
@@ -153,7 +166,6 @@ public class hLogStatus
             logListener.remove(ll);
         }
     }
-    private static int mProgress = 0;
     public synchronized static void addStateListener(StateListener sl) {
         if (!stateListener.contains(sl)) {
             stateListener.add(sl);
@@ -280,6 +292,18 @@ public class hLogStatus
         mLastStateresid = resid;
         mLastLevel = level;
         mProgress = progress;
+
+        // Persist state
+        try {
+            android.content.SharedPreferences sp = com.v2ray.ang.MainApplication.getApp().getSharedPreferences("vpn_status", android.content.Context.MODE_PRIVATE);
+            sp.edit()
+                .putString("last_state", state)
+                .putString("last_msg", msg)
+                .putInt("last_res_id", resid)
+                .putString("last_level", level.name())
+                .putInt("last_progress", progress)
+                .apply();
+        } catch (Exception ignored) {}
 
         for (StateListener sl : stateListener) {
             sl.updateState(state, msg, resid, level, progress);

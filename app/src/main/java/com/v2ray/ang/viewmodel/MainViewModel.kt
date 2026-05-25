@@ -456,8 +456,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         override fun onReceive(ctx: Context?, intent: Intent?) {
             when (intent?.getIntExtra("key", 0)) {
                 AppConfig.MSG_STATE_RUNNING -> {
-
                     isRunning.value = true
+                    if (!hLogStatus.isTunnelActive()) {
+                        hLogStatus.updateStateString(hLogStatus.VPN_CONNECTED, "Connected")
+                    }
                 }
 
                 AppConfig.MSG_STATE_NOT_RUNNING -> {
