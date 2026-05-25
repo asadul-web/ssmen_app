@@ -111,11 +111,13 @@ public class TrafficGraphView extends View {
             float lastOut = currentOut.get(currentOut.size() - 1);
             smoothedIn = lastIn;
             smoothedOut = lastOut;
+            smoothedPeakIn = lastIn; // Set to last known to avoid jump on freeze
+            smoothedPeakOut = lastOut;
         }
 
         // 3rd and 4th labels: bit only with 1 decimal
-        displayInStr = String.format(java.util.Locale.US, "%.1f bit", smoothedIn);
-        displayOutStr = String.format(java.util.Locale.US, "%.1f bit", smoothedOut);
+        displayInStr = smoothedIn <= 0 ? "0.00 bit" : String.format(java.util.Locale.US, "%.2f bit", smoothedIn);
+        displayOutStr = smoothedOut <= 0 ? "0.00 bit" : String.format(java.util.Locale.US, "%.2f bit", smoothedOut);
 
         // 1st and 2nd labels: scaled bits with 1 decimal
         float pIn = 0.0f;
@@ -183,7 +185,7 @@ public class TrafficGraphView extends View {
         textPaint.setColor(0xFF757575);
         textPaint.setTextSize(dp(8f));
         textPaint.setTextAlign(Paint.Align.LEFT);
-        textPaint.setLetterSpacing(0.05f);
+        textPaint.setLetterSpacing(0.10f);
         try {
             textPaint.setTypeface(ResourcesCompat.getFont(getContext(), R.font.google_sans_flex));
         } catch (Exception e) {
@@ -236,11 +238,11 @@ public class TrafficGraphView extends View {
             }
 
             // Apply same smoothing used in drawing
-            smoothedIn = smoothedIn + (lastIn - smoothedIn) * 0.15f;
-            smoothedOut = smoothedOut + (lastOut - smoothedOut) * 0.15f;
+            smoothedIn = smoothedIn + (lastIn - smoothedIn) * 0.10f;
+            smoothedOut = smoothedOut + (lastOut - smoothedOut) * 0.10f;
 
-            displayInStr = String.format(java.util.Locale.US, "%.1f bit", smoothedIn);
-            displayOutStr = String.format(java.util.Locale.US, "%.1f bit", smoothedOut);
+            displayInStr = smoothedIn <= 0 ? "0.00 bit" : String.format(java.util.Locale.US, "%.2f bit", smoothedIn);
+            displayOutStr = smoothedOut <= 0 ? "0.00 bit" : String.format(java.util.Locale.US, "%.2f bit", smoothedOut);
         }
 
         // Calculate dynamic offset based on the NEW strings
@@ -305,8 +307,10 @@ public class TrafficGraphView extends View {
         showPath = false; // HIDE the graph lines on clear (reopen/fresh launch)
         smoothedIn = 0f;
         smoothedOut = 0f;
-        displayInStr = "0.0 bit";
-        displayOutStr = "0.0 bit";
+        smoothedPeakIn = 0f;
+        smoothedPeakOut = 0f;
+        displayInStr = "0.00 bit";
+        displayOutStr = "0.00 bit";
         peakInStr = "0 bit";
         peakOutStr = "0 bit";
         minValue = 0f;
@@ -338,8 +342,12 @@ public class TrafficGraphView extends View {
             for (float v : currentIn) if (v > pIn) pIn = v;
             float pOut = 0.0f;
             for (float v : currentOut) if (v > pOut) pOut = v;
-            peakInStr = formatSpeed(pIn, 1);
-            peakOutStr = formatSpeed(pOut, 1);
+            
+            smoothedPeakIn = smoothedPeakIn + (pIn - smoothedPeakIn) * 0.10f;
+            smoothedPeakOut = smoothedPeakOut + (pOut - smoothedPeakOut) * 0.10f;
+            
+            peakInStr = formatSpeed(smoothedPeakIn, 1);
+            peakOutStr = formatSpeed(smoothedPeakOut, 1);
         }
 
         updateLabelsAndOffset();
@@ -357,8 +365,8 @@ public class TrafficGraphView extends View {
         if (isZeroState && !isFrozen) {
             labels[0] = "0 bit";
             labels[1] = "0 bit";
-            labels[2] = "0.0 bit";
-            labels[3] = "0.0 bit";
+            labels[2] = "0.00 bit";
+            labels[3] = "0.00 bit";
         } else {
             labels[0] = peakInStr;
             labels[1] = peakOutStr;
@@ -513,9 +521,11 @@ public class TrafficGraphView extends View {
 
     private float smoothedIn = 0f;
     private float smoothedOut = 0f;
+    private float smoothedPeakIn = 0f;
+    private float smoothedPeakOut = 0f;
     private long lastLabelUpdateTime = 0;
-    private String displayInStr = "0.0 bit";
-    private String displayOutStr = "0.0 bit";
+    private String displayInStr = "0.00 bit";
+    private String displayOutStr = "0.00 bit";
     private String peakInStr = "0 bit";
     private String peakOutStr = "0 bit";
 
@@ -527,8 +537,8 @@ public class TrafficGraphView extends View {
         if (isZeroState && !isFrozen) {
             labels[0] = "0 bit";
             labels[1] = "0 bit";
-            labels[2] = "0.0 bit";
-            labels[3] = "0.0 bit";
+            labels[2] = "0.00 bit";
+            labels[3] = "0.00 bit";
         } else {
             labels[0] = peakInStr;
             labels[1] = peakOutStr;
