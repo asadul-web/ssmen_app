@@ -71,7 +71,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
      * Called when the ViewModel is cleared.
      */
     override fun onCleared() {
-       // getApplication<AngApplication>().unregisterReceiver(mMsgReceiver)
+        try {
+            getApplication<Application>().unregisterReceiver(mMsgReceiver)
+        } catch (e: Exception) {
+            // Already unregistered or not registered
+        }
         tcpingTestScope.coroutineContext[Job]?.cancelChildren()
         SpeedtestManager.closeAllTcpSockets()
         Log.i(AppConfig.TAG, "Main ViewModel is cleared")
@@ -476,7 +480,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                     if (!mtkdex.core.build.ssmen.view.StatisticGraphData.getStatisticData().dataTransferStats.isConnected) {
                         mtkdex.core.build.ssmen.view.StatisticGraphData.getStatisticData().dataTransferStats.startConnected()
                     }
-                    testCurrentServerRealPing()
                   //  getApplication<AngApplication>().toastSuccess(R.string.toast_services_success)
                     isRunning.value = true
                 }
@@ -505,7 +508,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                             val bundle1 = Bundle()
                             bundle1.putString("V2ray_ms",intent.getStringExtra("content"))
                             bundle = bundle1
-                            hLogStatus.updateStateString(hLogStatus.VPN_CONNECTED, "Connected")
                             /*updateTestResultAction.value?.let {
                                 getApplication<AngApplication>().toastSuccess(
                                     it

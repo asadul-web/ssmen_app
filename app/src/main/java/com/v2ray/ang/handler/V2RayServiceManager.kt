@@ -288,9 +288,6 @@ object V2RayServiceManager {
             }
             // 🔔 Send back to UI
             MessageUtil.sendMsg2UI(service, AppConfig.MSG_MEASURE_DELAY_SUCCESS, result)
-            withContext(Dispatchers.Main) {
-                Toast.makeText(service, result, Toast.LENGTH_SHORT).show()
-            }
         }
     }
 

@@ -509,7 +509,6 @@ public class MainActivity extends MainBaseActivity implements
             if (isConnected) {
                 if (getConfig().getServerType().equals(SERVER_TYPE_V2RAY)) {
                     layout_test.setVisibility(View.GONE);
-                    teststate1();
                 } else {
                     layout_test.setVisibility(View.GONE);
                 }
@@ -570,7 +569,6 @@ public class MainActivity extends MainBaseActivity implements
                     String success = "V2ray Connected";
                     hLogStatus.logInfo(success);
                     layout_test.setVisibility(View.GONE);
-                    teststate1();
                 } else {
                     layout_test.setVisibility(View.GONE);
                 }
@@ -590,7 +588,6 @@ public class MainActivity extends MainBaseActivity implements
                 if (getConfig().getServerType().equals(SERVER_TYPE_V2RAY)) {
                     layout_test.setVisibility(View.GONE);
                     tv_test_state.setText(this.getString(R.string.connection_connected));
-                    teststate1();
                 } else {
                     layout_test.setVisibility(View.GONE);
                 }
@@ -635,7 +632,9 @@ public class MainActivity extends MainBaseActivity implements
         if (level.equals(ConnectionStatus.LEVEL_CONNECTED)) {
             statusValue = "CONNECTED";
             statusColor = ContextCompat.getColor(this, R.color.connected_color);
-            testServerPing();
+            if (!getConfig().getServerType().equals(SERVER_TYPE_V2RAY)) {
+                testServerPing();
+            }
             isConnected = true; // Set connected state
         } else if (level.equals(ConnectionStatus.LEVEL_CONNECTING_SERVER_REPLIED) || 
                    level.equals(ConnectionStatus.LEVEL_CONNECTING_NO_SERVER_REPLY_YET) ||
@@ -1248,8 +1247,14 @@ public class MainActivity extends MainBaseActivity implements
     }
 
     private void showHandshakeToast(String ms) {
+        if (isFinishing()) return;
         runOnUiThread(() -> {
             try {
+                // Cancel existing toast if showing to prevent stacking
+                if (mCurrentToast != null) {
+                    mCurrentToast.cancel();
+                }
+
                 View layout = getLayoutInflater().inflate(R.layout.snackbar, null);
                 TextView title = layout.findViewById(R.id.itemtoastTv1);
                 TextView subtitle = layout.findViewById(R.id.itemtoastTv2);
@@ -1257,16 +1262,18 @@ public class MainActivity extends MainBaseActivity implements
                 if (title != null) title.setText("Handshake");
                 if (subtitle != null) subtitle.setText("Success: HTTPS handshake took " + ms + " ms");
 
-                Toast toast = new Toast(getApplicationContext());
-                toast.setDuration(Toast.LENGTH_LONG);
-                toast.setGravity(Gravity.BOTTOM, 0, 150);
-                toast.setView(layout);
-                toast.show();
+                mCurrentToast = new Toast(getApplicationContext());
+                mCurrentToast.setDuration(Toast.LENGTH_LONG);
+                mCurrentToast.setGravity(Gravity.BOTTOM, 0, 150);
+                mCurrentToast.setView(layout);
+                mCurrentToast.show();
             } catch (Exception e) {
                 util.showToast("Handshake", "Success: HTTPS handshake took " + ms + " ms");
             }
         });
     }
+
+    private Toast mCurrentToast;
 
     private void showMoreOptionsMenu(View v) {
         PopupMenu popup = new PopupMenu(this, v);
