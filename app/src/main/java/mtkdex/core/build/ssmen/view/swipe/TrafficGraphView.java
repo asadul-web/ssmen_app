@@ -225,20 +225,22 @@ public class TrafficGraphView extends View {
     private void updateLabelsAndOffset() {
         if (drawingArea == null) return;
         
-        // Update the display strings BEFORE measuring to prevent the "lag" that causes cutting
-        float lastIn = 0;
-        float lastOut = 0;
-        if (!currentIn.isEmpty() && !currentOut.isEmpty()) {
-            lastIn = previousIn.get(currentIn.size() - 1) + ((currentIn.get(currentIn.size() - 1) - previousIn.get(currentIn.size() - 1)) * animationProgress);
-            lastOut = previousOut.get(currentOut.size() - 1) + ((currentOut.get(currentOut.size() - 1) - previousOut.get(currentOut.size() - 1)) * animationProgress);
+        if (!isFrozen) {
+            // Update the display strings BEFORE measuring to prevent the "lag" that causes cutting
+            float lastIn = 0;
+            float lastOut = 0;
+            if (!currentIn.isEmpty() && !currentOut.isEmpty()) {
+                lastIn = previousIn.get(currentIn.size() - 1) + ((currentIn.get(currentIn.size() - 1) - previousIn.get(currentIn.size() - 1)) * animationProgress);
+                lastOut = previousOut.get(currentOut.size() - 1) + ((currentOut.get(currentOut.size() - 1) - previousOut.get(currentOut.size() - 1)) * animationProgress);
+            }
+
+            // Apply same smoothing used in drawing
+            smoothedIn = smoothedIn + (lastIn - smoothedIn) * 0.15f;
+            smoothedOut = smoothedOut + (lastOut - smoothedOut) * 0.15f;
+
+            displayInStr = String.format(java.util.Locale.US, "%.1f bit", smoothedIn);
+            displayOutStr = String.format(java.util.Locale.US, "%.1f bit", smoothedOut);
         }
-
-        // Apply same smoothing used in drawing
-        smoothedIn = smoothedIn + (lastIn - smoothedIn) * 0.15f;
-        smoothedOut = smoothedOut + (lastOut - smoothedOut) * 0.15f;
-
-        displayInStr = String.format(java.util.Locale.US, "%.1f bit", smoothedIn);
-        displayOutStr = String.format(java.util.Locale.US, "%.1f bit", smoothedOut);
 
         // Calculate dynamic offset based on the NEW strings
         float maxLabelWidth = getMaxLabelWidth();
@@ -314,30 +316,30 @@ public class TrafficGraphView extends View {
     }
 
     private void calculateScale() {
-        if (isFrozen) return;
+        if (!isFrozen) {
+            float combinedMax = 0f;
 
-        float combinedMax = 0f;
+            for (Float v : currentIn)
+                if (v > combinedMax) combinedMax = v;
 
-        for (Float v : currentIn)
-            if (v > combinedMax) combinedMax = v;
+            for (Float v : currentOut)
+                if (v > combinedMax) combinedMax = v;
 
-        for (Float v : currentOut)
-            if (v > combinedMax) combinedMax = v;
+            float actualMax = combinedMax;
+            if (combinedMax <= 0f) combinedMax = 1f;
 
-        float actualMax = combinedMax;
-        if (combinedMax <= 0f) combinedMax = 1f;
+            minValue = 0f;
+            maxValue = combinedMax;
+            this.isZeroState = (actualMax <= 0f);
 
-        minValue = 0f;
-        maxValue = combinedMax;
-        this.isZeroState = (actualMax <= 0f);
-
-        // Update peaks immediately for label measurement
-        float pIn = 0.0f;
-        for (float v : currentIn) if (v > pIn) pIn = v;
-        float pOut = 0.0f;
-        for (float v : currentOut) if (v > pOut) pOut = v;
-        peakInStr = formatSpeed(pIn, 1);
-        peakOutStr = formatSpeed(pOut, 1);
+            // Update peaks immediately for label measurement
+            float pIn = 0.0f;
+            for (float v : currentIn) if (v > pIn) pIn = v;
+            float pOut = 0.0f;
+            for (float v : currentOut) if (v > pOut) pOut = v;
+            peakInStr = formatSpeed(pIn, 1);
+            peakOutStr = formatSpeed(pOut, 1);
+        }
 
         updateLabelsAndOffset();
 

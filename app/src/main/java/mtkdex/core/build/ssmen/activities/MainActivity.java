@@ -747,9 +747,6 @@ public class MainActivity extends MainBaseActivity implements
             // Only reset if NOT active.
             inValue = 0f;
             outValue = 0f;
-            
-            // To achieve "freeze after disconnect", we simply DO NOTHING here.
-            // Values will stay what they were until 'active' becomes true again.
         }
 
         if (trafficGraph != null) {
