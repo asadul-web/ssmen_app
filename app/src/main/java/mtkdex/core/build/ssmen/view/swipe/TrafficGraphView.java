@@ -557,9 +557,6 @@ public class TrafficGraphView extends View {
 
     private String formatSpeed(float value, int decimalCount) {
         if (value <= 0) {
-            if (decimalCount == 0) return "0 bit";
-            if (decimalCount == 1) return "0.0 bit";
-            if (decimalCount == 2) return "0.00 bit";
             return "0 bit";
         }
         String format = "%." + decimalCount + "f %s";
