@@ -24,6 +24,16 @@ public class hLogStatus
     public static TrafficHistory trafficHistory;
     private static final Vector<ByteCountListener> byteCountListener;
 
+    private static long mTotalIn = 0;
+    private static long mTotalOut = 0;
+    private static long mDiffIn = 0;
+    private static long mDiffOut = 0;
+
+    public static long getTotalIn() { return mTotalIn; }
+    public static long getTotalOut() { return mTotalOut; }
+    public static long getDiffIn() { return mDiffIn; }
+    public static long getDiffOut() { return mDiffOut; }
+
     public static boolean isTunnelActive() {
         return mLastLevel != ConnectionStatus.LEVEL_AUTH_FAILED && !(mLastLevel == ConnectionStatus.LEVEL_NOTCONNECTED);
     }
@@ -117,6 +127,10 @@ public class hLogStatus
 
     public static void updateByteCount(long in, long out) {
         TrafficHistory.LastDiff diff = trafficHistory.add(in, out);
+        mTotalIn = in;
+        mTotalOut = out;
+        mDiffIn = diff.getDiffIn();
+        mDiffOut = diff.getDiffOut();
         for (ByteCountListener bcl : byteCountListener) {
             bcl.updateByteCount(in, out, diff.getDiffIn(), diff.getDiffOut());
         }
