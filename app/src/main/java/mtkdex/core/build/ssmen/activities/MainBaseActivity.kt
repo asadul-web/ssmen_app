@@ -1127,6 +1127,8 @@ abstract class MainBaseActivity : AppCompatActivity(), SettingsConstants, Inject
         vEditor.putBoolean(AppConfig.PREF_CONFIRM_REMOVE, false)
         vEditor.putBoolean(AppConfig.PREF_START_SCAN_IMMEDIATE, false)
         vEditor.putString(AppConfig.PREF_LANGUAGE, "auto")
+        vEditor.putBoolean("auto_connect_enabled", false)
+        vEditor.putBoolean("auto_reconnect_enabled", false)
         vEditor.commit()
         settingsStorage.encode(AppConfig.PREF_SPEED_ENABLED, false)
         settingsStorage.encode(AppConfig.PREF_SNIFFING_ENABLED, true)
@@ -1148,6 +1150,8 @@ abstract class MainBaseActivity : AppCompatActivity(), SettingsConstants, Inject
         settingsStorage.encode(AppConfig.PREF_CONFIRM_REMOVE, false)
         settingsStorage.encode(AppConfig.PREF_START_SCAN_IMMEDIATE, false)
         settingsStorage.encode(AppConfig.PREF_LANGUAGE, "auto")
+        settingsStorage.encode("auto_connect_enabled", false)
+        settingsStorage.encode("auto_reconnect_enabled", false)
     }
 
 

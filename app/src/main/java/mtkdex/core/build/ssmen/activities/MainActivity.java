@@ -535,11 +535,10 @@ public class MainActivity extends MainBaseActivity implements
             if (hLogStatus.isTunnelActive() && !getPref().getString("_screenPassword_key", "").isEmpty())
                 xPass.setText("******");
 
-            // Auto reconnect logic
+            // Stricter auto reconnect logic: Only reconnect if we were fully connected and now we are fully disconnected
             if (getPref().getBoolean("auto_reconnect_enabled", false) && 
-                wasConnected && !isConnected && 
-                !state.equals(hLogStatus.VPN_STOPPING) && 
-                !state.equals(hLogStatus.VPN_AUTH_FAILED)) {
+                wasConnected && state.equals(hLogStatus.VPN_DISCONNECTED) && 
+                !hLogStatus.isTunnelActive()) {
                 
                 new Handler().postDelayed(() -> {
                     if (getPref().getBoolean("auto_reconnect_enabled", false) && 
@@ -553,6 +552,7 @@ public class MainActivity extends MainBaseActivity implements
 
         switch (state) {
             case hLogStatus.VPN_CONNECTED -> mHandler.post(() -> {
+                isConnecting = false;
                 isConnected = true;
                 isDisconnecting = false;
                 hasConnectedOnce = true;
@@ -602,6 +602,7 @@ public class MainActivity extends MainBaseActivity implements
                     hLogStatus.VPN_DISCONNECTED,
                     hLogStatus.VPN_STOPPING,
                     hLogStatus.VPN_AUTH_FAILED -> mHandler.post(() -> {
+                isConnecting = false;
                 shouldFetchAccountDetails = true;
                 isConnected = false;
                 isDisconnecting = false;
@@ -2245,7 +2246,8 @@ public class MainActivity extends MainBaseActivity implements
         updateTunnelTypeText();
         
         if (!isActive) {
-            // Auto connect on app resume if enabled
+            // Auto connect on app resume disabled to fix "sudden connection" issue
+            /*
             if (getPref().getBoolean("auto_connect_enabled", false)) {
                 new Handler().postDelayed(() -> {
                     if (!hLogStatus.isTunnelActive()) {
@@ -2253,6 +2255,7 @@ public class MainActivity extends MainBaseActivity implements
                     }
                 }, 1000); // Wait 1 second after resume
             }
+            */
 
             if (getConfig().getServerType().equals(SERVER_TYPE_V2RAY)) {
                 loadV2rayConfig();
@@ -2338,7 +2341,15 @@ public class MainActivity extends MainBaseActivity implements
         startTunnelService();
     }
 
+    private boolean isConnecting = false;
+
     private void startTunnelService() {
+        if (isConnecting) return;
+        isConnecting = true;
+        
+        // Reset flag after a timeout to allow retry if it gets stuck
+        new Handler().postDelayed(() -> isConnecting = false, 10000);
+
         m_SentBytes = 0;
         m_ReceivedBytes = 0;
         hLogStatus.resetTrafficHistory();
