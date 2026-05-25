@@ -538,6 +538,7 @@ public class MainActivity extends MainBaseActivity implements
             // Auto reconnect logic
             if (getPref().getBoolean("auto_reconnect_enabled", false) && 
                 wasConnected && !isConnected && 
+                !isDisconnecting &&
                 !state.equals(hLogStatus.VPN_STOPPING) && 
                 !state.equals(hLogStatus.VPN_AUTH_FAILED)) {
                 
@@ -2160,7 +2161,6 @@ public class MainActivity extends MainBaseActivity implements
     private void startOrStopTunnel() {
         getEditor().putInt("loadOnce", 0).apply();
         if (hLogStatus.isTunnelActive()) {
-            isDisconnecting = true;
             // Freeze exactly where we are
             if (trafficGraph != null) {
                 trafficGraph.setFrozen(true);
@@ -2192,6 +2192,7 @@ public class MainActivity extends MainBaseActivity implements
     }
 
     public void stopTunnelService() {
+        isDisconnecting = true;
         if (getConfig().getServerType().equals(SERVER_TYPE_V2RAY)) {
             Bundle bundle1 = new Bundle();
             bundle1.putString("V2ray_ms", "");
@@ -2339,6 +2340,7 @@ public class MainActivity extends MainBaseActivity implements
     }
 
     private void startTunnelService() {
+        isDisconnecting = false;
         m_SentBytes = 0;
         m_ReceivedBytes = 0;
         hLogStatus.resetTrafficHistory();
