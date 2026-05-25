@@ -196,6 +196,9 @@ object V2RayServiceManager {
             hLogStatus.updateStateString(hLogStatus.VPN_CONNECTED, "Connected")
             NotificationManager.showNotification(currentConfig)
             NotificationManager.startSpeedNotification(currentConfig)
+            
+            // Proactively trigger delay measurement immediately after start success
+            measureV2rayDelay()
 
             PluginServiceManager.runPlugin(service, config, result.socksPort)
         } catch (e: Exception) {
