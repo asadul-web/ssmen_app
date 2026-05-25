@@ -117,14 +117,14 @@ public class TrafficGraphView extends View {
         displayInStr = String.format(java.util.Locale.US, "%.1f bit", smoothedIn);
         displayOutStr = String.format(java.util.Locale.US, "%.1f bit", smoothedOut);
 
-        // 1st and 2nd labels: scaled bits with 0 decimal as requested
+        // 1st and 2nd labels: scaled bits with 1 decimal
         float pIn = 0.0f;
         for (float v : currentIn) if (v > pIn) pIn = v;
         float pOut = 0.0f;
         for (float v : currentOut) if (v > pOut) pOut = v;
 
-        peakInStr = formatSpeed(pIn, 0);
-        peakOutStr = formatSpeed(pOut, 0);
+        peakInStr = formatSpeed(pIn, 1);
+        peakOutStr = formatSpeed(pOut, 1);
     }
 
     public void setOnAxisOffsetListener(OnAxisOffsetListener listener) {
@@ -336,8 +336,8 @@ public class TrafficGraphView extends View {
         for (float v : currentIn) if (v > pIn) pIn = v;
         float pOut = 0.0f;
         for (float v : currentOut) if (v > pOut) pOut = v;
-        peakInStr = formatSpeed(pIn, 0);
-        peakOutStr = formatSpeed(pOut, 0);
+        peakInStr = formatSpeed(pIn, 1);
+        peakOutStr = formatSpeed(pOut, 1);
 
         updateLabelsAndOffset();
 
@@ -446,7 +446,7 @@ public class TrafficGraphView extends View {
             }
         }
 
-        // Labels
+        // Labels - ALWAYS DRAWN IF NOT HIDDEN BY OUTSIDE LOGIC
         drawLabels(canvas);
     }
 
@@ -516,35 +516,21 @@ public class TrafficGraphView extends View {
     private String peakInStr = "0 bit";
     private String peakOutStr = "0 bit";
 
-    public String getLabel(int index) {
-        if (isZeroState && !isFrozen) {
-            switch (index) {
-                case 0:
-                case 1:
-                    return "0 bit";
-                case 2:
-                case 3:
-                    return "0.0 bit";
-                default:
-                    return "";
-            }
-        }
-        switch (index) {
-            case 0: return peakInStr;
-            case 1: return peakOutStr;
-            case 2: return displayInStr;
-            case 3: return displayOutStr;
-            default: return "";
-        }
-    }
-
     private void drawLabels(Canvas canvas) {
         if (currentIn.isEmpty() || currentOut.isEmpty()) return;
 
         // Strings are now updated in updateLabelsAndOffset() to ensure correct measurement
         String[] labels = new String[4];
-        for (int i = 0; i < 4; i++) {
-            labels[i] = getLabel(i);
+        if (isZeroState && !isFrozen) {
+            labels[0] = "0 bit";
+            labels[1] = "0 bit";
+            labels[2] = "0.0 bit";
+            labels[3] = "0.0 bit";
+        } else {
+            labels[0] = peakInStr;
+            labels[1] = peakOutStr;
+            labels[2] = displayInStr;
+            labels[3] = displayOutStr;
         }
 
         Paint.FontMetrics fm = textPaint.getFontMetrics();

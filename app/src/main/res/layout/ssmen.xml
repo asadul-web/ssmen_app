@@ -155,7 +155,8 @@
                             android:text="0 bit"
                             android:textColor="@color/colorTextSecondary"
                             android:textSize="8sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            android:visibility="gone" />
 
                         <TextView
                             android:id="@+id/mDataOutTv"
@@ -165,25 +166,28 @@
                             android:text="0 bit"
                             android:textColor="@color/colorTextSecondary"
                             android:textSize="8sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            android:visibility="gone" />
 
                         <TextView
                             android:id="@+id/val1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/google_sans_flex"
-                            android:text="0.0 bit"
+                            android:text="0 bit"
                             android:textColor="@color/colorTextSecondary"
-                            android:textSize="8sp" />
+                            android:textSize="8sp"
+                            android:visibility="gone" />
 
                         <TextView
                             android:id="@+id/val2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/google_sans_flex"
-                            android:text="0.0 bit"
+                            android:text="0 bit"
                             android:textColor="@color/colorTextSecondary"
-                            android:textSize="8sp" />
+                            android:textSize="8sp"
+                            android:visibility="gone" />
                     </LinearLayout>
 
                     <LinearLayout
