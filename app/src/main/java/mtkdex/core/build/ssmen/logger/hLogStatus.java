@@ -24,6 +24,9 @@ public class hLogStatus
     static final int MAXLOGENTRIES = 1000;
     public static TrafficHistory trafficHistory;
     private static final Vector<ByteCountListener> byteCountListener;
+    private static long mStartIn = 0;
+    private static long mStartOut = 0;
+    private static boolean mIsFirstByteCount = true;
 
     public static boolean isTunnelActive() {
         return mLastLevel != ConnectionStatus.LEVEL_AUTH_FAILED && !(mLastLevel == ConnectionStatus.LEVEL_NOTCONNECTED);
@@ -120,18 +123,34 @@ public class hLogStatus
         trafficHistory = _trafficHistory;
     }
 
-    public static void resetTrafficHistory() {
+    public synchronized static void resetTrafficHistory() {
         trafficHistory = new TrafficHistory();
+        mIsFirstByteCount = true;
+        mStartIn = 0;
+        mStartOut = 0;
     }
 
     public interface ByteCountListener {
         public void updateByteCount(long in, long out, long diffIn, long diffOut);
     }
 
-    public static void updateByteCount(long in, long out) {
-        TrafficHistory.LastDiff diff = trafficHistory.add(in, out);
+    public synchronized static void updateByteCount(long in, long out) {
+        if (mIsFirstByteCount && (in > 0 || out > 0)) {
+            mStartIn = in;
+            mStartOut = out;
+            mIsFirstByteCount = false;
+        }
+
+        // Handle underlying counter reset (e.g. core restart)
+        if (in < mStartIn && in > 0) mStartIn = 0;
+        if (out < mStartOut && out > 0) mStartOut = 0;
+
+        long resetIn = (in >= mStartIn) ? (in - mStartIn) : in;
+        long resetOut = (out >= mStartOut) ? (out - mStartOut) : out;
+
+        TrafficHistory.LastDiff diff = trafficHistory.add(resetIn, resetOut);
         for (ByteCountListener bcl : byteCountListener) {
-            bcl.updateByteCount(in, out, diff.getDiffIn(), diff.getDiffOut());
+            bcl.updateByteCount(resetIn, resetOut, diff.getDiffIn(), diff.getDiffOut());
         }
     }
 

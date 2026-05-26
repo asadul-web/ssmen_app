@@ -2349,6 +2349,7 @@ public class MainActivity extends MainBaseActivity implements
         m_SentBytes = 0;
         m_ReceivedBytes = 0;
         hLogStatus.resetTrafficHistory();
+        StatisticGraphData.getStatisticData().getDataTransferStats().stop();
         if (byteIn_view != null) byteIn_view.setText("0 B");
         if (byteOut_view != null) byteOut_view.setText("0 B");
         if (mDataInTv != null) mDataInTv.setText("0 bit");
