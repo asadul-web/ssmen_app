@@ -469,6 +469,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
                 AppConfig.MSG_STATE_NOT_RUNNING -> {
                     isRunning.value = false
+                    hLogStatus.updateStateString(hLogStatus.VPN_DISCONNECTED, "Disconnected")
                     hLogStatus.logInfo("V2Ray Service stopped")
                 }
 
@@ -493,8 +494,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                     isRunning.value = false
                 }
 
-                AppConfig.MSG_STATE_STOP_SUCCESS -> {
-                    hLogStatus.logInfo("V2Ray Connection stopped successfully")
+                AppConfig.MSG_STATE_STOP, AppConfig.MSG_STATE_STOP_SUCCESS -> {
+                    hLogStatus.updateStateString(hLogStatus.VPN_DISCONNECTED, "Disconnected")
+                    hLogStatus.logInfo("V2Ray Connection stopped")
                     mtkdex.core.build.ssmen.view.StatisticGraphData.getStatisticData().dataTransferStats.stop()
                     isRunning.value = false
                 }
