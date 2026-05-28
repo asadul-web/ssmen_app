@@ -17,11 +17,12 @@
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:textAppearance="?android:textAppearanceMedium"
-            android:textSize="18.0dip"
+            android:textSize="15.0dip"
             android:gravity="center"
             android:textAlignment="center"
             style="@style/TextViewTheme_dark"
-            android:layout_marginTop="30.0dip"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:id="@+id/notiftext1"
             android:text="Notification" />
 

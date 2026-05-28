@@ -20,7 +20,7 @@
                 android:layout_marginTop="10.0dip">
 
                 <androidx.appcompat.widget.LinearLayoutCompat
-                    android:gravity="center_vertical"
+                    android:gravity="center"
                     android:layout_gravity="center"
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
