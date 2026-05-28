@@ -106,7 +106,13 @@ object NotificationManager {
 
                 val statsText = "↓ ${downSpeed.toBitSpeedString()} ⚡ ${sessionTotalDown.toTrafficString()} ↑ ${upSpeed.toBitSpeedString()} ⚡ ${sessionTotalUp.toTrafficString()}"
                 
-                val notificationContent = "$serverName • $payloadName\n$statsText"
+                val combinedInfo = when {
+                    serverName.equals(payloadName, ignoreCase = true) -> serverName
+                    serverName.contains(payloadName, ignoreCase = true) -> serverName
+                    payloadName.contains(serverName, ignoreCase = true) -> payloadName
+                    else -> "$serverName • $payloadName"
+                }
+                val notificationContent = "$combinedInfo\n$statsText"
                 updateNotification(notificationContent)
 
                 lastUp = currentUpRaw
@@ -251,8 +257,8 @@ object NotificationManager {
             // "Connected" and Time as Subtext
             mBuilder?.setSubText("Connected  •  $time")
             
-            // Expanded view
-            mBuilder?.setStyle(NotificationCompat.BigTextStyle().bigText("$nameText\n$statsText"))
+            // Expanded view - only show stats to avoid title repetition
+            mBuilder?.setStyle(NotificationCompat.BigTextStyle().bigText(statsText))
 
             getNotificationManager()?.notify(NOTIFICATION_ID, mBuilder?.build())
         }

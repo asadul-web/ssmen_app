@@ -576,10 +576,23 @@ public class dex002 extends Service implements Handler.Callback, SettingsConstan
 
 
     private String getConnection_name(){
+        String serverName = mConfig.getServerName();
         if (mServer_type.equals(SERVER_TYPE_V2RAY)){
-            return mConfig.getServerName() + " • " + "V2Ray/Xray";
+            return serverName;
         }
-        return mConfig.getServerName() + " • " + mConfig.getPayloadName();
+        String payloadName = mConfig.getPayloadName();
+        if (serverName != null && payloadName != null) {
+            if (serverName.equalsIgnoreCase(payloadName)) {
+                return serverName;
+            }
+            if (serverName.toLowerCase().contains(payloadName.toLowerCase())) {
+                return serverName;
+            }
+            if (payloadName.toLowerCase().contains(serverName.toLowerCase())) {
+                return payloadName;
+            }
+        }
+        return serverName + " • " + payloadName;
     }
 
 
@@ -610,8 +623,8 @@ public class dex002 extends Service implements Handler.Callback, SettingsConstan
         jbNotificationExtras(mNotifyBuilder);
         lpNotificationExtras(mNotifyBuilder);
         Notification notification = mNotifyBuilder.build();
-        nm.notify(1002, notification);
-        startForeground(1002, notification);
+        nm.notify(NOTIFICATION_ID, notification);
+        startForeground(NOTIFICATION_ID, notification);
     }
 
 
