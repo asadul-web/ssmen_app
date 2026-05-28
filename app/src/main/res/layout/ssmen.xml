@@ -680,7 +680,7 @@
                     android:id="@+id/ac_xp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Expiry: --/--/---- | 0 Days"
+                    android:text="Expiry: -- ---, ---- | 0 Days"
                     android:textSize="10sp"
                     android:textColor="@color/colorPrimary"
                     android:layout_gravity="center"

@@ -227,7 +227,7 @@ public class MainActivity extends MainBaseActivity implements
     private boolean isCheckUpdateIsRunning = false;
     private boolean _stop = false;
     private boolean showGraphOnDisconnect = false;
-    private String date = "Expiry: --/--/---- | 0 Days";
+    private String date = "Expiry: -- ---, ---- | 0 Days";
     private LogsAdapter mAdapter;
     private ImageView showLog;
     TrafficGraphView trafficGraph;

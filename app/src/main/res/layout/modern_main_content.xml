@@ -374,7 +374,7 @@
                     android:id="@+id/ac_xp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Expiry: --/--/---- | 0 Days"
+                    android:text="Expiry: -- ---, ---- | 0 Days"
                     android:textSize="14sp"
                     android:textColor="@color/colorPrimary"
                     android:textStyle="bold"

@@ -373,7 +373,7 @@
     <string name="title_language">Language</string>
     <string name="title_ui_settings">UI settings</string>
     <string name="btn_settingsicon">SettingsIcon</string>
-    <string name="expiry_0_days">Expiry: --/--/-- | 0 Days</string>
+    <string name="expiry_0_days">Expiry: -- ---, ---- | 0 Days</string>
     <string name="btn_0bit">0bit</string>
     <string name="upload">Upload</string>
     <string name="secure_shell_ssh">Secure Shell (SSH)</string>

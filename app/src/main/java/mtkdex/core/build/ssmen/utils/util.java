@@ -112,7 +112,7 @@ public class util implements SettingsConstants {
 
     public static String getExpireDateFormatted(String date) {
         if (date == null || date.equals("none") || date.isEmpty()) {
-            return "--/--/----";
+            return "-- ---, ----";
         }
         try {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.US);
@@ -130,7 +130,7 @@ public class util implements SettingsConstants {
             if (newDate == null) return date;
 
             // Display in local time for the user's convenience
-            format = new SimpleDateFormat("dd/MMM/yyyy", java.util.Locale.US);
+            format = new SimpleDateFormat("dd MMM, yyyy", java.util.Locale.US);
             format.setTimeZone(java.util.TimeZone.getDefault());
             return format.format(newDate);
         } catch (Exception e) {
