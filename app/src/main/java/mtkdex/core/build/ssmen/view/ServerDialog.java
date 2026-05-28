@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -61,15 +62,18 @@ public class ServerDialog implements SettingsConstants{
         mConfig = ConfigUtil.getInstance(c);
         mPref = MainApplication.getPrivateSharedPreferences();
         
-        // Use standard alert dialog theme instead of full screen
-        int dialogTheme = mConfig.getAppThemeUtil() ? R.style.AppAlertDialog_Dark : R.style.AppAlertDialog_Light;
+        // Use same theme as list window (90% width)
+        int dialogTheme = mConfig.getAppThemeUtil() ? R.style.AppThemeDialogDark : R.style.AppThemeDialogLight;
         a = new AlertDialog.Builder(c, dialogTheme).create();
         a.setCancelable(false);
     }
 
     public void add() {
         v = LayoutInflater.from(c).inflate(R.layout.dialog_add_server, null);
-        v.findViewById(R.id.color_bg).setBackgroundColor(mConfig.getColorAccent());
+        v.setBackgroundResource(mConfig.getAppThemeUtil() ? R.drawable.bg_round_d : R.drawable.bg_round_l);
+        if (v.findViewById(R.id.color_bg).getBackground() != null) {
+            v.findViewById(R.id.color_bg).getBackground().setColorFilter(mConfig.getColorAccent(), android.graphics.PorterDuff.Mode.SRC_IN);
+        }
         ((TextView)v.findViewById(R.id.cancel_tv)).setTextColor(mConfig.getColorAccent());
         v.findViewById(R.id.save).setBackgroundTintList(ColorStateList.valueOf(mConfig.getColorAccent()));
         sName = v.findViewById(R.id.etServerName);
@@ -208,13 +212,15 @@ public class ServerDialog implements SettingsConstants{
             }
         });
         isAddOrEdited = true;
-        a.setView(v);
     }
 
 
     public void edit(JSONObject json) {
         v=LayoutInflater.from(c).inflate(R.layout.dialog_add_server, null);
-        v.findViewById(R.id.color_bg).setBackgroundColor(mConfig.getColorAccent());
+        v.setBackgroundResource(mConfig.getAppThemeUtil() ? R.drawable.bg_round_d : R.drawable.bg_round_l);
+        if (v.findViewById(R.id.color_bg).getBackground() != null) {
+            v.findViewById(R.id.color_bg).getBackground().setColorFilter(mConfig.getColorAccent(), android.graphics.PorterDuff.Mode.SRC_IN);
+        }
         ((TextView)v.findViewById(R.id.cancel_tv)).setTextColor(mConfig.getColorAccent());
         v.findViewById(R.id.save).setBackgroundTintList(ColorStateList.valueOf(mConfig.getColorAccent()));
         sName = v.findViewById(R.id.etServerName);
@@ -410,7 +416,6 @@ public class ServerDialog implements SettingsConstants{
                 server_web_renew_lay.setVisibility(View.GONE);
             }
         } catch (Exception ignored) {}
-        a.setView(v);
     }
     public void onServerAdd(final SpinnerListener oca) {
         v.findViewById(R.id.cancel).setOnClickListener(p1 -> a.dismiss());
@@ -524,5 +529,32 @@ public class ServerDialog implements SettingsConstants{
 
     public void init() {
         a.show();
+        if (a.getWindow() != null) {
+            // Force the dialog to 90% width and FULL screen height
+            android.util.DisplayMetrics displayMetrics = c.getResources().getDisplayMetrics();
+            int width = (int) (displayMetrics.widthPixels * 0.90);
+            int height = displayMetrics.heightPixels;
+            
+            // Set window layout to full height and specific width
+            a.getWindow().setLayout(width, height);
+            a.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+            a.getWindow().setGravity(android.view.Gravity.CENTER);
+            
+            // This replaces the entire dialog surface with our custom layout
+            a.setContentView(v);
+            
+            if (v != null) {
+                // Ensure rounding is visible by clipping child views
+                v.setClipToOutline(true);
+                
+                // Force root view to expand and fill the window dimensions
+                android.view.ViewGroup.LayoutParams lp = v.getLayoutParams();
+                if (lp != null) {
+                    lp.width = width;
+                    lp.height = height;
+                    v.setLayoutParams(lp);
+                }
+            }
+        }
     }
 }

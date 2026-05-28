@@ -4,7 +4,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/contain"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_round_l"
+    android:clipToOutline="true"
     android:orientation="vertical">
 
     <!-- Blue Header matching main_adapters -->
@@ -13,33 +15,35 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_header_rounded"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp">
+        android:paddingTop="20dp"
+        android:paddingBottom="3dp">
 
         <TextView
             android:id="@+id/notiftext1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textAlignment="center"
+            android:textAlignment="textStart"
+            android:paddingStart="20dp"
             android:fontFamily="@font/google_sans_flex"
             android:text="Network Payload"
             android:textColor="@color/white"
             android:textSize="16sp"
-            app:fontVariationSettings="'wght' 700" />
+            app:fontVariationSettings="'wght' 400" />
     </RelativeLayout>
 
     <!-- Content Area -->
     <LinearLayout
         android:id="@+id/content_area"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/white"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:orientation="vertical">
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -379,7 +383,7 @@
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 
-        <!-- Footer matching image design -->
+        <!-- Footer matching main_adapters design -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="60dp"
@@ -390,23 +394,23 @@
                 android:layout_width="80dp"
                 android:layout_height="32dp"
                 android:layout_centerVertical="true"
-                android:background="?attr/selectableItemBackground"
+                android:background="@drawable/bg_create_btn"
                 android:gravity="center">
                 <TextView
                     android:id="@+id/cancel_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Cancel"
+                    android:text="CANCEL"
                     android:fontFamily="@font/google_sans_flex"
                     android:textColor="@color/colorText"
-                    android:textSize="12sp"
+                    android:textSize="10sp"
                     app:fontVariationSettings="'wght' 500" />
             </LinearLayout>
 
             <RelativeLayout
                 android:id="@+id/save"
-                android:layout_width="140dp"
-                android:layout_height="36dp"
+                android:layout_width="80dp"
+                android:layout_height="32dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:background="@drawable/bg_close_btn"
@@ -415,10 +419,10 @@
                     android:id="@+id/savetv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Save"
+                    android:text="SAVE"
                     android:fontFamily="@font/google_sans_flex"
                     android:textColor="@color/white"
-                    android:textSize="12sp"
+                    android:textSize="10sp"
                     app:fontVariationSettings="'wght' 500" />
             </RelativeLayout>
         </RelativeLayout>

@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -51,8 +52,8 @@ public class PayloadDialog implements SettingsConstants{
         mConfig = ConfigUtil.getInstance(c);
         mPref = MainApplication.getPrivateSharedPreferences();
         
-        // Use standard alert dialog theme instead of full screen
-        int dialogTheme = mConfig.getAppThemeUtil() ? R.style.AppAlertDialog_Dark : R.style.AppAlertDialog_Light;
+        // Use same theme as list window (90% width)
+        int dialogTheme = mConfig.getAppThemeUtil() ? R.style.AppThemeDialogDark : R.style.AppThemeDialogLight;
         a = new AlertDialog.Builder(c, dialogTheme).create();
         a.setCancelable(false);
     }
@@ -73,7 +74,10 @@ public class PayloadDialog implements SettingsConstants{
 
     public void add(int forceType) {
         v = LayoutInflater.from(c).inflate(R.layout.dialog_add_payload, null);
-        v.findViewById(R.id.color_bg).setBackgroundColor(mConfig.getColorAccent());
+        v.setBackgroundResource(mConfig.getAppThemeUtil() ? R.drawable.bg_round_d : R.drawable.bg_round_l);
+        if (v.findViewById(R.id.color_bg).getBackground() != null) {
+            v.findViewById(R.id.color_bg).getBackground().setColorFilter(mConfig.getColorAccent(), android.graphics.PorterDuff.Mode.SRC_IN);
+        }
         ((TextView)v.findViewById(R.id.cancel_tv)).setTextColor(mConfig.getColorAccent());
         v.findViewById(R.id.save).setBackgroundTintList(ColorStateList.valueOf(mConfig.getColorAccent()));
         pLogo = v.findViewById(R.id.pLogo);
@@ -249,12 +253,14 @@ public class PayloadDialog implements SettingsConstants{
             util.showToast("Payload Dialog",e.getMessage());
         }
         isAddOrEdited = true;
-        a.setView(v);
     }
 
     public void edit(JSONObject json) {
         v=LayoutInflater.from(c).inflate(R.layout.dialog_add_payload, null);
-        v.findViewById(R.id.color_bg).setBackgroundColor(mConfig.getColorAccent());
+        v.setBackgroundResource(mConfig.getAppThemeUtil() ? R.drawable.bg_round_d : R.drawable.bg_round_l);
+        if (v.findViewById(R.id.color_bg).getBackground() != null) {
+            v.findViewById(R.id.color_bg).getBackground().setColorFilter(mConfig.getColorAccent(), android.graphics.PorterDuff.Mode.SRC_IN);
+        }
         ((TextView)v.findViewById(R.id.cancel_tv)).setTextColor(mConfig.getColorAccent());
         v.findViewById(R.id.save).setBackgroundTintList(ColorStateList.valueOf(mConfig.getColorAccent()));
         pLogo = v.findViewById(R.id.pLogo);
@@ -462,7 +468,6 @@ public class PayloadDialog implements SettingsConstants{
         } catch (Exception e) {
             util.showToast("Payload Dialog",e.getMessage());
         }
-        a.setView(v);
     }
 
     public void onPayloadAdd(final SpinnerListener oca) {
@@ -501,9 +506,31 @@ public class PayloadDialog implements SettingsConstants{
     public void init() {
         a.show();
         if (a.getWindow() != null) {
-            // No longer forcing width to 90% manually since the style AppAlertDialog_Light/Dark 
-            // already handles it with windowMinWidthMajor/Minor
+            // Force the dialog to 90% width and FULL screen height
+            android.util.DisplayMetrics displayMetrics = c.getResources().getDisplayMetrics();
+            int width = (int) (displayMetrics.widthPixels * 0.90);
+            int height = displayMetrics.heightPixels;
+            
+            // Set window layout to full height and specific width
+            a.getWindow().setLayout(width, height);
             a.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+            a.getWindow().setGravity(android.view.Gravity.CENTER);
+            
+            // This replaces the entire dialog surface with our custom layout
+            a.setContentView(v);
+            
+            if (v != null) {
+                // Ensure rounding is visible by clipping child views
+                v.setClipToOutline(true);
+                
+                // Force root view to expand and fill the window dimensions
+                android.view.ViewGroup.LayoutParams lp = v.getLayoutParams();
+                if (lp != null) {
+                    lp.width = width;
+                    lp.height = height;
+                    v.setLayoutParams(lp);
+                }
+            }
         }
     }
 }
