@@ -20,6 +20,9 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.net.Uri;
 import android.net.VpnService;
 import android.os.Build;
@@ -2290,6 +2293,16 @@ public class MainActivity extends MainBaseActivity implements
             stopTunnelService();
             cancel_stats();
         } else {
+            ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+            Network[] networks = cm.getAllNetworks();
+            for (Network network : networks) {
+                NetworkCapabilities caps = cm.getNetworkCapabilities(network);
+                if (caps != null && caps.hasTransport(NetworkCapabilities.TRANSPORT_VPN)) {
+                    Toast.makeText(this, "Another VPN is already connected. Please disconnect it first.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }
+
             m_SentBytes = 0;
             m_ReceivedBytes = 0;
             if (byteIn_view != null) byteIn_view.setText("0 B");
