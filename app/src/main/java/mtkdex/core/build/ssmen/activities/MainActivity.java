@@ -172,35 +172,67 @@ public class MainActivity extends MainBaseActivity implements
     }
 
     private void showUpdateDialog(String version) {
+        runOnUiThread(() -> {
+            if (cBuiler != null && cBuiler.isShowing()) cBuiler.dismiss();
+            View inflate = LayoutInflater.from(this).inflate(R.layout.notif2, null);
+            cBuiler = new AlertDialog.Builder(this).create();
 
-        View view = getLayoutInflater().inflate(R.layout.dialog_update, null);
+            RelativeLayout btnUpdate = inflate.findViewById(R.id.appButton2);
+            TextView tvTitle = inflate.findViewById(R.id.notiftext1);
+            TextView tvMsg = inflate.findViewById(R.id.confimsg);
+            TextView btnUpdateText = inflate.findViewById(R.id.appButton2txt);
+            TextView btnLater = inflate.findViewById(R.id.appButton1);
 
-        TextView message = view.findViewById(R.id.updateMessage);
-        Button btnUpdate = view.findViewById(R.id.btnUpdate);
-        Button btnLater = view.findViewById(R.id.btnLater);
+            tvMsg.setTextColor(getConfig().gettextColor());
+            inflate.findViewById(R.id.color_bg).setBackgroundColor(getConfig().getColorAccent());
+            btnUpdate.setBackgroundTintList(ColorStateList.valueOf(getConfig().getColorAccent()));
+            btnUpdateText.setTextColor(getConfig().getAppThemeUtil() ? Color.BLACK : Color.WHITE);
+            tvTitle.setTextColor(getConfig().getAppThemeUtil() ? Color.BLACK : Color.WHITE);
+            btnLater.setTextColor(getConfig().getColorAccent());
 
-        message.setText("New version " + version + " is available.\n\nUpgrade for better performance and security.");
+            tvTitle.setText("New Update Available");
+            btnUpdateText.setText("UPDATE");
+            btnLater.setText("LATER");
 
-        androidx.appcompat.app.AlertDialog dialog =
-                new androidx.appcompat.app.AlertDialog.Builder(this)
-                        .setView(view)
-                        .setCancelable(false)
-                        .create();
+            String message = "নতুন ভার্সন " + version + " প্রস্তুত। নতুন ফিচার, দ্রুত গতি এবং আরও ভালো পারফরম্যান্সের জন্য এখনই আপডেট করুন।\n\n" +
+                    "A new version " + version + " is ready. Update now for new features, faster speeds, and better performance.\n\n" +
+                    "नया वर्शन " + version + " तैयार है। नई सुविधाओं, तेज़ स्पीड और बेहतर परफॉर्मेंस के लिए अभी अपडेट करें।\n\n" +
+                    "الإصدار " + version + " جاهز الآن. حدّث التطبيق للحصول على ميزات جديدة وسرعات أسرع وأداء أفضل.\n\n" +
+                    "نیا ورژن " + version + " تیار ہے۔ نئی خصوصیات، تیز رفتار اور بہتر پرفارمنس کے لیے ابھی اپڈیٹ کریں۔\n\n";
 
-        btnUpdate.setOnClickListener(v -> {
+            btnUpdate.setOnClickListener(v -> {
+                String updatePageUrl = "https://app.asalo.site/";
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(updatePageUrl));
+                startActivity(intent);
+                cBuiler.dismiss();
+            });
 
-            String updatePageUrl = "https://app.asalo.site/";
+            btnLater.setOnClickListener(v -> cBuiler.dismiss());
+            // appButton0 is also used in some cases as a wrapper for appButton1
+            if (inflate.findViewById(R.id.appButton0) != null) {
+                inflate.findViewById(R.id.appButton0).setOnClickListener(v -> cBuiler.dismiss());
+            }
 
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse(updatePageUrl));
-            startActivity(intent);
+            // Typewriter effect
+            final Handler handler = new Handler();
+            new Thread(() -> {
+                for (int i = 0; i < message.length(); i++) {
+                    final int index = i;
+                    handler.post(() -> {
+                        try {
+                            tvMsg.setText(message.substring(0, index + 1));
+                        } catch (Exception ignored) {}
+                    });
+                    try { Thread.sleep(10); } catch (InterruptedException ignored) {}
+                }
+            }).start();
 
-            dialog.dismiss();
+            cBuiler.setView(inflate);
+            cBuiler.setCancelable(false);
+            cBuiler.getWindow().getAttributes().windowAnimations = R.style.alertDialog;
+            cBuiler.show();
         });
-
-        btnLater.setOnClickListener(v -> dialog.dismiss());
-
-        dialog.show();
     }
 
 
@@ -340,14 +372,29 @@ public class MainActivity extends MainBaseActivity implements
                 if (daysLeft.equals("Expired")) {
                     if (hLogStatus.isTunnelActive()) {
                         addlogInfo("<font color = #d50000>Account expired! Disconnecting...");
-                        stopTunnelService();
-                        showExpiryAlert();
+                        showNoticePopup("Account Expired", "Your account has expired. You have been disconnected.", true);
                     }
                     if (ac_xp != null) {
                         String fDate = util.getExpireDateFormatted(rawExpiry);
                         ac_xp.setText("Expiry: " + fDate + " | Expired");
                     }
                 } else {
+                    // Trigger "Expiring Soon" notice if < 5 minutes (300,000 ms) remaining
+                    try {
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.US);
+                        format.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
+                        Date expiry = format.parse(rawExpiry);
+                        if (expiry != null) {
+                            long diff = expiry.getTime() - System.currentTimeMillis();
+                            if (diff > 0 && diff < 300000 && !hasShownExpiringSoon && hLogStatus.isTunnelActive()) {
+                                hasShownExpiringSoon = true;
+                                showNoticePopup("Account Expiring Soon", "Your account expires in " + daysLeft + ". Please renew to continue.", false);
+                            } else if (diff > 300000) {
+                                hasShownExpiringSoon = false; // Reset if user renewed
+                            }
+                        }
+                    } catch (Exception ignored) {}
+
                     // Update label every single tick for smooth countdown
                     if (ac_xp != null) {
                         String fDate = util.getExpireDateFormatted(rawExpiry);
@@ -372,22 +419,59 @@ public class MainActivity extends MainBaseActivity implements
         }
     };
 
-    private void showExpiryAlert() {
+    private void showNoticePopup(String title, String message, final boolean isFatal) {
         runOnUiThread(() -> {
-            new AlertDialog.Builder(this)
-                    .setTitle("Account Expired")
-                    .setMessage("Your account has expired. Please renew your subscription to continue using the VPN service.")
-                    .setCancelable(false)
-                    .setPositiveButton("Login", (dialog, which) -> {
-                        ConfigUtil.getInstance(this).logout();
-                        startActivity(new Intent(this, LoginActivity.class));
-                        finish();
-                    })
-                    .setNegativeButton("Exit", (dialog, which) -> {
-                        finishAffinity();
-                        System.exit(0);
-                    })
-                    .show();
+            if (cBuiler != null && cBuiler.isShowing()) cBuiler.dismiss();
+            View inflate = LayoutInflater.from(this).inflate(R.layout.notif2, null);
+            cBuiler = new AlertDialog.Builder(this).create();
+
+            RelativeLayout btn = inflate.findViewById(R.id.appButton2);
+            TextView tvTitle = inflate.findViewById(R.id.notiftext1);
+            TextView tvMsg = inflate.findViewById(R.id.confimsg);
+            TextView btnText = inflate.findViewById(R.id.appButton2txt);
+
+            tvMsg.setTextColor(getConfig().gettextColor());
+            inflate.findViewById(R.id.color_bg).setBackgroundColor(getConfig().getColorAccent());
+            btn.setBackgroundTintList(ColorStateList.valueOf(getConfig().getColorAccent()));
+            btnText.setTextColor(getConfig().getAppThemeUtil() ? Color.BLACK : Color.WHITE);
+            tvTitle.setTextColor(getConfig().getAppThemeUtil() ? Color.BLACK : Color.WHITE);
+
+            tvTitle.setText(title);
+            btnText.setText("OKA'Y");
+            inflate.findViewById(R.id.appButton1).setVisibility(View.GONE);
+
+            btn.setOnClickListener(p1 -> {
+                cBuiler.dismiss();
+                if (isFatal) {
+                    if (hLogStatus.isTunnelActive()) stopTunnelService();
+                    if (secureEditor != null) {
+                        secureEditor.remove("_screenUsername_key").apply();
+                        secureEditor.remove("_screenPassword_key").apply();
+                    }
+                    ConfigUtil.getInstance(this).setHasAccount(false);
+                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                    finish();
+                }
+            });
+
+            // Typewriter effect
+            final Handler handler = new Handler();
+            new Thread(() -> {
+                for (int i = 0; i < message.length(); i++) {
+                    final int index = i;
+                    handler.post(() -> {
+                        try {
+                            tvMsg.setText(message.substring(0, index + 1));
+                        } catch (Exception ignored) {}
+                    });
+                    try { Thread.sleep(50); } catch (InterruptedException ignored) {}
+                }
+            }).start();
+
+            cBuiler.setView(inflate);
+            cBuiler.setCancelable(false);
+            cBuiler.getWindow().getAttributes().windowAnimations = R.style.alertDialog;
+            cBuiler.show();
         });
     }
 
@@ -432,6 +516,7 @@ public class MainActivity extends MainBaseActivity implements
     private int i11 = 0;
     private int authCheckCounter = 0;
     private int authRetryCount = 0;
+    private boolean hasShownExpiringSoon = false;
 
     public static void updateMainViews(Context context, String str) {
         Intent mIntent = new Intent(str);
@@ -3407,8 +3492,18 @@ public class MainActivity extends MainBaseActivity implements
                         boolean auth = js.optBoolean("auth", false) || js.optString("auth").equals("true");
                         boolean deviceMatch = js.optBoolean("device_match", false) || deviceMatchStr.equals("true");
 
-                        if (!auth || !deviceMatch || expiry.equals("none") || deviceMatchStr.equals("none")) {
-                             handleSessionInvalidated("Account Disconnected - Your account is no longer valid. Please contact support.");
+                        if (!auth) {
+                             showNoticePopup("Account Suspended", "Your account has been suspended. Please contact support.", true);
+                             return;
+                        }
+
+                        if (!deviceMatch || deviceMatchStr.equals("none")) {
+                             showNoticePopup("Device Conflict", "Your account has been logged in on another device.", true);
+                             return;
+                        }
+
+                        if (expiry.equals("none") || deviceMatchStr.equals("none")) {
+                             showNoticePopup("Account Suspended", "Your account is no longer valid. Please contact support.", true);
                              return;
                         }
 
@@ -3421,7 +3516,7 @@ public class MainActivity extends MainBaseActivity implements
                     if (hLogStatus.isTunnelActive()) {
                         authRetryCount++;
                         if (authRetryCount >= 3) {
-                            handleSessionInvalidated("Account Disconnected - Connection to server failed after multiple attempts.");
+                            showNoticePopup("Account Disconnected", "Connection to server failed after multiple attempts.", true);
                         }
                     }
                 });
