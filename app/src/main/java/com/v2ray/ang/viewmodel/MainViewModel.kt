@@ -463,16 +463,19 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                     isRunning.value = true
                     if (!hLogStatus.isTunnelActive()) {
                         hLogStatus.updateStateString(hLogStatus.VPN_CONNECTED, "Connected")
+                        hLogStatus.logInfo("V2Ray Service is running")
                     }
                 }
 
                 AppConfig.MSG_STATE_NOT_RUNNING -> {
                     isRunning.value = false
+                    hLogStatus.logInfo("V2Ray Service stopped")
                 }
 
                 AppConfig.MSG_STATE_START_SUCCESS -> {
                     //updateTestResultAction.isInitialized
                     hLogStatus.updateStateString(hLogStatus.VPN_CONNECTED, "Connected")
+                    hLogStatus.logInfo("<font color='#00E977'>V2Ray Connection Established</font>")
                     val stats = intent?.serializable<LongArray>("content")
                     if (stats != null && stats.size >= 2) {
                         hLogStatus.updateByteCount(stats[0], stats[1])
@@ -486,10 +489,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
                 AppConfig.MSG_STATE_START_FAILURE -> {
                 //   getApplication<AngApplication>().toastError(R.string.toast_services_failure)
+                    hLogStatus.logError("V2Ray Service failed to start")
                     isRunning.value = false
                 }
 
                 AppConfig.MSG_STATE_STOP_SUCCESS -> {
+                    hLogStatus.logInfo("V2Ray Connection stopped successfully")
                     mtkdex.core.build.ssmen.view.StatisticGraphData.getStatisticData().dataTransferStats.stop()
                     isRunning.value = false
                 }

@@ -324,7 +324,7 @@ public class dex003 extends VpnService implements VpnUtils.VPNProtectListener, S
     }
 
     public static class LogMsg {
-        String line;
+        public String line;
     }
 
     public class Profile {
@@ -1934,12 +1934,14 @@ public class dex003 extends VpnService implements VpnUtils.VPNProtectListener, S
                     addLogInfo(str);
                 }
                 if(str.contains("Transport Error")){
+                    addLogInfo("<font color='red'>Transport Error detected. Restarting...</font>");
                     if (this.active && util.isNetworkAvailable(dex003.this)){
                         hLogStatus.clearLog();
                         startService(new Intent(dex003.this, dex002.class).setAction(dex002.RESTART_SERVICE));
                     }
                 }
                 if(str.contains("Proxy Error")){
+                    addLogInfo("<font color='red'>Proxy Error detected. Restarting...</font>");
                     if (this.active && util.isNetworkAvailable(dex003.this)){
                         hLogStatus.clearLog();
                         startService(new Intent(dex003.this, dex002.class).setAction(dex002.RESTART_SERVICE));

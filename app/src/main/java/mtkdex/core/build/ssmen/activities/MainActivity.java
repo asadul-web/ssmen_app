@@ -630,6 +630,13 @@ public class MainActivity extends MainBaseActivity implements
     @Override
     public void updateState(String state, String logMessage, int localizedResId, ConnectionStatus level, int progress) {
         mHandler.post(() -> {
+            // Log state changes to the activity log
+            if (logMessage != null && !logMessage.isEmpty()) {
+                addlogInfo("State: " + state + " - " + logMessage);
+            } else {
+                addlogInfo("State: " + state);
+            }
+
             boolean wasConnected = isConnected;
             isConnected = level.equals(ConnectionStatus.LEVEL_CONNECTED);
             
@@ -724,6 +731,14 @@ public class MainActivity extends MainBaseActivity implements
                     hLogStatus.VPN_DISCONNECTED,
                     hLogStatus.VPN_STOPPING,
                     hLogStatus.VPN_AUTH_FAILED -> mHandler.post(() -> {
+                if (state.equals(hLogStatus.VPN_AUTH_FAILED)) {
+                    addlogInfo("<font color='red'><b>Authentication Failed</b></font>");
+                } else if (state.equals(hLogStatus.VPN_STOPPING)) {
+                    addlogInfo("Stopping connection...");
+                } else if (state.equals(hLogStatus.VPN_DISCONNECTED)) {
+                    addlogInfo("<b>Disconnected</b>");
+                }
+
                 shouldFetchAccountDetails = true;
                 isConnected = false;
                 isDisconnecting = false;
@@ -2324,11 +2339,20 @@ public class MainActivity extends MainBaseActivity implements
                 trafficGraph.setShowPath(true);
                 trafficGraph.setFrozen(false);
             }
-            if (getConfig().getAutoClearLog()) mAdapter.clearLog();
+            if (getConfig().getAutoClearLog()) {
+                addlogInfo("<i>Clearing previous logs...</i>");
+                mAdapter.clearLog();
+            }
             
             if (checkConfiguration()) {
                 // 1. Start stats and timer instantly
                 hLogStatus.updateStateString(hLogStatus.VPN_CONNECTING, getString(R.string.state_connecting));
+                
+                // ADD LOGS HERE
+                addlogInfo("<b>Connecting to:</b> " + s_name.getText().toString());
+                addlogInfo("<b>Network:</b> " + p_name.getText().toString());
+                addlogInfo("<b>Tunnel Type:</b> " + getConfig().getServerType());
+
                 hLogStatus.resetTrafficHistory();
                 hLogStatus.updateByteCount(0, 0);
                 StatisticGraphData.getStatisticData().getDataTransferStats().startConnected();
@@ -2349,9 +2373,12 @@ public class MainActivity extends MainBaseActivity implements
         String user = getStoredUsername();
         String pass = getStoredPassword();
 
-        if (user.isEmpty() || pass.isEmpty()) return;
+        if (user.isEmpty() || pass.isEmpty()) {
+            addlogInfo("<font color='red'>Username or Password is empty!</font>");
+            return;
+        }
 
-        // Note: No showProgrss() here to keep it instant
+        addlogInfo("Verifying account status...");
         String model = Build.MODEL;
         @SuppressLint("HardwareIds") String id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         String jsonUrl = api + "?username=" + user + "&password=" + pass + "&device_id=" + id + "&device_model=" + model;
@@ -2386,15 +2413,16 @@ public class MainActivity extends MainBaseActivity implements
                         }
 
                         // Success -> Just update expiry info, VPN is already starting/started
+                        addlogInfo("<font color='#00E977'>Account Verified Successfully</font>");
+                        addlogInfo("Expiry: " + util.getExpireDateFormatted(expiry));
                         onExpireDate(expiry);
 
                     } catch (Exception e) {
-                        // Silently ignore or log parsing errors if VPN is already working, 
-                        // or handle as failure if strictness is required.
+                        addlogInfo("<font color='orange'>Warning: Could not verify account status (Parsing error)</font>");
                     }
                 },
                 error -> {
-                    // Optional: handle network error for validation
+                    addlogInfo("<font color='orange'>Warning: Could not verify account status (Network error)</font>");
                 });
 
         MainApplication.getRequestQueue().add(req);
@@ -2402,6 +2430,7 @@ public class MainActivity extends MainBaseActivity implements
 
     private void handleAccountError(String message) {
         // If account is invalid, we MUST stop the VPN that we started optimistically
+        addlogInfo("<font color='red'><b>" + message + "</b></font>");
         stopTunnelService();
         showPreConnectError(message);
     }

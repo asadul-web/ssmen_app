@@ -301,9 +301,15 @@ abstract class MainBaseActivity : AppCompatActivity(), SettingsConstants, Inject
 
     protected open fun post_bind() {}
     override fun event(ev: EventMsg) {
+        if (ev.name != null) {
+            hLogStatus.logInfo("Event: ${ev.name}" + if (ev.info != null) " - ${ev.info}" else "")
+        }
     }
 
     override fun log(lm: LogMsg) {
+        if (lm.line != null) {
+            hLogStatus.logInfo(lm.line)
+        }
     }
 
     protected fun resString(res_id: Int): String {
