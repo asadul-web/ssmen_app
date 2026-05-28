@@ -15,8 +15,8 @@ android {
         applicationId "site.asalo.ssmen"
         minSdk 21
         targetSdk 35
-        versionCode 41
-        versionName "4.6.30"
+        versionCode 42
+        versionName "4.6.31"
 
         setProperty("archivesBaseName", "app")
 
