@@ -9,6 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.view.View;
+import android.view.ViewParent;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 
@@ -116,8 +117,18 @@ public class DragItem {
         onBindDragView(startFromView, mDragView);
         onMeasureDragView(startFromView, mDragView);
         onStartDragAnimation(mDragView);
-        mRealStartX = startFromView.getX() - (mDragView.getMeasuredWidth() - startFromView.getMeasuredWidth()) / 2f + mDragView.getMeasuredWidth() / 2f;
-        mRealStartY = startFromView.getY() - (mDragView.getMeasuredHeight() - startFromView.getMeasuredHeight()) / 2f + mDragView.getMeasuredHeight() / 2f;
+
+        float startX = startFromView.getX();
+        float startY = startFromView.getY();
+        ViewParent parent = startFromView.getParent();
+        while (parent != null && parent instanceof View && parent != mDragView.getParent()) {
+            startX += ((View) parent).getX();
+            startY += ((View) parent).getY();
+            parent = parent.getParent();
+        }
+
+        mRealStartX = startX - (mDragView.getMeasuredWidth() - startFromView.getMeasuredWidth()) / 2f + mDragView.getMeasuredWidth() / 2f;
+        mRealStartY = startY - (mDragView.getMeasuredHeight() - startFromView.getMeasuredHeight()) / 2f + mDragView.getMeasuredHeight() / 2f;
         if (mSnapToTouch) {
             mPosTouchDx = 0;
             mPosTouchDy = 0;

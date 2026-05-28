@@ -81,6 +81,9 @@ public class DragListView extends FrameLayout {
         mRecyclerView.setDragItem(mDragItem);
         addView(mRecyclerView);
         addView(mDragItem.getDragItemView());
+
+        setClipChildren(false);
+        setClipToPadding(false);
     }
 
     @Override
