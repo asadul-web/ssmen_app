@@ -5,7 +5,6 @@
      xmlns:app="http://schemas.android.com/apk/res-auto"
      android:layout_height="wrap_content"
      android:layout_width="match_parent"
-     android:gravity="right"
      android:orientation="vertical">
 
     <LinearLayout
@@ -13,18 +12,20 @@
          android:layout_width="match_parent"
          android:background="@color/colorPrimary"
          android:id="@+id/color_bg"        
-         android:orientation="vertical">
+         android:orientation="vertical"
+         android:gravity="center">
 
         <TextView
              android:layout_height="wrap_content"
-             android:layout_width="wrap_content"
-            android:id="@+id/notiftext1"
+             android:layout_width="match_parent"
+             android:id="@+id/notiftext1"
              android:textAppearance="?android:textAppearanceMedium"
              android:textSize="18.0dip"
-             android:layout_marginLeft="25.0dip"
+             android:gravity="center"
+             android:textAlignment="center"
              style="@style/TextViewTheme_dark"
              android:layout_marginTop="15.0dip"
-            android:layout_marginBottom="15.0dip"
+             android:layout_marginBottom="15.0dip"
              android:text="Config Clipboard" />
 
         <View
