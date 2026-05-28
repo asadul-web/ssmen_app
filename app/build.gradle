@@ -7,16 +7,20 @@ plugins {
 }
 
 android {
+
     namespace 'com.v2ray.ang'
     compileSdk 35
-    ndkVersion  "28.2.13676358"
+    ndkVersion "28.2.13676358"
 
     defaultConfig {
+
         applicationId "site.asalo.ssmen"
+
         minSdk 21
         targetSdk 35
-        versionCode 43
-        versionName "4.6.32"
+
+        versionCode 44
+        versionName "4.7.32"
 
         setProperty("archivesBaseName", "app")
 
@@ -30,11 +34,16 @@ android {
     }
 
     signingConfigs {
+
         release {
-//            storeFile file("C:/keystore/mtkgenuineprov2.jks")
-//            storePassword "mtkgenuineprov2"
-//            keyAlias "mtkgenuineprov2"
-//            keyPassword "mtkgenuineprov2"
+
+            // JKS FILE
+            storeFile file("new-release.jks")
+
+            // CHANGE THESE
+            storePassword "0plm9oknA@"
+            keyAlias "fightervpn"
+            keyPassword "0plm9oknA@"
 
             enableV1Signing true
             enableV2Signing true
@@ -44,23 +53,40 @@ android {
     }
 
     buildTypes {
+
         debug {
+
+            debuggable true
+
+            minifyEnabled false
+            shrinkResources false
+
             ndk.debugSymbolLevel = "FULL"
         }
 
         release {
-            minifyEnabled true
-            shrinkResources true
+
+            // KEEP TRUE FOR TESTING
+            debuggable true
+
+            // DISABLE FOR NOW
+            // Prevent release issues
+            minifyEnabled false
+            shrinkResources false
+
+            signingConfig signingConfigs.release
+
+            ndk.debugSymbolLevel = "FULL"
+
             proguardFiles(
                     getDefaultProguardFile("proguard-android-optimize.txt"),
                     "proguard-rules.pro"
             )
-            ndk.debugSymbolLevel = "SYMBOL_TABLE"
-
-            signingConfig signingConfigs.release
 
             packaging {
+
                 jniLibs {
+
                     keepDebugSymbols += [
                             "libdns.so",
                             "libh3.so",
@@ -74,49 +100,61 @@ android {
         }
     }
 
-    android {
-        packaging {
-            jniLibs {
-                useLegacyPackaging = true
+    packaging {
 
-                // Apply to ALL builds: debug & release.
-                pickFirsts += [
-                        "lib/arm64-v8a/libgojni.so",
-                        "lib/armeabi-v7a/libgojni.so",
-                        "lib/arm64-v8a/libmmkv.so",
-                        "lib/armeabi-v7a/libmmkv.so",
+        jniLibs {
 
-                ]
-            }
+            useLegacyPackaging = true
 
-            resources {
-                // No duplicate resource files
-            }
+            pickFirsts += [
+                    "lib/arm64-v8a/libgojni.so",
+                    "lib/armeabi-v7a/libgojni.so",
+                    "lib/arm64-v8a/libmmkv.so",
+                    "lib/armeabi-v7a/libmmkv.so"
+            ]
         }
     }
 
-
     compileOptions {
+
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
+
         coreLibraryDesugaringEnabled true
     }
 
     buildFeatures {
+
         aidl true
         buildConfig true
         dataBinding true
     }
+
     kotlinOptions {
         jvmTarget = kotlinJvmTarget
     }
 
-
     lint {
-        checkOnly.addAll(["ImpliedQuantity", "MissingQuantity"])
-        disable.addAll(["MissingTranslation", "UnsafeNativeCodeLocation"])
-        enable.addAll(["BackButton", "EasterEgg", "StopShip", "IconExpectedSize",
-                       "GradleDynamicVersion", "NewerVersionAvailable"])
+
+        checkOnly.addAll([
+                "ImpliedQuantity",
+                "MissingQuantity"
+        ])
+
+        disable.addAll([
+                "MissingTranslation",
+                "UnsafeNativeCodeLocation"
+        ])
+
+        enable.addAll([
+                "BackButton",
+                "EasterEgg",
+                "StopShip",
+                "IconExpectedSize",
+                "GradleDynamicVersion",
+                "NewerVersionAvailable"
+        ])
+
         abortOnError false
         checkAllWarnings true
         checkDependencies true
@@ -125,37 +163,21 @@ android {
     }
 
     publishing {
+
         singleVariant("release") {
+
             withJavadocJar()
             withSourcesJar()
         }
     }
+
     buildToolsVersion '35.0.0'
-
-    signingConfigs {
-        release {
-            storeFile file("keystore.jks")
-            storePassword System.getenv("KEYSTORE_PASSWORD")
-            keyAlias System.getenv("KEY_ALIAS")
-            keyPassword System.getenv("KEY_PASSWORD")
-        }
-    }
-
-    buildTypes {
-        release {
-            minifyEnabled true
-            shrinkResources true
-            signingConfig signingConfigs.release
-            proguardFiles(
-                    getDefaultProguardFile("proguard-android-optimize.txt"),
-                    "proguard-rules.pro"
-            )
-        }
-    }
 }
 
 dependencies {
+
     implementation fileTree(dir: "libs", include: ["*.aar", "*.jar"])
+
     implementation libs.appcompat
     implementation libs.material
     implementation libs.constraintlayout
@@ -182,20 +204,25 @@ dependencies {
     implementation libs.toasty
     implementation libs.activity
     implementation libs.splashscreen
+
     coreLibraryDesugaring libs.desugar.jdk.libs
+
     implementation "com.android.volley:volley:1.2.1"
+
     implementation "com.github.PhilJay:MPAndroidChart:v3.1.0"
+
     implementation "com.airbnb.android:lottie:6.2.0"
-    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 }
 
 tasks.withType(JavaCompile).configureEach {
-    options.compilerArgs.clear()            // remove previous flags
-    options.compilerArgs.add("-Xlint:none") // disable all warnings
-    options.deprecation = false             // disable deprecation messages
+
+    options.compilerArgs.clear()
+    options.compilerArgs.add("-Xlint:none")
+
+    options.deprecation = false
 }
 
 tasks.withType(KotlinCompile).configureEach {
-    //noinspection GrDeprecatedAPIUsage
+
     kotlinOptions.jvmTarget = JavaVersion.VERSION_17.toString()
 }
