@@ -52,6 +52,7 @@
                     android:textColor="@color/white"
                     android:text="Handshake"
                     android:textSize="10sp"
+                    android:textStyle="bold"
                     android:fontFamily="@font/google_sans_flex" />
 
                 <TextView

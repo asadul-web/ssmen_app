@@ -1,8 +1,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
-    android:padding="8dp"
+    android:orientation="vertical"
+    android:padding="12dp"
     android:background="@drawable/toast_frame_success"
-    android:gravity="center_vertical"
+    android:gravity="center"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
@@ -10,8 +10,8 @@
         android:id="@+id/toast_msg"
         android:text="Success:"
         android:textColor="@android:color/white"
-        android:textSize="14sp"
-        android:layout_marginEnd="8dp"
+        android:textSize="15sp"
+        android:textStyle="bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
@@ -19,8 +19,8 @@
         android:id="@+id/toast_ping"
         android:text="0 ms"
         android:textColor="@android:color/white"
-        android:textStyle="bold"
-        android:textSize="14sp"
+        android:textSize="13sp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"/>
 </LinearLayout>

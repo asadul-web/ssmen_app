@@ -2320,7 +2320,7 @@ public class MainActivity extends MainBaseActivity implements
             for (Network network : networks) {
                 NetworkCapabilities caps = cm.getNetworkCapabilities(network);
                 if (caps != null && caps.hasTransport(NetworkCapabilities.TRANSPORT_VPN)) {
-                    Toast.makeText(this, "Another VPN is already connected. Please disconnect it first.", Toast.LENGTH_SHORT).show();
+                    showToast("VPN Error", "Another VPN is already connected. Please disconnect it first.");
                     return;
                 }
             }
@@ -3426,7 +3426,7 @@ public class MainActivity extends MainBaseActivity implements
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://wa.link/nnypmi"));
             startActivity(Intent.createChooser(intent, "launch Whatsapp"));
         } catch (Exception e) {
-            Toast.makeText(getApplicationContext(), "Please download the Whatsapp!", Toast.LENGTH_LONG).show();
+            showToast("Support", "Please download the Whatsapp!");
         }
     }
 

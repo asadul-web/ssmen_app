@@ -158,6 +158,10 @@ public class util implements SettingsConstants {
         */
     }
 
+    public static void showToast(String message){
+        showToast("FIGHTER V2RAY", message);
+    }
+
     public static void showToast(String title, String subtitle){
         new Handler(Looper.getMainLooper()).post(() -> {
             try {

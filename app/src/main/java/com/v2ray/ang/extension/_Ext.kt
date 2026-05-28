@@ -7,7 +7,7 @@ import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
-import es.dmoral.toasty.Toasty
+import mtkdex.core.build.ssmen.utils.util
 import org.json.JSONObject
 import java.io.Serializable
 import java.net.URI
@@ -19,7 +19,7 @@ import java.net.URLConnection
  * @param message The resource ID of the message to show.
  */
 fun Context.toast(message: Int) {
-    Toasty.normal(this, message).show()
+    util.showToast(this.getString(message))
 }
 
 /**
@@ -28,7 +28,7 @@ fun Context.toast(message: Int) {
  * @param message The text of the message to show.
  */
 fun Context.toast(message: CharSequence) {
-    Toasty.normal(this, message).show()
+    util.showToast(message.toString())
 }
 
 /**
@@ -37,7 +37,7 @@ fun Context.toast(message: CharSequence) {
  * @param message The resource ID of the message to show.
  */
 fun Context.toastSuccess(message: Int) {
-    Toasty.success(this, message, Toast.LENGTH_SHORT, true).show()
+    util.showToast("Success", this.getString(message))
 }
 
 /**
@@ -46,7 +46,7 @@ fun Context.toastSuccess(message: Int) {
  * @param message The text of the message to show.
  */
 fun Context.toastSuccess(message: CharSequence) {
-    Toasty.success(this, message, Toast.LENGTH_SHORT, true).show()
+    util.showToast("Success", message.toString())
 }
 
 /**
@@ -56,7 +56,7 @@ fun Context.toastSuccess(message: CharSequence) {
  */
 
 fun Context.toastError(message: Int) {
-    Toasty.error(this, message, Toast.LENGTH_SHORT, true).show()
+    util.showToast("Error", this.getString(message))
 }
 
 /**
@@ -65,7 +65,7 @@ fun Context.toastError(message: Int) {
  * @param message The text of the message to show.
  */
 fun Context.toastError(message: CharSequence) {
-    Toasty.error(this, message, Toast.LENGTH_SHORT, true).show()
+    util.showToast("Error", message.toString())
 }
 
 
