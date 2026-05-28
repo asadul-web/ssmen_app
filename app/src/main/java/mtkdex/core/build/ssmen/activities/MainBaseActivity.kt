@@ -78,7 +78,9 @@ abstract class MainBaseActivity : AppCompatActivity(), SettingsConstants, Inject
     private val mainViewModel: MainViewModel by viewModels()
     private val settingsViewModel: SettingsViewModel by viewModels()
     protected var pref: SharedPreferences? = null
+    @JvmField protected var securePref: SharedPreferences? = null
     protected var editor: SharedPreferences.Editor? = null
+    @JvmField protected var secureEditor: SharedPreferences.Editor? = null
     protected var dPrefs: SharedPreferences? = null
     protected var dEditor: SharedPreferences.Editor? = null
     private var injector: dex002? = null
@@ -121,9 +123,14 @@ abstract class MainBaseActivity : AppCompatActivity(), SettingsConstants, Inject
         val builder = ThreadPolicy.Builder()
         StrictMode.setThreadPolicy(builder.permitAll().build())
         pref = MainApplication.getPrivateSharedPreferences()
+        securePref = mtkdex.core.build.ssmen.utils.SecurePrefUtil.getEncryptedPrefs(this)
         editor = pref!!.edit()
+        secureEditor = securePref!!.edit()
         dPrefs = MainApplication.getDefaultSharedPreferences()
         dEditor = dPrefs!!.edit()
+        
+        migrateToSecurePrefs()
+
         //getSettingsStorage()
         config = ConfigUtil.getInstance(this@MainBaseActivity)
         serverData = ConfigDataBase(this@MainBaseActivity, "mServerData")
@@ -268,6 +275,28 @@ abstract class MainBaseActivity : AppCompatActivity(), SettingsConstants, Inject
 
     protected fun addlogInfo(msg: String) {
         hLogStatus.logInfo(msg)
+    }
+
+    private fun migrateToSecurePrefs() {
+        val user = pref?.getString("_screenUsername_key", "") ?: ""
+        val pass = pref?.getString("_screenPassword_key", "") ?: ""
+        
+        if (user.isNotEmpty() || pass.isNotEmpty()) {
+            secureEditor?.putString("_screenUsername_key", user)?.apply()
+            secureEditor?.putString("_screenPassword_key", pass)?.apply()
+            
+            // Remove from plain text prefs
+            editor?.remove("_screenUsername_key")?.apply()
+            editor?.remove("_screenPassword_key")?.apply()
+        }
+    }
+
+    protected fun getStoredUsername(): String {
+        return securePref?.getString("_screenUsername_key", "") ?: ""
+    }
+
+    protected fun getStoredPassword(): String {
+        return securePref?.getString("_screenPassword_key", "") ?: ""
     }
 
     protected open fun post_bind() {}
@@ -685,10 +714,10 @@ abstract class MainBaseActivity : AppCompatActivity(), SettingsConstants, Inject
                     config!!.setUser(s_js.getString("Username"))
                     config!!.setUserPass(s_js.getString("Password"))
                 } else {
-                    val user = pref!!.getString("_screenUsername_key", "")
-                    val pass = pref!!.getString("_screenPassword_key", "")
-                    config!!.setUser(if (user!!.isEmpty()) "" else c_01.encrypt(user))
-                    config!!.setUserPass(if (pass!!.isEmpty()) "" else c_01.encrypt(pass))
+                    val user = getStoredUsername()
+                    val pass = getStoredPassword()
+                    config!!.setUser(if (user.isEmpty()) "" else c_01.encrypt(user))
+                    config!!.setUserPass(if (pass.isEmpty()) "" else c_01.encrypt(pass))
                 }
                 editor!!.putString(
                     SettingsConstants.SERVER_WEB_RENEW_KEY,
@@ -733,8 +762,8 @@ abstract class MainBaseActivity : AppCompatActivity(), SettingsConstants, Inject
                     useraccount = s_js.getString("Username")
                     passaccount = s_js.getString("Password")
                 } else {
-                    useraccount = pref!!.getString("_screenUsername_key", "").toString()
-                    passaccount = pref!!.getString("_screenPassword_key", "").toString()
+                    useraccount = getStoredUsername()
+                    passaccount = getStoredPassword()
                 }
                 val nana = c_01.decrypt(config!!.getputv2())
 
@@ -755,10 +784,10 @@ abstract class MainBaseActivity : AppCompatActivity(), SettingsConstants, Inject
                     config!!.setUser(s_js.getString("Username"))
                     config!!.setUserPass(s_js.getString("Password"))
                 } else {
-                    val user = pref!!.getString("_screenUsername_key", "")
-                    val pass = pref!!.getString("_screenPassword_key", "")
-                    config!!.setUser(if (user!!.isEmpty()) "" else c_01.encrypt(user))
-                    config!!.setUserPass(if (pass!!.isEmpty()) "" else c_01.encrypt(pass))
+                    val user = getStoredUsername()
+                    val pass = getStoredPassword()
+                    config!!.setUser(if (user.isEmpty()) "" else c_01.encrypt(user))
+                    config!!.setUserPass(if (pass.isEmpty()) "" else c_01.encrypt(pass))
                 }
                 config!!.payloadName = p_js.getString("Name")
                 editor!!.putString(
@@ -779,10 +808,10 @@ abstract class MainBaseActivity : AppCompatActivity(), SettingsConstants, Inject
                     config!!.setUser(s_js.getString("Username"))
                     config!!.setUserPass(s_js.getString("Password"))
                 } else {
-                    val user = pref!!.getString("_screenUsername_key", "")
-                    val pass = pref!!.getString("_screenPassword_key", "")
-                    config!!.setUser(if (user!!.isEmpty()) "" else c_01.encrypt(user))
-                    config!!.setUserPass(if (pass!!.isEmpty()) "" else c_01.encrypt(pass))
+                    val user = getStoredUsername()
+                    val pass = getStoredPassword()
+                    config!!.setUser(if (user.isEmpty()) "" else c_01.encrypt(user))
+                    config!!.setUserPass(if (pass.isEmpty()) "" else c_01.encrypt(pass))
                 }
                 editor!!.putString("IPHunter_pName", p_js.getString("Name")).apply()
                 //if (p_js.has("Info") && p_js.getString("Info").isNotEmpty()) {
@@ -936,10 +965,10 @@ abstract class MainBaseActivity : AppCompatActivity(), SettingsConstants, Inject
                 config!!.setUser(s_js.getString("Username"))
                 config!!.setUserPass(s_js.getString("Password"))
             } else {
-                val user = pref!!.getString("_screenUsername_key", "")
-                val pass = pref!!.getString("_screenPassword_key", "")
-                config!!.setUser(if (user!!.isEmpty()) "" else c_01.encrypt(user))
-                config!!.setUserPass(if (pass!!.isEmpty()) "" else c_01.encrypt(pass))
+                val user = getStoredUsername()
+                val pass = getStoredPassword()
+                config!!.setUser(if (user.isEmpty()) "" else c_01.encrypt(user))
+                config!!.setUserPass(if (pass.isEmpty()) "" else c_01.encrypt(pass))
             }
             editor!!.putString(
                 SettingsConstants.SERVER_WEB_RENEW_KEY,

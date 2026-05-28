@@ -49,6 +49,20 @@ public class MainApplication extends MultiDexApplication
         SettingsManager.initRoutingRulesets(this);
 
         requestQueue = Volley.newRequestQueue(this);
+
+        scheduleExpiryCheck();
+    }
+
+    private void scheduleExpiryCheck() {
+        androidx.work.PeriodicWorkRequest expiryCheckRequest =
+                new androidx.work.PeriodicWorkRequest.Builder(mtkdex.core.build.ssmen.service.ExpiryCheckWorker.class, 30, java.util.concurrent.TimeUnit.MINUTES)
+                        .build();
+
+        androidx.work.WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+                "ExpiryCheckWork",
+                androidx.work.ExistingPeriodicWorkPolicy.KEEP,
+                expiryCheckRequest
+        );
     }
 
     public static RequestQueue getRequestQueue() {

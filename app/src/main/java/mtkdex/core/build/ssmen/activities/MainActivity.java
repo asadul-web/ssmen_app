@@ -341,24 +341,55 @@ public class MainActivity extends MainBaseActivity implements
                     if (hLogStatus.isTunnelActive()) {
                         addlogInfo("<font color = #d50000>Account expired! Disconnecting...");
                         stopTunnelService();
-                        showToast("Expired", "Your account has just expired.");
+                        showExpiryAlert();
                     }
                     if (ac_xp != null) {
                         String fDate = util.getExpireDateFormatted(rawExpiry);
                         ac_xp.setText("Expiry: " + fDate + " | Expired");
                     }
                 } else {
-                    // Update label in real-time for short trial users
-                    if (ac_xp != null && i11 % 5 == 0) { // Update every 5 seconds to save battery
+                    // Update label every single tick for smooth countdown
+                    if (ac_xp != null) {
                         String fDate = util.getExpireDateFormatted(rawExpiry);
                         ac_xp.setText("Expiry: " + fDate + " | " + daysLeft);
                     }
                 }
             }
+            
+            // Trigger server auth check every 60 seconds while VPN is active
+            if (hLogStatus.isTunnelActive()) {
+                authCheckCounter++;
+                if (authCheckCounter >= 60) {
+                    authCheckCounter = 0;
+                    MainActivity.this.dataAuthetication();
+                }
+            } else {
+                authCheckCounter = 0;
+            }
 
+            i11++;
             MainActivity.this.schedule_stats();
         }
     };
+
+    private void showExpiryAlert() {
+        runOnUiThread(() -> {
+            new AlertDialog.Builder(this)
+                    .setTitle("Account Expired")
+                    .setMessage("Your account has expired. Please renew your subscription to continue using the VPN service.")
+                    .setCancelable(false)
+                    .setPositiveButton("Login", (dialog, which) -> {
+                        ConfigUtil.getInstance(this).logout();
+                        startActivity(new Intent(this, LoginActivity.class));
+                        finish();
+                    })
+                    .setNegativeButton("Exit", (dialog, which) -> {
+                        finishAffinity();
+                        System.exit(0);
+                    })
+                    .show();
+        });
+    }
 
     private void updateLiveStatusLabels() {
         boolean active = hLogStatus.isTunnelActive();
@@ -397,9 +428,10 @@ public class MainActivity extends MainBaseActivity implements
         if (configVers != null && (i11 % 10 == 0)) {
             configVers.setText(String.format("Config: %s", getPref().getString(SettingsConstants.CONFIG_VERSION, "1.0")));
         }
-        i11++;
     }
     private int i11 = 0;
+    private int authCheckCounter = 0;
+    private int authRetryCount = 0;
 
     public static void updateMainViews(Context context, String str) {
         Intent mIntent = new Intent(str);
@@ -921,7 +953,7 @@ public class MainActivity extends MainBaseActivity implements
             // byteOut_view.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 11);
         }
 
-        xUser.setText(getPref().getString("_screenUsername_key", ""));
+        xUser.setText(getStoredUsername());
         xUser.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -930,7 +962,7 @@ public class MainActivity extends MainBaseActivity implements
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String u = xUser.getText().toString().trim();
-                getEditor().putString("_screenUsername_key", u).apply();
+                secureEditor.putString("_screenUsername_key", u).apply();
             }
 
             @Override
@@ -961,7 +993,7 @@ public class MainActivity extends MainBaseActivity implements
         });
         ar.start(); // hypothetically replaces start()
 
-        xPass.setText(getPref().getString("_screenPassword_key", ""));
+        xPass.setText(getStoredPassword());
         xPass.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -970,7 +1002,7 @@ public class MainActivity extends MainBaseActivity implements
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String u = xPass.getText().toString().trim();
-                if (!u.equals("******")) getEditor().putString("_screenPassword_key", u).apply();
+                if (!u.equals("******")) secureEditor.putString("_screenPassword_key", u).apply();
             }
 
             @Override
@@ -981,7 +1013,7 @@ public class MainActivity extends MainBaseActivity implements
 
         show_password.setOnClickListener(v -> {
             isMostrarSenha = !isMostrarSenha;
-            String u = getPref().getString("_screenPassword_key", "");
+            String u = getStoredPassword();
             if (isMostrarSenha) {
                 xPass.setText(u);
             } else {
@@ -2149,14 +2181,14 @@ public class MainActivity extends MainBaseActivity implements
             showRenewServDialog();
             return false;
         } else if (getConfig().getConfigIsAutoLogIn()) {
-            String user = getPref().getString("_screenUsername_key", "");
-            String pass = getPref().getString("_screenPassword_key", "");
+            String user = getStoredUsername();
+            String pass = getStoredPassword();
             if (getConfig().getSecureString(USERNAME_KEY).isEmpty() || getConfig().getSecureString(PASSWORD_KEY).isEmpty() || containsSpecialCharacter(user) || containsSpecialCharacter(pass) || user.length() < 4 || pass.length() < 4) {
                 showToast("Account Invalid", "Invalid username or password, Please enter a valid account.");
                 return false;
             }
             return true;
-        } else if (getConfig().getSecureString(USERNAME_KEY).isEmpty() || getConfig().getSecureString(PASSWORD_KEY).isEmpty() || containsSpecialCharacter(getPref().getString("_screenUsername_key", "")) || containsSpecialCharacter(getPref().getString("_screenPassword_key", "")) || getPref().getString("_screenUsername_key", "").length() < 4 || getPref().getString("_screenPassword_key", "").length() < 4) {
+        } else if (getConfig().getSecureString(USERNAME_KEY).isEmpty() || getConfig().getSecureString(PASSWORD_KEY).isEmpty() || containsSpecialCharacter(getStoredUsername()) || containsSpecialCharacter(getStoredPassword()) || getStoredUsername().length() < 4 || getStoredPassword().length() < 4) {
             showToast("Account Invalid", "Invalid username or password, Please enter a valid account.");
             return false;
         }
@@ -2186,14 +2218,89 @@ public class MainActivity extends MainBaseActivity implements
                 trafficGraph.setShowPath(true);
             }
             if (getConfig().getAutoClearLog()) mAdapter.clearLog();
+            
             if (checkConfiguration()) {
-                if (!getPref().getString("Network_info", "").isEmpty() && !getConfig().getServerType().equals(SERVER_TYPE_V2RAY)) {
-                    start_connect();
-                } else {
-                    start_connect();
-                }
+                validateAccountBeforeConnect();
             }
         }
+    }
+
+    private void validateAccountBeforeConnect() {
+        String api = new appUtil().x_api;
+        String user = getStoredUsername();
+        String pass = getStoredPassword();
+
+        if (user.isEmpty() || pass.isEmpty()) {
+            util.showToast(resString(R.string.app_name), "Username or Password is empty");
+            return;
+        }
+
+        showProgrss();
+        ((TextView) findViewById(R.id.progTv)).setText("Verifying account...");
+        btn_connector.setEnabled(false);
+
+        String model = Build.MODEL;
+        @SuppressLint("HardwareIds") String id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        String jsonUrl = api + "?username=" + user + "&password=" + pass + "&device_id=" + id + "&device_model=" + model;
+
+        StringRequest req = new StringRequest(jsonUrl,
+                response -> {
+                    hideProgrss();
+                    btn_connector.setEnabled(true);
+                    try {
+                        JSONObject js = new JSONObject(response);
+                        boolean auth = js.optBoolean("auth", false) || js.optString("auth").equals("true");
+                        String deviceMatchStr = js.optString("device_match", "false");
+                        boolean deviceMatch = js.optBoolean("device_match", false) || deviceMatchStr.equals("true");
+                        String expiry = js.optString("expiry", "none");
+
+                        if (!auth) {
+                            showPreConnectError("Authentication Failed - Account not found or suspended.");
+                            return;
+                        }
+
+                        if (!deviceMatch || deviceMatchStr.equals("none")) {
+                            showPreConnectError("Authentication Failed - Account is logged in on another device.");
+                            return;
+                        }
+
+                        if (expiry.equals("none")) {
+                            showPreConnectError("Authentication Failed - Account not found.");
+                            return;
+                        }
+
+                        if (util.getDaysLeft(expiry).equals("Expired")) {
+                            showPreConnectError("Authentication Failed - Your account has expired.");
+                            return;
+                        }
+
+                        // Success -> Proceed to connect
+                        onExpireDate(expiry);
+                        if (!getPref().getString("Network_info", "").isEmpty() && !getConfig().getServerType().equals(SERVER_TYPE_V2RAY)) {
+                            start_connect();
+                        } else {
+                            start_connect();
+                        }
+
+                    } catch (Exception e) {
+                        showPreConnectError("Authentication Failed - Invalid server response.");
+                    }
+                },
+                error -> {
+                    hideProgrss();
+                    btn_connector.setEnabled(true);
+                    showPreConnectError("Authentication Failed - Cannot verify account. Check internet connection.");
+                });
+
+        MainApplication.getRequestQueue().add(req);
+    }
+
+    private void showPreConnectError(String message) {
+        new AlertDialog.Builder(this)
+                .setTitle("Connection Rejected")
+                .setMessage(message)
+                .setPositiveButton("OK", null)
+                .show();
     }
 
     public void stopTunnelService() {
@@ -3277,8 +3384,8 @@ public class MainActivity extends MainBaseActivity implements
 
     private void dataAuthetication() {
         String api = new appUtil().x_api;
-        String user = getPref().getString("_screenUsername_key", "");
-        String pass = getPref().getString("_screenPassword_key", "");
+        String user = getStoredUsername();
+        String pass = getStoredPassword();
         if (user.isEmpty() || pass.isEmpty()) {
             return;
         }
@@ -3291,28 +3398,60 @@ public class MainActivity extends MainBaseActivity implements
         StringRequest req = new StringRequest(
                 jsonUrl,
                 response -> {
-                    Log.d("here", response);
+                    authRetryCount = 0; // Reset retry count on success
                     try {
                         JSONObject js = new JSONObject(response);
 
-                        // ✅ Save username locally (SharedPreferences)
-                        getEditor().putString("_screenUsername_key", user).apply();
+                        String expiry = js.optString("expiry", "none");
+                        String deviceMatchStr = js.optString("device_match", "false");
+                        boolean auth = js.optBoolean("auth", false) || js.optString("auth").equals("true");
+                        boolean deviceMatch = js.optBoolean("device_match", false) || deviceMatchStr.equals("true");
 
-                        if (js.getString("device_match").equals("none")) {
-                            onAuthFailed("Authentication Failed");
-                            if (dex002.isVPNRunning()) stopTunnelService();
-                            return;
+                        if (!auth || !deviceMatch || expiry.equals("none") || deviceMatchStr.equals("none")) {
+                             handleSessionInvalidated("Account Disconnected - Your account is no longer valid. Please contact support.");
+                             return;
                         }
-                        if (js.getString("device_match").equals("false")) {
-                            showDeviceIdNotMatch();
-                            return;
-                        }
-                        onExpireDate(js.getString("expiry"));
+
+                        // Process Expiry and sync
+                        onExpireDate(expiry);
+
                     } catch (Exception ignored) {
                     }
-                }, error -> onError("Expire Date: "+ error.getMessage()));
+                }, error -> {
+                    if (hLogStatus.isTunnelActive()) {
+                        authRetryCount++;
+                        if (authRetryCount >= 3) {
+                            handleSessionInvalidated("Account Disconnected - Connection to server failed after multiple attempts.");
+                        }
+                    }
+                });
 
         MainApplication.getRequestQueue().add(req);
+    }
+
+    private void handleSessionInvalidated(String message) {
+        runOnUiThread(() -> {
+            if (hLogStatus.isTunnelActive()) {
+                stopTunnelService();
+            }
+
+            // Clear credentials from secure storage
+            if (secureEditor != null) {
+                secureEditor.remove("_screenUsername_key").apply();
+                secureEditor.remove("_screenPassword_key").apply();
+            }
+            ConfigUtil.getInstance(this).setHasAccount(false);
+
+            new AlertDialog.Builder(this)
+                    .setTitle("Account Disconnected")
+                    .setMessage(message)
+                    .setCancelable(false)
+                    .setPositiveButton("OK", (dialog, which) -> {
+                        startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                        finish();
+                    })
+                    .show();
+        });
     }
 
     @Override
@@ -3340,17 +3479,19 @@ public class MainActivity extends MainBaseActivity implements
     }
 
     void showDeviceIdNotMatch() {
-        {
-            if (dex002.isVPNRunning()) stopTunnelService();
-            util.showToast(resString(R.string.app_name), "Account is used in another device!!");
+        if (hLogStatus.isTunnelActive()) {
+            stopTunnelService();
         }
+        util.showToast(resString(R.string.app_name), "Account is used in another device!!");
     }
 
     @Override
     public void onDeviceNotMatch(String s) {
-        getEditor().putString("_AccountXp", "This account using other device!").apply();
-        ac_xp.setText("This account using other device!");
-        if (dex002.isVPNRunning()) stopTunnelService();
+        getEditor().putString("_AccountXp", "Device Mismatch").apply();
+        ac_xp.setText("Device Mismatch");
+        if (hLogStatus.isTunnelActive()) {
+            stopTunnelService();
+        }
     }
 
     private String getDaysLeft(String expiryDate) {
@@ -3366,7 +3507,10 @@ public class MainActivity extends MainBaseActivity implements
     public void onAuthFailed(String authenticationFailed) {
         getEditor().putString("_AccountXp", resString(R.string.state_auth_failed)).apply();
         ac_xp.setText(resString(R.string.state_auth_failed));
-        if (dex002.isVPNRunning()) stopTunnelService();
+        if (hLogStatus.isTunnelActive()) {
+            stopTunnelService();
+        }
+        util.showToast(resString(R.string.app_name), "Authentication Failed");
     }
 
     @Override

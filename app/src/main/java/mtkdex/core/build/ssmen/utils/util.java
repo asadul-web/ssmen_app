@@ -74,39 +74,28 @@ public class util implements SettingsConstants {
             }
 
             if (expiry == null) {
-                return "0 Days";
+                return "0 days";
             }
 
             long now = System.currentTimeMillis();
-            // Add a small 10-second grace period for clock sync
-            if (expiry.getTime() + 10000 <= now) {
+            long diff = expiry.getTime() - now;
+
+            if (diff <= 0) {
                 return "Expired";
             }
 
-            long diff = expiry.getTime() - now;
-            long days = diff / (1000 * 60 * 60 * 24);
-
-            if (days < 1) {
-                long totalHours = diff / (1000 * 60 * 60);
-                long totalMins = diff / (1000 * 60);
-                
-                if (totalHours > 0) {
-                    long remainingMins = (diff % (1000 * 60 * 60)) / (1000 * 60);
-                    if (remainingMins > 0) {
-                        return totalHours + (totalHours == 1 ? " Hr " : " Hrs ") + remainingMins + " Min";
-                    }
-                    return totalHours + (totalHours == 1 ? " Hour" : " Hours");
-                } else {
-                    if (totalMins > 0) {
-                        return totalMins + (totalMins == 1 ? " Minute" : " Minutes");
-                    }
-                    return "Expiring soon...";
-                }
+            if (diff >= 86400000) { // 1 day or more
+                int d = (int) Math.ceil(diff / 86400000.0);
+                return d + (d == 1 ? " day" : " days");
+            } else if (diff >= 3600000) { // 1 hour or more
+                int h = (int) Math.ceil(diff / 3600000.0);
+                return h + (h == 1 ? " hour" : " hours");
+            } else { // Less than 1 hour
+                int m = (int) Math.ceil(diff / 60000.0);
+                return m + (m == 1 ? " minute" : " minutes");
             }
-
-            return days + (days == 1 ? " Day" : " Days");
         } catch (Exception e) {
-            return "0 Days";
+            return "0 days";
         }
     }
 

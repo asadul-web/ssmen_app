@@ -138,8 +138,8 @@ public class LoginActivity extends MainBaseActivity {
         loginBtn = findViewById(R.id.login_button);
 
         // Load saved credentials
-        mUsername.setText(getPref().getString("_screenUsername_key", ""));
-        mPassword.setText(getPref().getString("_screenPassword_key", ""));
+        mUsername.setText(getStoredUsername());
+        mPassword.setText(getStoredPassword());
 
         // Bottom sheet setup
         View progbottomSheet = findViewById(R.id.progress_bottom_sheet);
@@ -158,6 +158,12 @@ public class LoginActivity extends MainBaseActivity {
 
         // Handle login click
         loginBtn.setOnClickListener(v -> LoginApi());
+
+        String errorMsg = getIntent().getStringExtra("error_msg");
+        if (errorMsg != null) {
+            mWarningText.setText(errorMsg);
+            mWarningText.setTextColor(ContextCompat.getColor(this, R.color.colorBtnStroke));
+        }
 
         ImageView whatsapp = findViewById(R.id.ivWhatsapp);
         whatsapp.setOnClickListener(v -> {
@@ -252,7 +258,7 @@ public class LoginActivity extends MainBaseActivity {
                         JSONObject js = new JSONObject(response);
 
                         // Load saved account
-                        String savedUser = getPref().getString("_screenUsername_key", "");
+                        String savedUser = getStoredUsername();
                         boolean sameAccount = user.equals(savedUser);
 
                         // ❌ ERROR CASES
@@ -265,8 +271,8 @@ public class LoginActivity extends MainBaseActivity {
 
                             // Delete saved account ONLY if the same user fails login
                             if (sameAccount) {
-                                getEditor().remove("_screenUsername_key").apply();
-                                getEditor().remove("_screenPassword_key").apply();
+                                secureEditor.remove("_screenUsername_key").apply();
+                                secureEditor.remove("_screenPassword_key").apply();
                             }
 
                             util.showToast("Wrong Account", "Authentication failed, check your username and password");
@@ -277,8 +283,8 @@ public class LoginActivity extends MainBaseActivity {
                         if (js.getString("device_match").equals("true")) {
 
                             // Always save successful account
-                            getEditor().putString("_screenUsername_key", user).apply();
-                            getEditor().putString("_screenPassword_key", pass).apply();
+                            secureEditor.putString("_screenUsername_key", user).apply();
+                            secureEditor.putString("_screenPassword_key", pass).apply();
 
                             mWarningText.setTextColor(ContextCompat.getColor(this, R.color.dataIn));
                             onExpireDate(js.getString("expiry"));
@@ -375,9 +381,32 @@ public class LoginActivity extends MainBaseActivity {
         mPoint.startAnimation(ra);
     }
 
+    private final android.os.Handler expiryHandler = new android.os.Handler(android.os.Looper.getMainLooper());
+    private final Runnable expiryRunnable = new Runnable() {
+        @Override
+        public void run() {
+            String rawExpiry = getPref().getString("_AccountRawXp", "");
+            if (!rawExpiry.isEmpty() && !rawExpiry.equals("none")) {
+                String daysLeft = util.getDaysLeft(rawExpiry);
+                mWarningText.setText("Account Validity: " + daysLeft);
+                if (daysLeft.equals("Expired")) {
+                    mWarningText.setTextColor(android.graphics.Color.RED);
+                }
+            }
+            expiryHandler.postDelayed(this, 1000);
+        }
+    };
+
     @Override
     public void onResume() {
         super.onResume();
+        expiryHandler.post(expiryRunnable);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        expiryHandler.removeCallbacks(expiryRunnable);
     }
 
 }
