@@ -196,7 +196,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignBottom="@+id/trafficGraph"
                         android:layout_alignParentEnd="true"
-                        android:layout_marginEnd="38dp"
+                        android:layout_marginEnd="43.8dp"
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
 
@@ -680,12 +680,11 @@
                     android:id="@+id/ac_xp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Expiry: ____ __, ____ | __ Days"
-                    android:textSize="11sp"
+                    android:text="Expiry: -- ---, ---- | 0 Days"
+                    android:textSize="10sp"
                     android:textColor="@color/colorPrimary"
                     android:layout_gravity="center"
                     android:layout_marginTop="2dp"
-                    android:maxLines="1"
                     android:fontFamily="@font/google_sans_flex"
                     app:fontVariationSettings="'wght' 500"/>
             </LinearLayout>

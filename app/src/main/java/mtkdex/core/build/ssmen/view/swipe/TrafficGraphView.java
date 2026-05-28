@@ -111,20 +111,22 @@ public class TrafficGraphView extends View {
             float lastOut = currentOut.get(currentOut.size() - 1);
             smoothedIn = lastIn;
             smoothedOut = lastOut;
+            smoothedPeakIn = lastIn; // Set to last known to avoid jump on freeze
+            smoothedPeakOut = lastOut;
         }
 
-        // 3rd and 4th labels: bit only with 2 decimals
-        displayInStr = String.format(java.util.Locale.US, "%.2f bit", smoothedIn);
-        displayOutStr = String.format(java.util.Locale.US, "%.2f bit", smoothedOut);
+        // 3rd and 4th labels: bit only with 1 decimal
+        displayInStr = smoothedIn <= 0 ? "0.00 bit" : String.format(java.util.Locale.US, "%.2f bit", smoothedIn);
+        displayOutStr = smoothedOut <= 0 ? "0.00 bit" : String.format(java.util.Locale.US, "%.2f bit", smoothedOut);
 
-        // 1st and 2nd labels: scaled bits with 0 decimals
+        // 1st and 2nd labels: scaled bits with 1 decimal
         float pIn = 0.0f;
         for (float v : currentIn) if (v > pIn) pIn = v;
         float pOut = 0.0f;
         for (float v : currentOut) if (v > pOut) pOut = v;
 
-        peakInStr = formatSpeed(pIn, 0);
-        peakOutStr = formatSpeed(pOut, 0);
+        peakInStr = formatSpeed(pIn, 1);
+        peakOutStr = formatSpeed(pOut, 1);
     }
 
     public void setOnAxisOffsetListener(OnAxisOffsetListener listener) {
@@ -183,6 +185,7 @@ public class TrafficGraphView extends View {
         textPaint.setColor(0xFF757575);
         textPaint.setTextSize(dp(8f));
         textPaint.setTextAlign(Paint.Align.LEFT);
+        textPaint.setLetterSpacing(0.10f);
         try {
             textPaint.setTypeface(ResourcesCompat.getFont(getContext(), R.font.google_sans_flex));
         } catch (Exception e) {
@@ -225,20 +228,22 @@ public class TrafficGraphView extends View {
     private void updateLabelsAndOffset() {
         if (drawingArea == null) return;
         
-        // Update the display strings BEFORE measuring to prevent the "lag" that causes cutting
-        float lastIn = 0;
-        float lastOut = 0;
-        if (!currentIn.isEmpty() && !currentOut.isEmpty()) {
-            lastIn = previousIn.get(currentIn.size() - 1) + ((currentIn.get(currentIn.size() - 1) - previousIn.get(currentIn.size() - 1)) * animationProgress);
-            lastOut = previousOut.get(currentOut.size() - 1) + ((currentOut.get(currentOut.size() - 1) - previousOut.get(currentOut.size() - 1)) * animationProgress);
+        if (!isFrozen) {
+            // Update the display strings BEFORE measuring to prevent the "lag" that causes cutting
+            float lastIn = 0;
+            float lastOut = 0;
+            if (!currentIn.isEmpty() && !currentOut.isEmpty()) {
+                lastIn = previousIn.get(currentIn.size() - 1) + ((currentIn.get(currentIn.size() - 1) - previousIn.get(currentIn.size() - 1)) * animationProgress);
+                lastOut = previousOut.get(currentOut.size() - 1) + ((currentOut.get(currentOut.size() - 1) - previousOut.get(currentOut.size() - 1)) * animationProgress);
+            }
+
+            // Apply same smoothing used in drawing
+            smoothedIn = smoothedIn + (lastIn - smoothedIn) * 0.10f;
+            smoothedOut = smoothedOut + (lastOut - smoothedOut) * 0.10f;
+
+            displayInStr = smoothedIn <= 0 ? "0.00 bit" : String.format(java.util.Locale.US, "%.2f bit", smoothedIn);
+            displayOutStr = smoothedOut <= 0 ? "0.00 bit" : String.format(java.util.Locale.US, "%.2f bit", smoothedOut);
         }
-
-        // Apply same smoothing used in drawing
-        smoothedIn = smoothedIn + (lastIn - smoothedIn) * 0.15f;
-        smoothedOut = smoothedOut + (lastOut - smoothedOut) * 0.15f;
-
-        displayInStr = String.format(java.util.Locale.US, "%.2f bit", smoothedIn);
-        displayOutStr = String.format(java.util.Locale.US, "%.2f bit", smoothedOut);
 
         // Calculate dynamic offset based on the NEW strings
         float maxLabelWidth = getMaxLabelWidth();
@@ -302,6 +307,8 @@ public class TrafficGraphView extends View {
         showPath = false; // HIDE the graph lines on clear (reopen/fresh launch)
         smoothedIn = 0f;
         smoothedOut = 0f;
+        smoothedPeakIn = 0f;
+        smoothedPeakOut = 0f;
         displayInStr = "0.00 bit";
         displayOutStr = "0.00 bit";
         peakInStr = "0 bit";
@@ -314,30 +321,34 @@ public class TrafficGraphView extends View {
     }
 
     private void calculateScale() {
-        if (isFrozen) return;
+        if (!isFrozen) {
+            float combinedMax = 0f;
 
-        float combinedMax = 0f;
+            for (Float v : currentIn)
+                if (v > combinedMax) combinedMax = v;
 
-        for (Float v : currentIn)
-            if (v > combinedMax) combinedMax = v;
+            for (Float v : currentOut)
+                if (v > combinedMax) combinedMax = v;
 
-        for (Float v : currentOut)
-            if (v > combinedMax) combinedMax = v;
+            float actualMax = combinedMax;
+            if (combinedMax <= 0f) combinedMax = 1f;
 
-        float actualMax = combinedMax;
-        if (combinedMax <= 0f) combinedMax = 1f;
+            minValue = 0f;
+            maxValue = combinedMax;
+            this.isZeroState = (actualMax <= 0f);
 
-        minValue = 0f;
-        maxValue = combinedMax;
-        this.isZeroState = (actualMax <= 0f);
-
-        // Update peaks immediately for label measurement
-        float pIn = 0.0f;
-        for (float v : currentIn) if (v > pIn) pIn = v;
-        float pOut = 0.0f;
-        for (float v : currentOut) if (v > pOut) pOut = v;
-        peakInStr = formatSpeed(pIn, 0);
-        peakOutStr = formatSpeed(pOut, 0);
+            // Update peaks immediately for label measurement
+            float pIn = 0.0f;
+            for (float v : currentIn) if (v > pIn) pIn = v;
+            float pOut = 0.0f;
+            for (float v : currentOut) if (v > pOut) pOut = v;
+            
+            smoothedPeakIn = smoothedPeakIn + (pIn - smoothedPeakIn) * 0.10f;
+            smoothedPeakOut = smoothedPeakOut + (pOut - smoothedPeakOut) * 0.10f;
+            
+            peakInStr = formatSpeed(smoothedPeakIn, 1);
+            peakOutStr = formatSpeed(smoothedPeakOut, 1);
+        }
 
         updateLabelsAndOffset();
 
@@ -432,18 +443,10 @@ public class TrafficGraphView extends View {
         axisPaint.setStrokeWidth(verticalStrokeWidth);
         canvas.drawLine(drawingArea.right, verticalTop, drawingArea.right, baselineY, axisPaint);
 
-        // Paths - Only draw if showPath is true AND we have non-zero data
+        // Draw graph paths if enabled
         if (showPath) {
-            boolean hasData = false;
-            for (Float f : currentIn) if (f > 0) { hasData = true; break; }
-            if (!hasData) {
-                for (Float f : currentOut) if (f > 0) { hasData = true; break; }
-            }
-
-            if (hasData || isFrozen) {
-                drawPath(canvas, currentIn, previousIn, inPaint);
-                drawPath(canvas, currentOut, previousOut, outPaint);
-            }
+            drawPath(canvas, currentIn, previousIn, inPaint);
+            drawPath(canvas, currentOut, previousOut, outPaint);
         }
 
         // Labels - ALWAYS DRAWN IF NOT HIDDEN BY OUTSIDE LOGIC
@@ -510,6 +513,8 @@ public class TrafficGraphView extends View {
 
     private float smoothedIn = 0f;
     private float smoothedOut = 0f;
+    private float smoothedPeakIn = 0f;
+    private float smoothedPeakOut = 0f;
     private long lastLabelUpdateTime = 0;
     private String displayInStr = "0.00 bit";
     private String displayOutStr = "0.00 bit";
@@ -519,19 +524,13 @@ public class TrafficGraphView extends View {
     private void drawLabels(Canvas canvas) {
         if (currentIn.isEmpty() || currentOut.isEmpty()) return;
 
-        // Strings are now updated in updateLabelsAndOffset() to ensure correct measurement
-        String[] labels = new String[4];
-        if (isZeroState && !isFrozen) {
-            labels[0] = "0 bit";
-            labels[1] = "0 bit";
-            labels[2] = "0.00 bit";
-            labels[3] = "0.00 bit";
-        } else {
-            labels[0] = peakInStr;
-            labels[1] = peakOutStr;
-            labels[2] = displayInStr;
-            labels[3] = displayOutStr;
-        }
+        // Use the calculated strings (which include smoothing and units)
+        String[] labels = {
+            peakInStr,
+            peakOutStr,
+            displayInStr,
+            displayOutStr
+        };
 
         Paint.FontMetrics fm = textPaint.getFontMetrics();
         float textHeightOffset = (fm.ascent + fm.descent) / 2;
@@ -557,8 +556,6 @@ public class TrafficGraphView extends View {
 
     private String formatSpeed(float value, int decimalCount) {
         if (value <= 0) {
-            if (decimalCount == 0) return "0 bit";
-            if (decimalCount == 2) return "0.00 bit";
             return "0 bit";
         }
         String format = "%." + decimalCount + "f %s";

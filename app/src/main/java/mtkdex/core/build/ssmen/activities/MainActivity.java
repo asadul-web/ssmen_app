@@ -227,7 +227,7 @@ public class MainActivity extends MainBaseActivity implements
     private boolean isCheckUpdateIsRunning = false;
     private boolean _stop = false;
     private boolean showGraphOnDisconnect = false;
-    private String date = "Expiry: --/--/-- | 0 Days";
+    private String date = "Expiry: -- ---, ---- | 0 Days";
     private LogsAdapter mAdapter;
     private ImageView showLog;
     TrafficGraphView trafficGraph;
@@ -330,15 +330,32 @@ public class MainActivity extends MainBaseActivity implements
     private boolean liveDataBlink = false;
     private final Runnable stats_timer_task = new Runnable() {
         public void run() {
-            boolean active = hLogStatus.isTunnelActive();
-            if (active) {
-                duration_view.setText(getUpDateBytes().isConnected() ? getUpDateBytes().elapsedTimeToDisplay(getUpDateBytes().getElapsedTime()) : "00h:00m:00s");
-            }
-            
-            // Update status labels every second to keep them "Live"
-            updateLiveStatusLabels();
-            
+            // This loop triggers stat fetching for services
             MainActivity.this.show_stats();
+            
+            // Check for real-time account expiry and update UI
+            String rawExpiry = getPref().getString("_AccountRawXp", "");
+            if (!rawExpiry.isEmpty() && !rawExpiry.equals("none")) {
+                String daysLeft = util.getDaysLeft(rawExpiry);
+                if (daysLeft.equals("Expired")) {
+                    if (hLogStatus.isTunnelActive()) {
+                        addlogInfo("<font color = #d50000>Account expired! Disconnecting...");
+                        stopTunnelService();
+                        showToast("Expired", "Your account has just expired.");
+                    }
+                    if (ac_xp != null) {
+                        String fDate = util.getExpireDateFormatted(rawExpiry);
+                        ac_xp.setText("Expiry: " + fDate + " | Expired");
+                    }
+                } else {
+                    // Update label in real-time for short trial users
+                    if (ac_xp != null && i11 % 5 == 0) { // Update every 5 seconds to save battery
+                        String fDate = util.getExpireDateFormatted(rawExpiry);
+                        ac_xp.setText("Expiry: " + fDate + " | " + daysLeft);
+                    }
+                }
+            }
+
             MainActivity.this.schedule_stats();
         }
     };
@@ -401,18 +418,16 @@ public class MainActivity extends MainBaseActivity implements
     public void show_stats() {
         try {
             if (hLogStatus.isTunnelActive()) {
-                if (getConfig().getServerType().equals(SERVER_TYPE_OVPN)) {
+                String serverType = getConfig().getServerType();
+                if (serverType.equals(SERVER_TYPE_OVPN)) {
                     ConnectionStats stats = get_connection_stats();
-                    hLogStatus.updateByteCount(stats.bytes_in, stats.bytes_out);
-                } else if (getConfig().getServerType().equals(SERVER_TYPE_V2RAY)) {
-                    // V2Ray stats are now pushed via broadcasts from the service process
-                    // to MainViewModel, which updates hLogStatus.
-                    // No direct query needed here as it would fail across processes.
-                } else if (getConfig().getServerType().equals(SERVER_TYPE_UDP_HYSTERIA_V1)) {
-                    m_ReceivedBytes += getUpDateBytes().getBytesReceived();
-                    m_SentBytes += getUpDateBytes().getBytesSent();
-                    hLogStatus.updateByteCount(m_ReceivedBytes, m_SentBytes);
+                    if (stats != null) {
+                        hLogStatus.updateByteCount(stats.bytes_in, stats.bytes_out);
+                    }
+                } else if (serverType.equals(SERVER_TYPE_V2RAY)) {
+                    // Handled via broadcasts from NotificationManager (MainViewModel)
                 } else {
+                    // For SSH/UDP types that might update StatisticGraphData
                     hLogStatus.updateByteCount(getUpDateBytes().getTotalBytesReceived(), getUpDateBytes().getTotalBytesSent());
                 }
             }
@@ -424,6 +439,8 @@ public class MainActivity extends MainBaseActivity implements
         boolean isRunning = hLogStatus.isTunnelActive();
         if (serverDialog != null) serverDialog.setEnabled(!isRunning);
         if (networkDialog != null) networkDialog.setEnabled(!isRunning);
+        
+        updateLiveStatusLabels();
         
         // Disable server and payload spinners when VPN is connected
         LinearLayout serverSpinner = findViewById(R.id.server_spinner);
@@ -492,7 +509,6 @@ public class MainActivity extends MainBaseActivity implements
             if (isConnected) {
                 if (getConfig().getServerType().equals(SERVER_TYPE_V2RAY)) {
                     layout_test.setVisibility(View.GONE);
-                    teststate1();
                 } else {
                     layout_test.setVisibility(View.GONE);
                 }
@@ -518,6 +534,7 @@ public class MainActivity extends MainBaseActivity implements
             // Auto reconnect logic
             if (getPref().getBoolean("auto_reconnect_enabled", false) && 
                 wasConnected && !isConnected && 
+                !isDisconnecting &&
                 !state.equals(hLogStatus.VPN_STOPPING) && 
                 !state.equals(hLogStatus.VPN_AUTH_FAILED)) {
                 
@@ -544,11 +561,14 @@ public class MainActivity extends MainBaseActivity implements
                     trafficGraph.setFrozen(false);
                 }
                 
+                // Trigger immediate UI refresh when connected
+                updateLiveStatusLabels();
+                show_stats();
+                
                 if (getConfig().getServerType().equals(SERVER_TYPE_V2RAY)) {
                     String success = "V2ray Connected";
                     hLogStatus.logInfo(success);
                     layout_test.setVisibility(View.GONE);
-                    teststate1();
                 } else {
                     layout_test.setVisibility(View.GONE);
                 }
@@ -568,7 +588,6 @@ public class MainActivity extends MainBaseActivity implements
                 if (getConfig().getServerType().equals(SERVER_TYPE_V2RAY)) {
                     layout_test.setVisibility(View.GONE);
                     tv_test_state.setText(this.getString(R.string.connection_connected));
-                    teststate1();
                 } else {
                     layout_test.setVisibility(View.GONE);
                 }
@@ -613,7 +632,9 @@ public class MainActivity extends MainBaseActivity implements
         if (level.equals(ConnectionStatus.LEVEL_CONNECTED)) {
             statusValue = "CONNECTED";
             statusColor = ContextCompat.getColor(this, R.color.connected_color);
-            testServerPing();
+            if (!getConfig().getServerType().equals(SERVER_TYPE_V2RAY)) {
+                testServerPing();
+            }
             isConnected = true; // Set connected state
         } else if (level.equals(ConnectionStatus.LEVEL_CONNECTING_SERVER_REPLIED) || 
                    level.equals(ConnectionStatus.LEVEL_CONNECTING_NO_SERVER_REPLY_YET) ||
@@ -693,7 +714,7 @@ public class MainActivity extends MainBaseActivity implements
     @Override
     public void updateByteCount(long in, long out, long diffIn, long diffOut) {
         boolean active = hLogStatus.isTunnelActive();
-
+        
         if (active) {
             // Multiply by 8 to convert bytes to bits for the graph labels
             inValue = (float) diffIn * 8;
@@ -705,20 +726,25 @@ public class MainActivity extends MainBaseActivity implements
             final String totalOutStr = ConfigUtil.render_bandwidth(out, false);
 
             runOnUiThread(() -> {
+                // Update all values in a single UI frame to ensure synchronization
+                updateLiveStatusLabels();
+                
                 if (byteIn_view != null) byteIn_view.setText(totalInStr);
                 if (byteOut_view != null) byteOut_view.setText(totalOutStr);
                 if (mDataInTv != null) mDataInTv.setText(inStr);
                 if (mDataOutTv != null) mDataOutTv.setText(outStr);
                 if (val1 != null) val1.setText(inStr);
                 if (val2 != null) val2.setText(outStr);
+                
+                // Keep timer updating with every traffic tick
+                if (duration_view != null && getUpDateBytes().isConnected()) {
+                    duration_view.setText(getUpDateBytes().elapsedTimeToDisplay(getUpDateBytes().getElapsedTime()));
+                }
             });
         } else {
             // Only reset if NOT active.
             inValue = 0f;
             outValue = 0f;
-            
-            // To achieve "freeze after disconnect", we simply DO NOTHING here.
-            // Values will stay what they were until 'active' becomes true again.
         }
 
         if (trafficGraph != null) {
@@ -1200,9 +1226,9 @@ public class MainActivity extends MainBaseActivity implements
 
     public void setTestState(String content) {
         if (content == null) return;
-        
+
         tv_test_state.setText(content);
-        
+
         // Extract and display ping value
         if (content.contains("Success")) {
             try {
@@ -1210,7 +1236,7 @@ public class MainActivity extends MainBaseActivity implements
                 String pingValue = content.replaceAll("[^0-9]", "");
                 if (!pingValue.isEmpty()) {
                     updateServerPing(pingValue + " ms");
-                    
+
                     // Show custom toast/snackbar
                     showHandshakeToast(pingValue);
                 }
@@ -1221,25 +1247,33 @@ public class MainActivity extends MainBaseActivity implements
     }
 
     private void showHandshakeToast(String ms) {
+        if (isFinishing()) return;
         runOnUiThread(() -> {
             try {
+                // Cancel existing toast if showing to prevent stacking
+                if (mCurrentToast != null) {
+                    mCurrentToast.cancel();
+                }
+
                 View layout = getLayoutInflater().inflate(R.layout.snackbar, null);
                 TextView title = layout.findViewById(R.id.itemtoastTv1);
                 TextView subtitle = layout.findViewById(R.id.itemtoastTv2);
-                
+
                 if (title != null) title.setText("Handshake");
                 if (subtitle != null) subtitle.setText("Success: HTTPS handshake took " + ms + " ms");
-                
-                Toast toast = new Toast(getApplicationContext());
-                toast.setDuration(Toast.LENGTH_LONG);
-                toast.setGravity(Gravity.BOTTOM, 0, 150);
-                toast.setView(layout);
-                toast.show();
+
+                mCurrentToast = new Toast(getApplicationContext());
+                mCurrentToast.setDuration(Toast.LENGTH_LONG);
+                mCurrentToast.setGravity(Gravity.BOTTOM, 0, 150);
+                mCurrentToast.setView(layout);
+                mCurrentToast.show();
             } catch (Exception e) {
                 util.showToast("Handshake", "Success: HTTPS handshake took " + ms + " ms");
             }
         });
     }
+
+    private Toast mCurrentToast;
 
     private void showMoreOptionsMenu(View v) {
         PopupMenu popup = new PopupMenu(this, v);
@@ -1266,10 +1300,10 @@ public class MainActivity extends MainBaseActivity implements
                     if (cBuiler != null && cBuiler.isShowing()) cBuiler.dismiss();
                     View inflateClear = LayoutInflater.from(this).inflate(R.layout.dialog_clear_data, null);
                     cBuiler = new AlertDialog.Builder(this).create();
-                    
+
                     View btnClear = inflateClear.findViewById(R.id.btn_clear);
                     View btnCancel = inflateClear.findViewById(R.id.btn_cancel);
-                    
+
                     btnClear.setOnClickListener(v1 -> {
                         try {
                             // 1. Stop VPN services
@@ -1283,7 +1317,7 @@ public class MainActivity extends MainBaseActivity implements
                                 stopService(new Intent(this, mtkdex.core.build.ssmen.service.dex004.class));
                                 stopService(new Intent(this, com.v2ray.ang.service.V2RayVpnService.class));
                             } catch (Exception ignored) {}
-                            
+
                             // 3. Explicitly Cancel Notifications
                             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                             if (notificationManager != null) {
@@ -1298,7 +1332,7 @@ public class MainActivity extends MainBaseActivity implements
                             if (getPref() != null) getPref().edit().clear().commit();
                             if (getDPrefs() != null) getDPrefs().edit().clear().commit();
                             getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE).edit().clear().commit();
-                            
+
                             // 6. Clear MMKV (V2Ray core storage)
                             com.tencent.mmkv.MMKV.defaultMMKV().clearAll();
 
@@ -1320,16 +1354,16 @@ public class MainActivity extends MainBaseActivity implements
                         }
                         cBuiler.dismiss();
                     });
-                    
+
                     btnCancel.setOnClickListener(v1 -> cBuiler.dismiss());
-                    
+
                     cBuiler.setView(inflateClear);
                     if (cBuiler.getWindow() != null) {
                         cBuiler.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                         cBuiler.getWindow().getAttributes().windowAnimations = R.style.alertDialog;
                     }
                     cBuiler.show();
-                    
+
                     // Set to full width and centered
                     if (cBuiler.getWindow() != null) {
                         cBuiler.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
@@ -1360,7 +1394,7 @@ public class MainActivity extends MainBaseActivity implements
         if (index >= 4 && index <= 6) {
             displayIndex = 4;
         }
-        
+
         if (displayIndex >= 0 && displayIndex < mTypeList.length) {
             mTunnelType.setText(mTypeList[displayIndex]);
         } else {
@@ -1391,6 +1425,10 @@ public class MainActivity extends MainBaseActivity implements
         animation = AnimationUtils.loadAnimation(this, R.anim.blink);
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
         mainViewModel.reloadServerList();
+        
+        // Start listening for service broadcasts immediately to restore state
+        teststate1();
+
         doBindService();
         LoadDefaultConfig();
         findViewById(R.id.main_window_bg).setBackgroundColor(getConfig().getMainLayoutBG());
@@ -1520,8 +1558,6 @@ public class MainActivity extends MainBaseActivity implements
         checkAppUpdate();
         
         hasConnectedOnce = getPref().getBoolean("hasConnectedOnce", false);
-        m_SentBytes = 0;
-        m_ReceivedBytes = 0;
         if (trafficGraph != null) {
             trafficGraph.clear();
             trafficGraph.setShowPath(false); // Always hidden on launch
@@ -2098,6 +2134,16 @@ public class MainActivity extends MainBaseActivity implements
             showToast("Oppss...!", "Please connect to the internet");
             return false;
         }
+
+        String rawExpiry = getPref().getString("_AccountRawXp", "");
+        if (!rawExpiry.isEmpty() && !rawExpiry.equals("none")) {
+            if (util.getDaysLeft(rawExpiry).equals("Expired")) {
+                showToast("Account Expired", "Your account has expired. Please renew to continue.");
+                addlogInfo("<font color = #d50000>Account expired. Connection rejected.");
+                return false;
+            }
+        }
+
         if (getPref().getBoolean(CONFIG_EXP_KEY, false)) {
             addlogInfo("<font color = #FFFF002E>Oppss sorry! Your server is now expired,click the renew button to create new and fresh server");
             showRenewServDialog();
@@ -2120,7 +2166,6 @@ public class MainActivity extends MainBaseActivity implements
     private void startOrStopTunnel() {
         getEditor().putInt("loadOnce", 0).apply();
         if (hLogStatus.isTunnelActive()) {
-            isDisconnecting = true;
             // Freeze exactly where we are
             if (trafficGraph != null) {
                 trafficGraph.setFrozen(true);
@@ -2132,6 +2177,10 @@ public class MainActivity extends MainBaseActivity implements
             m_ReceivedBytes = 0;
             if (byteIn_view != null) byteIn_view.setText("0 B");
             if (byteOut_view != null) byteOut_view.setText("0 B");
+            if (mDataInTv != null) mDataInTv.setText("0 bit");
+            if (mDataOutTv != null) mDataOutTv.setText("0 bit");
+            if (val1 != null) val1.setText("0 bit");
+            if (val2 != null) val2.setText("0 bit");
             if (trafficGraph != null) {
                 trafficGraph.clear();
                 trafficGraph.setShowPath(true);
@@ -2148,6 +2197,7 @@ public class MainActivity extends MainBaseActivity implements
     }
 
     public void stopTunnelService() {
+        isDisconnecting = true;
         if (getConfig().getServerType().equals(SERVER_TYPE_V2RAY)) {
             Bundle bundle1 = new Bundle();
             bundle1.putString("V2ray_ms", "");
@@ -2194,13 +2244,13 @@ public class MainActivity extends MainBaseActivity implements
         if (isDrawerOpen()) close();
         autoUpdate();
         
-        // Only reload configs if VPN is NOT active to prevent accidental disconnects
+        // Ensure UI is populated correctly even when VPN is active (e.g. after process kill)
+        reLoad_Configs();
+        loadServers();
+        loadNetwork();
+        updateTunnelTypeText();
+        
         if (!isActive) {
-            reLoad_Configs();
-            loadServers();
-            loadNetwork();
-            updateTunnelTypeText();
-            
             // Auto connect on app resume if enabled
             if (getPref().getBoolean("auto_connect_enabled", false)) {
                 new Handler().postDelayed(() -> {
@@ -2225,7 +2275,17 @@ public class MainActivity extends MainBaseActivity implements
         doUpdateLayout();
         V2RAY_TYPE();
 
-        if (ac_xp != null) ac_xp.setText(getPref().getString("_AccountXp", date));
+        if (ac_xp != null) {
+            String rawExp = getPref().getString("_AccountRawXp", "");
+            if (!rawExp.isEmpty() && !rawExp.equals("none")) {
+                String fDate = util.getExpireDateFormatted(rawExp);
+                String dLeft = util.getDaysLeft(rawExp);
+                date = "Expiry: " + fDate + " | " + dLeft;
+                ac_xp.setText(date);
+            } else {
+                ac_xp.setText(getPref().getString("_AccountXp", date));
+            }
+        }
         
         // Refresh account details if needed
         if (shouldFetchAccountDetails) {
@@ -2285,11 +2345,25 @@ public class MainActivity extends MainBaseActivity implements
     }
 
     private void startTunnelService() {
+        isDisconnecting = false;
+        m_SentBytes = 0;
+        m_ReceivedBytes = 0;
+        hLogStatus.resetTrafficHistory();
+        StatisticGraphData.getStatisticData().getDataTransferStats().stop();
+        if (byteIn_view != null) byteIn_view.setText("0 B");
+        if (byteOut_view != null) byteOut_view.setText("0 B");
+        if (mDataInTv != null) mDataInTv.setText("0 bit");
+        if (mDataOutTv != null) mDataOutTv.setText("0 bit");
+        if (val1 != null) val1.setText("0 bit");
+        if (val2 != null) val2.setText("0 bit");
+        if (duration_view != null) duration_view.setText("00h:00m:00s");
+
         if (trafficGraph != null) {
+            trafficGraph.clear();
             trafficGraph.setShowPath(true);
             trafficGraph.setFrozen(false);
         }
-        
+
         // 1. Give immediate UI feedback
         hLogStatus.updateStateString(hLogStatus.VPN_CONNECTING, getString(R.string.state_connecting));
         
@@ -2300,8 +2374,9 @@ public class MainActivity extends MainBaseActivity implements
         }
         
         TunnelUtils.restartRotateAndRandom();
-        schedule_stats();
         StatisticGraphData.getStatisticData().getDataTransferStats().startConnected();
+        schedule_stats();
+        show_stats(); // Trigger first UI update immediately
         
         // 3. Move heavy config loading and service start to background to avoid UI lag
         if (statsExecutor != null && !statsExecutor.isShutdown()) {
@@ -2562,17 +2637,17 @@ public class MainActivity extends MainBaseActivity implements
             MmkvManager.INSTANCE.encodeSettings(MmkvManager.KEY_SELECTED_SERVER_NAME, js.getString("Name"));
             TextView tv2 = findViewById(R.id.sname3);
             tv2.setText(getServerType(js));
-            
+
             // Update visible server card
             TextView serverName = findViewById(R.id.server_name);
             TextView serverInfo = findViewById(R.id.server_info);
             if (serverName != null) serverName.setText(js.getString("Name"));
             if (serverInfo != null) serverInfo.setText(getServerType(js));
-            
+
             InputStream open = getAssets().open("flags/" + "flag_" + js.getString("FLAG") + ".webp");
             Drawable flagDrawable = Drawable.createFromStream(open, null);
             ((ImageView) findViewById(R.id.sicon)).setImageDrawable(flagDrawable);
-            
+
             // Set visible server icon
             ImageView serverSpinIcon = findViewById(R.id.server_spin_icon);
             if (serverSpinIcon != null && flagDrawable != null) {
@@ -2633,11 +2708,11 @@ public class MainActivity extends MainBaseActivity implements
             JSONObject js = networkArrayDragaPosition().getJSONObject(getPref().getInt(NETWORK_POSITION, 0));
             p_name.setText(js.getString("Name"));
             MmkvManager.INSTANCE.encodeSettings(MmkvManager.KEY_SELECTED_PAYLOAD_NAME, js.getString("Name"));
-            
+
             // Update visible network card
             TextView payloadName = findViewById(R.id.payload_name);
             if (payloadName != null) payloadName.setText(js.getString("Name"));
-            
+
             TextView payload_info = findViewById(R.id.payload_info);
             // payload_info.setTextColor(getConfig().getAppThemeUtil() ? Color.WHITE : Color.BLACK);
             if (js.has("Info") && !js.getString("Info").isEmpty()) {
@@ -2647,7 +2722,7 @@ public class MainActivity extends MainBaseActivity implements
             }
             TextView tv4 = findViewById(R.id.pname3);
             tv4.setText(getNetworkType(js));
-            
+
             // Update payload tag text with protocol/tunnel type
             TextView payloadTagText = findViewById(R.id.payload_tag_text);
             if (payloadTagText != null) {
@@ -2656,7 +2731,7 @@ public class MainActivity extends MainBaseActivity implements
             InputStream open = getAssets().open("networks/" + "icon_" + js.getString("FLAG") + ".png");
             Drawable networkDrawable = Drawable.createFromStream(open, null);
             ((ImageView) findViewById(R.id.picon)).setImageDrawable(networkDrawable);
-            
+
             // Set visible payload icon
             ImageView payloadSpinIcon = findViewById(R.id.payload_spin_icon);
             if (payloadSpinIcon != null && networkDrawable != null) {
@@ -2959,7 +3034,7 @@ public class MainActivity extends MainBaseActivity implements
         mDrawerLayout = findViewById(R.id.drawerLayoutMain);
         contentView = findViewById(R.id.main_content);
         View v = drawerNavigationView.getHeaderView(0);
-        // The lines below were overriding XML properties. 
+        // The lines below were overriding XML properties.
         // Commented out to allow XML changes to take effect.
         /*
         TextView navheaderTextView2 = v.findViewById(R.id.navheaderTextView2);
@@ -2993,7 +3068,7 @@ public class MainActivity extends MainBaseActivity implements
                     contentView.setPivotY(contentView.getHeight() / 2.0f);
 
                     contentView.setTranslationX(moveFactor);
-                    
+
                     // Shrink the home content significantly (to 70% of its size)
                     float scaleFactor = 1 - (slideOffset * 0.3f);
                     contentView.setScaleX(scaleFactor);
@@ -3084,7 +3159,7 @@ public class MainActivity extends MainBaseActivity implements
         } else if (id == R.id.item11) {
             if (!hLogStatus.isTunnelActive())
                 startActivity(new Intent(MainActivity.this, harliesAppManager.class));
-        
+
         } else if (id == R.id.item_battery_optimizer) {
             openBatteryOptimizationSettings();
         }
@@ -3245,6 +3320,7 @@ public class MainActivity extends MainBaseActivity implements
         if (expiry == null || expiry.equals("none")) {
             ac_xp.setText("Expiry: none");
             getEditor().putString("_AccountXp", "Expiry: none").apply();
+            getEditor().putString("_AccountRawXp", "none").apply();
             return;
         }
 
@@ -3253,7 +3329,12 @@ public class MainActivity extends MainBaseActivity implements
 
         date = "Expiry: " + formattedDate + " | " + daysLeft;
         getEditor().putString("_AccountXp", date).apply();
+        getEditor().putString("_AccountRawXp", expiry).apply();
         ac_xp.setText(date);
+
+        if (daysLeft.equals("Expired")) {
+            if (hLogStatus.isTunnelActive()) stopTunnelService();
+        }
 
         shouldFetchAccountDetails = false;
     }
@@ -3295,7 +3376,7 @@ public class MainActivity extends MainBaseActivity implements
 
     private void toggleAutoConnect() {
         boolean isAutoConnectEnabled = getPref().getBoolean("auto_connect_enabled", false);
-        
+
         if (isAutoConnectEnabled) {
             // Disable auto connect
             getEditor().putBoolean("auto_connect_enabled", false).apply();
@@ -3304,7 +3385,7 @@ public class MainActivity extends MainBaseActivity implements
             // Enable auto connect
             getEditor().putBoolean("auto_connect_enabled", true).apply();
             showToast("Auto Connect", "Auto Connect Enabled");
-            
+
             // If not connected, connect now
             if (!hLogStatus.isTunnelActive()) {
                 new Handler().postDelayed(() -> {
@@ -3318,7 +3399,7 @@ public class MainActivity extends MainBaseActivity implements
 
     private void toggleAutoReconnect() {
         boolean isAutoReconnectEnabled = getPref().getBoolean("auto_reconnect_enabled", false);
-        
+
         if (isAutoReconnectEnabled) {
             // Disable auto reconnect
             getEditor().putBoolean("auto_reconnect_enabled", false).apply();
@@ -3334,7 +3415,7 @@ public class MainActivity extends MainBaseActivity implements
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             String packageName = getPackageName();
             android.os.PowerManager pm = (android.os.PowerManager) getSystemService(Context.POWER_SERVICE);
-            
+
             if (pm != null && !pm.isIgnoringBatteryOptimizations(packageName)) {
                 // App is being optimized, show dialog to disable it
                 showBatteryOptimizationDialog();
@@ -3382,9 +3463,9 @@ public class MainActivity extends MainBaseActivity implements
                 }
             })
             .create();
-        
+
         dialog.show();
-        
+
         // Style the buttons with proper colors
         if (dialog.getButton(AlertDialog.BUTTON_POSITIVE) != null) {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getConfig().getColorAccent());
@@ -3405,7 +3486,7 @@ public class MainActivity extends MainBaseActivity implements
         String cacheSizeText = formatFileSize(cacheSize);
         String dataSizeText = formatFileSize(dataSize);
         String totalSizeText = formatFileSize(totalSize);
-        
+
         AlertDialog dialog = new AlertDialog.Builder(this)
             .setTitle("Clear App Data & Cache")
             .setMessage("Current usage:\n• Cache: " + cacheSizeText + "\n• Data: " + dataSizeText + "\n• Total: " + totalSizeText + "\n\n⚠️ Clear All will:\n• Delete ALL app data\n• Remove all settings\n• Clear all configs\n• Reset app to fresh state\n• You'll need to login again\n\nChoose what to clear:")
@@ -3417,9 +3498,9 @@ public class MainActivity extends MainBaseActivity implements
                 clearAppCache();
             })
             .create();
-        
+
         dialog.show();
-        
+
         // Style the buttons with proper colors
         if (dialog.getButton(AlertDialog.BUTTON_POSITIVE) != null) {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.RED);
@@ -3441,9 +3522,9 @@ public class MainActivity extends MainBaseActivity implements
             })
             .setNegativeButton("Cancel", null)
             .create();
-        
+
         confirmDialog.show();
-        
+
         // Style the buttons
         if (confirmDialog.getButton(AlertDialog.BUTTON_POSITIVE) != null) {
             confirmDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.RED);
@@ -3517,25 +3598,25 @@ public class MainActivity extends MainBaseActivity implements
         try {
             File cacheDir = getCacheDir();
             File externalCacheDir = getExternalCacheDir();
-            
+
             long clearedSize = 0;
             int filesDeleted = 0;
-            
+
             // Clear internal cache
             if (cacheDir != null && cacheDir.exists()) {
                 clearedSize += getDirSize(cacheDir);
                 filesDeleted += deleteDirContents(cacheDir);
             }
-            
+
             // Clear external cache
             if (externalCacheDir != null && externalCacheDir.exists()) {
                 clearedSize += getDirSize(externalCacheDir);
                 filesDeleted += deleteDirContents(externalCacheDir);
             }
-            
+
             String clearedSizeText = formatFileSize(clearedSize);
             showToast("Cache Cleared", "Cleared " + clearedSizeText + " (" + filesDeleted + " files)");
-            
+
         } catch (Exception e) {
             showToast("Error", "Failed to clear cache: " + e.getMessage());
             e.printStackTrace();
@@ -3548,29 +3629,29 @@ public class MainActivity extends MainBaseActivity implements
             File externalCacheDir = getExternalCacheDir();
             File dataDir = getFilesDir();
             File externalFilesDir = getExternalFilesDir(null);
-            
+
             long clearedSize = 0;
             int filesDeleted = 0;
-            
+
             // Clear internal cache
             if (cacheDir != null && cacheDir.exists()) {
                 clearedSize += getDirSize(cacheDir);
                 filesDeleted += deleteDirContents(cacheDir);
             }
-            
+
             // Clear external cache
             if (externalCacheDir != null && externalCacheDir.exists()) {
                 clearedSize += getDirSize(externalCacheDir);
                 filesDeleted += deleteDirContents(externalCacheDir);
             }
-            
+
             // Clear internal data (excluding databases and shared_prefs)
             if (dataDir != null && dataDir.exists()) {
                 File[] files = dataDir.listFiles();
                 if (files != null) {
                     for (File file : files) {
                         // Skip databases and shared_prefs to preserve settings
-                        if (!file.getName().equals("databases") && 
+                        if (!file.getName().equals("databases") &&
                             !file.getName().equals("shared_prefs")) {
                             clearedSize += getDirSize(file);
                             if (file.isDirectory()) {
@@ -3583,16 +3664,16 @@ public class MainActivity extends MainBaseActivity implements
                     }
                 }
             }
-            
+
             // Clear external data
             if (externalFilesDir != null && externalFilesDir.exists()) {
                 clearedSize += getDirSize(externalFilesDir);
                 filesDeleted += deleteDirContents(externalFilesDir);
             }
-            
+
             String clearedSizeText = formatFileSize(clearedSize);
             showToast("Data & Cache Cleared", "Cleared " + clearedSizeText + " (" + filesDeleted + " files)");
-            
+
         } catch (Exception e) {
             showToast("Error", "Failed to clear data: " + e.getMessage());
             e.printStackTrace();
@@ -3604,10 +3685,10 @@ public class MainActivity extends MainBaseActivity implements
             File cacheDir = getCacheDir();
             File externalCacheDir = getExternalCacheDir();
             File dataDir = getFilesDir().getParentFile(); // Get app data root directory
-            
+
             long clearedSize = 0;
             int filesDeleted = 0;
-            
+
             // Clear everything in app data directory
             if (dataDir != null && dataDir.exists()) {
                 File[] files = dataDir.listFiles();
@@ -3623,10 +3704,10 @@ public class MainActivity extends MainBaseActivity implements
                     }
                 }
             }
-            
+
             String clearedSizeText = formatFileSize(clearedSize);
             showToast("All Data Cleared", "Cleared " + clearedSizeText + " - App will restart");
-            
+
             // Restart app after clearing all data
             new Handler().postDelayed(() -> {
                 Intent intent = getPackageManager().getLaunchIntentForPackage(getPackageName());
@@ -3637,7 +3718,7 @@ public class MainActivity extends MainBaseActivity implements
                 finish();
                 System.exit(0);
             }, 2000);
-            
+
         } catch (Exception e) {
             showToast("Error", "Failed to clear all data: " + e.getMessage());
             e.printStackTrace();

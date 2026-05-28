@@ -136,91 +136,87 @@ public class ConfigSpinnerAdapter extends AppCompatActivity implements SettingsC
 		randonSpaceLay.setVisibility(mPref.getBoolean(CONFIG_PASSCODE_KEY, false) ?View.VISIBLE:View.GONE);
 		ConfigListView.getRecyclerView().setVerticalScrollBarEnabled(false);
 
-		// Load data in background to prevent UI freeze
-		new Thread(() -> {
-			final ArrayList<Pair<Long, JSONObject>> initialData = getConfigAdapter(ConfigType);
+		// Fast loading: load data directly on UI thread to avoid "empty list" state
+		final ArrayList<Pair<Long, JSONObject>> initialData = getConfigAdapter(ConfigType);
+		ConfigListView.setLayoutManager(mLinearLayoutManager);
+		listAdapter = new ItemAdapter(ConfigSpinnerAdapter.this, initialData, R.layout.list_item, R.id.dragHandle, Integer.parseInt(ConfigType));
+		ConfigListView.setAdapter(listAdapter, true);
+		ConfigListView.setCanDragHorizontally(false);
+		ConfigListView.setCanDragVertically(true);
 
-			runOnUiThread(() -> {
-				ConfigListView.setLayoutManager(mLinearLayoutManager);
-				listAdapter = new ItemAdapter(ConfigSpinnerAdapter.this, initialData, R.layout.list_item, R.id.dragHandle, Integer.parseInt(ConfigType));
-				ConfigListView.setAdapter(listAdapter, true);
-				ConfigListView.setCanDragHorizontally(false);
-				ConfigListView.setCanDragVertically(true);
+		ConfigListView.setDragListListener(new DragListView.DragListListenerAdapter() {
+			@Override
+			public void onItemDragEnded(int fromPosition, int toPosition) {
+				loadNewJS(listAdapter.getNewJS(), toPosition);
+			}
+		});
 
-				ConfigListView.setDragListListener(new DragListView.DragListListenerAdapter() {
-					@Override
-					public void onItemDragEnded(int fromPosition, int toPosition) {
-						loadNewJS(listAdapter.getNewJS(), toPosition);
-					}
-				});
+		listAdapter.setOnSelectedSerListener(new ItemAdapter.OnSelectedSerListener() {
+			@Override
+			public void onSelectSer(String positionStr) {
+				int p = Integer.parseInt(positionStr);
+				if (Objects.equals(ConfigType, "0")) {
+					mEditor.putInt(SERVER_POSITION, p);
+					mEditor.putBoolean("isRandom", false);
+				} else if (Objects.equals(ConfigType, "1")) {
+					mEditor.putInt(NETWORK_POSITION, p);
+					try {
+						JSONArray jar = getNetworkArrayDragaPosition();
+						if (jar != null && p < jar.length()) {
+							JSONObject js = jar.getJSONObject(p);
+							if (js.has("proto_spin")) {
+								int proto = js.getInt("proto_spin");
+								int currentCat = mPref.getInt(manual_tunnel_radio_key, 0);
 
-				listAdapter.setOnSelectedSerListener(new ItemAdapter.OnSelectedSerListener() {
-					@Override
-					public void onSelectSer(String positionStr) {
-						int p = Integer.parseInt(positionStr);
-						if (Objects.equals(ConfigType, "0")) {
-							mEditor.putInt(SERVER_POSITION, p);
-							mEditor.putBoolean("isRandom", false);
-						} else if (Objects.equals(ConfigType, "1")) {
-							mEditor.putInt(NETWORK_POSITION, p);
-							try {
-								JSONArray jar = getNetworkArrayDragaPosition();
-								if (jar != null && p < jar.length()) {
-									JSONObject js = jar.getJSONObject(p);
-									if (js.has("proto_spin")) {
-										int proto = js.getInt("proto_spin");
-										int currentCat = mPref.getInt(manual_tunnel_radio_key, 0);
-
-										if (proto == 1) { // Hysteria
-											if (currentCat != 1) {
-												mEditor.putInt(manual_tunnel_radio_key, 1);
-												mEditor.putInt(SERVER_POSITION, 0);
-											}
-										} else if (proto == 2) { // SLOWDNS
-											if (currentCat != 3) {
-												mEditor.putInt(manual_tunnel_radio_key, 3);
-												mEditor.putInt(SERVER_POSITION, 0);
-											}
-										} else if (proto == 6) { // V2ray
-											if (currentCat < 4 || currentCat > 6) {
-												mEditor.putInt(manual_tunnel_radio_key, 4);
-												mEditor.putInt(SERVER_POSITION, 0);
-											}
-										} else {
-											// Generic payloads (HTTP, SSL, etc.)
-											// If we are in a specialized category, default back to OVPN (0)
-											if (currentCat == 1 || currentCat == 3 || (currentCat >= 4 && currentCat <= 6)) {
-												mEditor.putInt(manual_tunnel_radio_key, 0);
-												mEditor.putInt(SERVER_POSITION, 0);
-											}
-										}
+								if (proto == 1) { // Hysteria
+									if (currentCat != 1) {
+										mEditor.putInt(manual_tunnel_radio_key, 1);
+										mEditor.putInt(SERVER_POSITION, 0);
+									}
+								} else if (proto == 2) { // SLOWDNS
+									if (currentCat != 3) {
+										mEditor.putInt(manual_tunnel_radio_key, 3);
+										mEditor.putInt(SERVER_POSITION, 0);
+									}
+								} else if (proto == 6) { // V2ray
+									if (currentCat < 4 || currentCat > 6) {
+										mEditor.putInt(manual_tunnel_radio_key, 4);
+										mEditor.putInt(SERVER_POSITION, 0);
+									}
+								} else {
+									// Generic payloads (HTTP, SSL, etc.)
+									// If we are in a specialized category, default back to OVPN (0)
+									if (currentCat == 1 || currentCat == 3 || (currentCat >= 4 && currentCat <= 6)) {
+										mEditor.putInt(manual_tunnel_radio_key, 0);
+										mEditor.putInt(SERVER_POSITION, 0);
 									}
 								}
-							} catch (Exception e) {
-								android.util.Log.e("ConfigSpinner", "Error updating tunnel category", e);
 							}
 						}
-						mEditor.commit();
-						finish();
-					}
-
-					@Override
-					public void onReloadConfig(int position) {
-						setupListRecyclerView(ConfigListView, listAdapter);
-					}
-				});
-
-				// Apply initial filter if exists
-				String savedSearch = mPref.getString("my_config_research_" + ConfigType, "");
-				if (!savedSearch.isEmpty()) {
-					search.setText(savedSearch);
-					listAdapter.filter(savedSearch);
-					if (Objects.equals(ConfigType, "0")) {
-						show_random_ly.setVisibility(listAdapter.getItemCount() > 0 ? View.VISIBLE : View.GONE);
+					} catch (Exception e) {
+						android.util.Log.e("ConfigSpinner", "Error updating tunnel category", e);
 					}
 				}
-			});
-		}).start();
+				mEditor.commit();
+				finish();
+			}
+
+			@Override
+			public void onReloadConfig(int position) {
+				setupListRecyclerView(ConfigListView, listAdapter);
+			}
+		});
+
+		// Apply initial filter if exists
+		String savedSearch = mPref.getString("my_config_research_" + ConfigType, "");
+		if (!savedSearch.isEmpty()) {
+			search.setText(savedSearch);
+			listAdapter.filter(savedSearch);
+			if (Objects.equals(ConfigType, "0")) {
+				show_random_ly.setVisibility(listAdapter.getItemCount() > 0 ? View.VISIBLE : View.GONE);
+			}
+		}
+
 
 		clear_btn = findViewById(R.id.clear_btn);
 		search_btn = findViewById(R.id.search_btn);
@@ -462,8 +458,9 @@ public class ConfigSpinnerAdapter extends AppCompatActivity implements SettingsC
 		} catch (JSONException e) {
 			util.showToast("Error-13!", e.getMessage());
 		}
-        return new JSONArray();
-    }
+		return new JSONArray();
+	}
+
 
 	private boolean reloadAdapterView(){
 		String research = search.getText().toString().trim();
@@ -537,20 +534,15 @@ public class ConfigSpinnerAdapter extends AppCompatActivity implements SettingsC
 	private ArrayList<Pair<Long, JSONObject>> getConfigAdapter(String t) {
 		ArrayList<Pair<Long, JSONObject>> mItemArray = new ArrayList<>();
 		arrayList.clear();
-		JSONArray jar = null;
 		try {
-			if (Objects.equals(t, "0")){
-				jar = getServerArrayDragaPosition();
-			}else if (Objects.equals(t, "1")){
-				jar = getNetworkArrayDragaPosition();
-			}
+			JSONArray jar = Objects.equals(t, "0") ? getServerArrayDragaPosition() : getNetworkArrayDragaPosition();
 			if (jar == null) return mItemArray;
-			for (int i=0;i < jar.length();i++) {
+			
+			int len = jar.length();
+			for (int i = 0; i < len; i++) {
 				JSONObject jo = jar.getJSONObject(i);
-				String name = jo.getString("Name");
-				Model model = new Model(name, i);
-				arrayList.add(model);
 				mItemArray.add(new Pair<>((long) i, jo));
+				arrayList.add(new Model(jo.optString("Name", ""), i));
 			}
 			return mItemArray;
 		} catch (Exception e) {
@@ -558,78 +550,66 @@ public class ConfigSpinnerAdapter extends AppCompatActivity implements SettingsC
 		}
 	}
 
+
 	public JSONArray getServerArrayDragaPosition(){
+		if (cachedServers != null) return cachedServers;
 		try {
 			JSONArray jar = new JSONArray();
-			if (mPref.getInt(manual_tunnel_radio_key, 0)==0){
-				JSONArray jarr1 = new JSONArray(mPref.getString(SERVER_TYPE_OVPN,"[]"));
-				for (int i=0;i < jarr1.length();i++){
-					if (jarr1.getJSONObject(i).getInt("serverType")==0){
-						jar.put(jarr1.getJSONObject(i));
-					}
-				}
-			}else if (mPref.getInt(manual_tunnel_radio_key, 0)==2){
-				JSONArray jarr2 = new JSONArray(mPref.getString(SERVER_TYPE_SSH,"[]"));
-				for (int i=0;i < jarr2.length();i++){
-					if (jarr2.getJSONObject(i).getInt("serverType")==1){
-						jar.put(jarr2.getJSONObject(i));
-					}
-				}
-			}else if (mPref.getInt(manual_tunnel_radio_key, 0)==3){
-				JSONArray jarr3 = new JSONArray(mPref.getString(SERVER_TYPE_DNS,"[]"));
-				for (int i=0;i < jarr3.length();i++){
-					if (jarr3.getJSONObject(i).getInt("serverType")==2){
-						jar.put(jarr3.getJSONObject(i));
-					}
-				}
-			}else if (mPref.getInt(manual_tunnel_radio_key, 0)==1){
-				JSONArray jarr4 = new JSONArray(mPref.getString(SERVER_TYPE_UDP_HYSTERIA_V1,"[]"));
-				for (int i=0;i < jarr4.length();i++){
-					if (jarr4.getJSONObject(i).getInt("serverType")==4){
-						jar.put(jarr4.getJSONObject(i));
-					}
-				}
-			}else if (mPref.getInt(manual_tunnel_radio_key, 0)==4){
-				JSONArray jarr5 = new JSONArray(mPref.getString(SERVER_TYPE_V2RAY,"[]"));
-				for (int i=0;i < jarr5.length();i++){
-					if (jarr5.getJSONObject(i).getInt("serverType")==3){
-						if (jarr5.getJSONObject(i).getInt("V2rayType") == 0) {
-							jar.put(jarr5.getJSONObject(i));
+			int tunnelMode = mPref.getInt(manual_tunnel_radio_key, 0);
+			String key;
+			int targetServerType;
+			
+			switch (tunnelMode) {
+				case 1:
+					key = SERVER_TYPE_UDP_HYSTERIA_V1;
+					targetServerType = 4;
+					break;
+				case 2:
+					key = SERVER_TYPE_SSH;
+					targetServerType = 1;
+					break;
+				case 3:
+					key = SERVER_TYPE_DNS;
+					targetServerType = 2;
+					break;
+				case 4:
+				case 5:
+				case 6:
+					key = (tunnelMode == 4) ? SERVER_TYPE_V2RAY : (tunnelMode == 5 ? SERVER_TYPE_CDN_V2RAY : SERVER_TYPE_SSL_V2RAY);
+					targetServerType = 3;
+					break;
+				default:
+					key = SERVER_TYPE_OVPN;
+					targetServerType = 0;
+					break;
+			}
+
+			JSONArray sourceArr = new JSONArray(mPref.getString(key, "[]"));
+			for (int i = 0; i < sourceArr.length(); i++) {
+				JSONObject jo = sourceArr.getJSONObject(i);
+				if (jo.getInt("serverType") == targetServerType) {
+					if (tunnelMode >= 4 && tunnelMode <= 6) {
+						int v2rayType = tunnelMode - 4; // 4->0, 5->1, 6->2
+						if (jo.getInt("V2rayType") == v2rayType) {
+							jar.put(jo);
 						}
-					}
-				}
-			}else if (mPref.getInt(manual_tunnel_radio_key, 0)==5){
-				JSONArray jarr6 = new JSONArray(mPref.getString(SERVER_TYPE_CDN_V2RAY,"[]"));
-				for (int i=0;i < jarr6.length();i++){
-					if (jarr6.getJSONObject(i).getInt("serverType")==3){
-						if (jarr6.getJSONObject(i).getInt("V2rayType") == 1) {
-							jar.put(jarr6.getJSONObject(i));
-						}
-					}
-				}
-			}else if (mPref.getInt(manual_tunnel_radio_key, 0)==6){
-				JSONArray jarr7 = new JSONArray(mPref.getString(SERVER_TYPE_SSL_V2RAY,"[]"));
-				for (int i=0;i < jarr7.length();i++){
-					if (jarr7.getJSONObject(i).getInt("serverType")==3){
-						if (jarr7.getJSONObject(i).getInt("V2rayType") == 2) {
-							jar.put(jarr7.getJSONObject(i));
-						}
+					} else {
+						jar.put(jo);
 					}
 				}
 			}
-			if (jar.length()>=2){
-				mEditor.putBoolean("show_random_layout",true).apply();
-			}else{
-				mEditor.putBoolean("show_random_layout",false).apply();
-			}
+
+			mEditor.putBoolean("show_random_layout", jar.length() >= 2).apply();
+			cachedServers = jar;
 			return jar;
 		} catch (JSONException e) {
 			mEditor.putBoolean("isRandom", false).apply();
-			mEditor.putBoolean("show_random_layout",false).apply();
+			mEditor.putBoolean("show_random_layout", false).apply();
 			util.showToast("Error-8!", e.getMessage());
 		}
 		return null;
 	}
+
 	public JSONArray getNetworkArrayDragaPosition() {
 		try {
 			JSONArray jar = new JSONArray();

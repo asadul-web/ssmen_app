@@ -81,6 +81,7 @@ object V2RayServiceManager {
         // context.toast(R.string.toast_services_stop)
         hLogStatus.updateStateString(hLogStatus.VPN_DISCONNECTED, "Disconnected")
         MessageUtil.sendMsg2Service(context, AppConfig.MSG_STATE_STOP, "")
+        NotificationManager.resetSessionStats()
     }
 
     /**
@@ -189,10 +190,15 @@ object V2RayServiceManager {
         }
 
         try {
-            MessageUtil.sendMsg2UI(service, AppConfig.MSG_STATE_START_SUCCESS, "")
+            val up = queryStats(AppConfig.TAG_PROXY, AppConfig.UPLINK)
+            val down = queryStats(AppConfig.TAG_PROXY, AppConfig.DOWNLINK)
+            MessageUtil.sendMsg2UI(service, AppConfig.MSG_STATE_START_SUCCESS, longArrayOf(down, up))
             hLogStatus.updateStateString(hLogStatus.VPN_CONNECTED, "Connected")
             NotificationManager.showNotification(currentConfig)
             NotificationManager.startSpeedNotification(currentConfig)
+            
+            // Proactively trigger delay measurement immediately after start success
+            measureV2rayDelay()
 
             PluginServiceManager.runPlugin(service, config, result.socksPort)
         } catch (e: Exception) {
@@ -282,9 +288,6 @@ object V2RayServiceManager {
             }
             // 🔔 Send back to UI
             MessageUtil.sendMsg2UI(service, AppConfig.MSG_MEASURE_DELAY_SUCCESS, result)
-            withContext(Dispatchers.Main) {
-                Toast.makeText(service, result, Toast.LENGTH_SHORT).show()
-            }
         }
     }
 
@@ -382,18 +385,6 @@ object V2RayServiceManager {
 
                 AppConfig.MSG_MEASURE_DELAY -> {
                     measureV2rayDelay()
-                }
-            }
-
-            when (intent?.action) {
-                Intent.ACTION_SCREEN_OFF -> {
-                    Log.i(AppConfig.TAG, "SCREEN_OFF, stop querying stats")
-                    NotificationManager.stopSpeedNotification(currentConfig)
-                }
-
-                Intent.ACTION_SCREEN_ON -> {
-                    Log.i(AppConfig.TAG, "SCREEN_ON, start querying stats")
-                    NotificationManager.startSpeedNotification(currentConfig)
                 }
             }
         }

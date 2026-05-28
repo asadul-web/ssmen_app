@@ -38,6 +38,8 @@ object NotificationManager {
     private var lastQueryTime = 0L
     private var lastUp = 0L
     private var lastDown = 0L
+    private var sessionTotalUp = 0L
+    private var sessionTotalDown = 0L
     private var mBuilder: NotificationCompat.Builder? = null
     private var speedNotificationJob: Job? = null
     private var mNotificationManager: NotificationManager? = null
@@ -53,9 +55,19 @@ object NotificationManager {
         lastUp = V2RayServiceManager.queryStats(AppConfig.TAG_PROXY, AppConfig.UPLINK)
         lastDown = V2RayServiceManager.queryStats(AppConfig.TAG_PROXY, AppConfig.DOWNLINK)
 
+        // Send initial stats immediately to UI
+        getService()?.let {
+            MessageUtil.sendMsg2UI(it, AppConfig.MSG_STATE_STATS, longArrayOf(sessionTotalDown, sessionTotalUp))
+        }
+
+        val loopStartTime = System.currentTimeMillis()
         speedNotificationJob = CoroutineScope(Dispatchers.IO).launch {
             while (isActive) {
-                delay(1000)
+                val now = System.currentTimeMillis()
+                val elapsedSinceStart = now - loopStartTime
+                val nextTick = ((elapsedSinceStart / 1000) + 1) * 1000
+                delay(nextTick - elapsedSinceStart)
+                
                 val queryTime = System.currentTimeMillis()
                 val sinceLastQueryInSeconds = (queryTime - lastQueryTime) / 1000.0
                 if (sinceLastQueryInSeconds < 0.1) continue
@@ -64,33 +76,54 @@ object NotificationManager {
                 val currentDownProxy = V2RayServiceManager.queryStats(AppConfig.TAG_PROXY, AppConfig.DOWNLINK)
                 
                 // Fallback to system traffic if proxy tag returns 0
-                val currentUp = if (currentUpProxy > 0) currentUpProxy else V2RayServiceManager.queryStats("", AppConfig.UPLINK)
-                val currentDown = if (currentDownProxy > 0) currentDownProxy else V2RayServiceManager.queryStats("", AppConfig.DOWNLINK)
+                val currentUpRaw = if (currentUpProxy > 0) currentUpProxy else V2RayServiceManager.queryStats("", AppConfig.UPLINK)
+                val currentDownRaw = if (currentDownProxy > 0) currentDownProxy else V2RayServiceManager.queryStats("", AppConfig.DOWNLINK)
                 
-                val upSpeed = ((currentUp - lastUp) / sinceLastQueryInSeconds).coerceAtLeast(0.0).toLong()
-                val downSpeed = ((currentDown - lastDown) / sinceLastQueryInSeconds).coerceAtLeast(0.0).toLong()
+                // Track monotonic session totals (handles core restarts)
+                // If core restarts, currentUpRaw will be less than lastUp (reset to 0)
+                if (currentUpRaw >= lastUp) {
+                    sessionTotalUp += (currentUpRaw - lastUp)
+                } else {
+                    sessionTotalUp += currentUpRaw
+                }
+                
+                if (currentDownRaw >= lastDown) {
+                    sessionTotalDown += (currentDownRaw - lastDown)
+                } else {
+                    sessionTotalDown += currentDownRaw
+                }
+
+                val upSpeed = ((currentUpRaw - lastUp).coerceAtLeast(0L) / sinceLastQueryInSeconds).coerceAtLeast(0.0).toLong()
+                val downSpeed = ((currentDownRaw - lastDown).coerceAtLeast(0L) / sinceLastQueryInSeconds).coerceAtLeast(0.0).toLong()
 
                 // Send stats to UI process for real-time display
                 getService()?.let {
-                    MessageUtil.sendMsg2UI(it, AppConfig.MSG_STATE_STATS, longArrayOf(currentDown, currentUp))
+                    MessageUtil.sendMsg2UI(it, AppConfig.MSG_STATE_STATS, longArrayOf(sessionTotalDown, sessionTotalUp))
                 }
 
                 val serverName = MmkvManager.decodeSettingsString(MmkvManager.KEY_SELECTED_SERVER_NAME) ?: currentConfig?.remarks ?: "Server"
                 val payloadName = MmkvManager.decodeSettingsString(MmkvManager.KEY_SELECTED_PAYLOAD_NAME) ?: "Default"
 
-                val statsText = "↓ ${downSpeed.toBitSpeedString()} ⚡ ${currentDown.toTrafficString()} ↑ ${upSpeed.toBitSpeedString()} ⚡ ${currentUp.toTrafficString()}"
+                val statsText = "↓ ${downSpeed.toBitSpeedString()} ⚡ ${sessionTotalDown.toTrafficString()} ↑ ${upSpeed.toBitSpeedString()} ⚡ ${sessionTotalUp.toTrafficString()}"
                 
-                // Combine into 2 lines for maximum compatibility and to prevent truncation
-                // Line 1: Server • Payload
-                // Line 2: Speed Stats
                 val notificationContent = "$serverName • $payloadName\n$statsText"
                 updateNotification(notificationContent)
 
-                lastUp = currentUp
-                lastDown = currentDown
+                lastUp = currentUpRaw
+                lastDown = currentDownRaw
                 lastQueryTime = queryTime
             }
         }
+    }
+
+    /**
+     * Resets the session totals. Should be called when the user disconnects.
+     */
+    fun resetSessionStats() {
+        sessionTotalUp = 0L
+        sessionTotalDown = 0L
+        lastUp = 0L
+        lastDown = 0L
     }
 
     /**
