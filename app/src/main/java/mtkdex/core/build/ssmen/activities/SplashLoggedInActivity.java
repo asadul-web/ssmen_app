@@ -25,12 +25,40 @@ import mtkdex.core.build.ssmen.utils.util;
 
 public class SplashLoggedInActivity extends AppCompatActivity {
 
+    private boolean animationFinished = false;
+    private boolean validationFinished = false;
+    private Intent nextIntent = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_logged_in);
 
+        com.airbnb.lottie.LottieAnimationView lottieSplash = findViewById(R.id.lottieSplash);
+        lottieSplash.addAnimatorListener(new android.animation.AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(android.animation.Animator animation) {
+                animationFinished = true;
+                checkAndProceed();
+            }
+        });
+
+        // Safety timeout to ensure app doesn't hang if animation fails
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            if (!animationFinished) {
+                animationFinished = true;
+                checkAndProceed();
+            }
+        }, 5000);
+
         validateAndProceed();
+    }
+
+    private void checkAndProceed() {
+        if (animationFinished && validationFinished && nextIntent != null) {
+            startActivity(nextIntent);
+            finish();
+        }
     }
 
     private void validateAndProceed() {
@@ -60,15 +88,13 @@ public class SplashLoggedInActivity extends AppCompatActivity {
                         if (auth && deviceMatch && !expiry.equals("none") && 
                             !util.getDaysLeft(expiry).equals("Expired")) {
                             
-                            // Valid account, save raw expiry for MainActivity
                             SecurePrefUtil.getEncryptedPrefs(this).edit()
                                     .putString("_AccountRawXp", expiry)
                                     .apply();
                             
-                            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                                startActivity(new Intent(this, MainActivity.class));
-                                finish();
-                            }, 2000); // Give user time to see splash
+                            nextIntent = new Intent(this, MainActivity.class);
+                            validationFinished = true;
+                            checkAndProceed();
                         } else {
                             if (expiry.equals("Expired") || util.getDaysLeft(expiry).equals("Expired")) {
                                 redirectToLogin("Your account has expired.");
@@ -79,11 +105,10 @@ public class SplashLoggedInActivity extends AppCompatActivity {
                             }
                         }
                     } catch (Exception e) {
-                        // On error, proceed anyway to allow offline use if possible
-                        proceedToMain();
+                        prepareProceedToMain();
                     }
                 },
-                error -> proceedToMain());
+                error -> prepareProceedToMain());
 
         MainApplication.getRequestQueue().add(req);
     }
@@ -92,14 +117,14 @@ public class SplashLoggedInActivity extends AppCompatActivity {
         ConfigUtil.getInstance(this).setHasAccount(false);
         Intent intent = new Intent(this, LoginActivity.class);
         intent.putExtra("error_msg", msg);
-        startActivity(intent);
-        finish();
+        nextIntent = intent;
+        validationFinished = true;
+        checkAndProceed();
     }
 
-    private void proceedToMain() {
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            startActivity(new Intent(this, MainActivity.class));
-            finish();
-        }, 1000);
+    private void prepareProceedToMain() {
+        nextIntent = new Intent(this, MainActivity.class);
+        validationFinished = true;
+        checkAndProceed();
     }
 }

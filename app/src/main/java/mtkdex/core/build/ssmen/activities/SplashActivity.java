@@ -20,7 +20,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 
 
-public class SpashActivity extends AppCompatActivity {
+public class SplashActivity extends AppCompatActivity {
 
     private SharedPreferences myPrefs;
     private SharedPreferences.Editor editor;
@@ -56,18 +56,28 @@ public class SpashActivity extends AppCompatActivity {
         lottieSplash.addAnimatorListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                startActivity(new Intent(SpashActivity.this, LoginActivity.class));
-                overridePendingTransition(0, 0); // 🔥 REMOVE TRANSITION
+                startActivity(new Intent(SplashActivity.this, LoginActivity.class));
                 finish();
             }
         });
+
+        // Safety timeout to ensure app doesn't hang if animation fails
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (!isFinishing()) {
+                    startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+                    finish();
+                }
+            }
+        }, 5000);
 
 
                              //       default transaction
 //        lottieSplash.addAnimatorListener(new AnimatorListenerAdapter() {
 //            @Override
 //            public void onAnimationEnd(Animator animation) {
-//                startActivity(new Intent(SpashActivity.this, LoginActivity.class));
+//                startActivity(new Intent(SplashActivity.this, LoginActivity.class));
 //                finish();
 //            }
 //        });

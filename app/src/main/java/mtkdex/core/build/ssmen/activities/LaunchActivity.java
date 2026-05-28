@@ -32,7 +32,7 @@ public class LaunchActivity extends AppCompatActivity {
             validateAndNavigate(splashScreen);
         } else {
             // New user → first splash
-            startActivity(new Intent(this, SpashActivity.class));
+            startActivity(new Intent(this, SplashActivity.class));
             finish();
         }
     }
@@ -46,7 +46,7 @@ public class LaunchActivity extends AppCompatActivity {
 
         if (user.isEmpty() || pass.isEmpty()) {
             ConfigUtil.getInstance(this).setHasAccount(false);
-            startActivity(new Intent(this, SpashActivity.class));
+            startActivity(new Intent(this, SplashActivity.class));
             finish();
             return;
         }
