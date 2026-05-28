@@ -359,13 +359,76 @@
                     android:fontFamily="@font/google_sans_flex"
                     app:fontVariationSettings="'wght' 500" />
 
-                <Spinner
+                <RadioGroup
                     android:id="@+id/categorySpinner"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_marginTop="5dp"
-                    android:background="@drawable/bg_spin"
-                    android:entries="@array/server_category" />
+                    android:background="@drawable/bg_tab_outline"
+                    android:clipToOutline="true"
+                    android:orientation="horizontal"
+                    android:padding="2dp">
+
+                    <RadioButton
+                        android:id="@+id/rb_cat_ovpn"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:button="@null"
+                        android:background="@drawable/bg_radio_selector"
+                        android:gravity="center"
+                        android:text="OVPN"
+                        android:textSize="8sp"
+                        android:textColor="@color/radio_text_selector" />
+
+                    <RadioButton
+                        android:id="@+id/rb_cat_v2ray"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:button="@null"
+                        android:background="@drawable/bg_radio_selector"
+                        android:gravity="center"
+                        android:text="V2RAY"
+                        android:textSize="8sp"
+                        android:textColor="@color/radio_text_selector" />
+
+                    <RadioButton
+                        android:id="@+id/rb_cat_ssh"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:button="@null"
+                        android:background="@drawable/bg_radio_selector"
+                        android:gravity="center"
+                        android:text="SSH"
+                        android:textSize="8sp"
+                        android:textColor="@color/radio_text_selector" />
+
+                    <RadioButton
+                        android:id="@+id/rb_cat_dns"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:button="@null"
+                        android:background="@drawable/bg_radio_selector"
+                        android:gravity="center"
+                        android:text="DNS"
+                        android:textSize="8sp"
+                        android:textColor="@color/radio_text_selector" />
+
+                    <RadioButton
+                        android:id="@+id/rb_cat_udp"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:button="@null"
+                        android:background="@drawable/bg_radio_selector"
+                        android:gravity="center"
+                        android:text="UDP"
+                        android:textSize="8sp"
+                        android:textColor="@color/radio_text_selector" />
+                </RadioGroup>
 
                 <!-- Checkboxes -->
                 <LinearLayout

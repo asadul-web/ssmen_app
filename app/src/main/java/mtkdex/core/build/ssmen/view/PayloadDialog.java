@@ -81,63 +81,10 @@ public class PayloadDialog implements SettingsConstants{
         ((TextView)v.findViewById(R.id.cancel_tv)).setTextColor(mConfig.getColorAccent());
         v.findViewById(R.id.save).setBackgroundTintList(ColorStateList.valueOf(mConfig.getColorAccent()));
         pLogo = v.findViewById(R.id.pLogo);
+        pLogo = v.findViewById(R.id.pLogo);
         proto_spin = v.findViewById(R.id.proto_spin);
         payload_v2ray_type_spinner = v.findViewById(R.id.payload_v2ray_type_spinner);
         server_type = v.findViewById(R.id.server_type);
-        etNetworkName = v.findViewById(R.id.etNetworkName);
-        etNetworkPayload = v.findViewById(R.id.etNetworkPayload);
-        etNetworkInfo = v.findViewById(R.id.etNetworkInfo);
-        ckUseDefProxy = v.findViewById(R.id.ckUseDefProxy);
-        etSquidProxy = v.findViewById(R.id.etSquidProxy);
-        etSquidPort = v.findViewById(R.id.etSquidPort);
-        etNetworkFrontQuery = v.findViewById(R.id.etNetworkFrontQuery);
-        etNetworkBackQuery = v.findViewById(R.id.etNetworkBackQuery);
-        btnPayloadGen = v.findViewById(R.id.btnPayloadGen);
-        imgLogoPreview = v.findViewById(R.id.imgLogoPreview);
-        v.findViewById(R.id.photo_card).setOnClickListener(view -> pLogo.performClick());
-        
-        pLogo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                try {
-                    String[] list = c.getAssets().list("networks");
-                    if (list != null && position < list.length) {
-                        InputStream open = c.getAssets().open("networks/" + list[position]);
-                        imgLogoPreview.setImageDrawable(Drawable.createFromStream(open, null));
-                        open.close();
-                    }
-                } catch (Exception e) {}
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
-        
-        btnPayloadGen.setColorFilter(mConfig.getColorAccent(), PorterDuff.Mode.SRC_IN);
-        isReplace = v.findViewById(R.id.isReplace);
-        isReplace.setTextColor(mConfig.getColorAccent());
-        ckUseDefProxy.setTextColor(mConfig.getColorAccent());
-        isReplace.setButtonTintList(ColorStateList.valueOf(mConfig.getColorAccent()));
-        ckUseDefProxy.setButtonTintList(ColorStateList.valueOf(mConfig.getColorAccent()));
-        ((TextView)v.findViewById(R.id.savetv)).setTextColor(mConfig.getAppThemeUtil()? Color.BLACK:Color.WHITE);
-        ((TextView)v.findViewById(R.id.notiftext1)).setTextColor(mConfig.getAppThemeUtil()? Color.BLACK:Color.WHITE);
-        int[] title = {R.id.title1,R.id.title2,R.id.title3,R.id.title4};
-        for (int t : title) {
-            ((TextView) v.findViewById(t)).setTextColor(mConfig.getAppThemeUtil()? Color.BLACK:Color.WHITE);
-            v.findViewById(t).setBackgroundColor(mConfig.getColorAccent());
-        }
-        int[] rb = {R.id.cf_radio,R.id.ws_radio,R.id.http_radio};
-        for (int r : rb) {
-            ((RadioButton) v.findViewById(r)).setButtonTintList(ColorStateList.valueOf(mConfig.getColorAccent()));
-        }
-        int[] txtly = {R.id.TextInputLayout1,R.id.TextInputLayout2,R.id.TextInputLayout3,R.id.TextInputLayout4,R.id.TextInputLayout5,R.id.TextInputLayout6,R.id.etNetworkPayloadInput};
-        for (int tl : txtly) {
-            ((TextInputLayout) v.findViewById(tl)).setBoxStrokeColor(mConfig.getColorAccent());
-        }
-        ckUseDefProxy.setChecked(true);
-        etSquidProxy.setEnabled(false);
-        server_type.check(R.id.cf_radio);
-        proto_spin.setEnabled(false);
         
         if (forceType != -1) {
             proto_spin.setSelection(forceType);
@@ -147,6 +94,7 @@ public class PayloadDialog implements SettingsConstants{
 
         payload_v2ray_type_spinner.setEnabled(false);
         payload_v2ray_type_spinner.setSelection(mPref.getInt(v2ray_payload_type_mSelection_key,0));
+        
         proto_spin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -181,6 +129,60 @@ public class PayloadDialog implements SettingsConstants{
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+        
+        etNetworkName = v.findViewById(R.id.etNetworkName);
+        etNetworkPayload = v.findViewById(R.id.etNetworkPayload);
+        etNetworkInfo = v.findViewById(R.id.etNetworkInfo);
+        ckUseDefProxy = v.findViewById(R.id.ckUseDefProxy);
+        etSquidProxy = v.findViewById(R.id.etSquidProxy);
+        etSquidPort = v.findViewById(R.id.etSquidPort);
+        etNetworkFrontQuery = v.findViewById(R.id.etNetworkFrontQuery);
+        etNetworkBackQuery = v.findViewById(R.id.etNetworkBackQuery);
+        btnPayloadGen = v.findViewById(R.id.btnPayloadGen);
+        imgLogoPreview = v.findViewById(R.id.imgLogoPreview);
+        v.findViewById(R.id.photo_card).setOnClickListener(view -> pLogo.performClick());
+
+        pLogo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                try {
+                    String[] list = c.getAssets().list("networks");
+                    if (list != null && position < list.length) {
+                        InputStream open = c.getAssets().open("networks/" + list[position]);
+                        imgLogoPreview.setImageDrawable(Drawable.createFromStream(open, null));
+                        open.close();
+                    }
+                } catch (Exception e) {}
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+        btnPayloadGen.setColorFilter(mConfig.getColorAccent(), android.graphics.PorterDuff.Mode.SRC_IN);
+        isReplace = v.findViewById(R.id.isReplace);
+        isReplace.setTextColor(mConfig.getColorAccent());
+        ckUseDefProxy.setTextColor(mConfig.getColorAccent());
+        isReplace.setButtonTintList(ColorStateList.valueOf(mConfig.getColorAccent()));
+        ckUseDefProxy.setButtonTintList(ColorStateList.valueOf(mConfig.getColorAccent()));
+        ((TextView)v.findViewById(R.id.savetv)).setTextColor(mConfig.getAppThemeUtil()? Color.BLACK:Color.WHITE);
+        ((TextView)v.findViewById(R.id.notiftext1)).setTextColor(mConfig.getAppThemeUtil()? Color.BLACK:Color.WHITE);
+        int[] title = {R.id.title1,R.id.title2,R.id.title3,R.id.title4};
+        for (int t : title) {
+            ((TextView) v.findViewById(t)).setTextColor(mConfig.getAppThemeUtil()? Color.BLACK:Color.WHITE);
+            v.findViewById(t).setBackgroundColor(mConfig.getColorAccent());
+        }
+        int[] rb = {R.id.cf_radio,R.id.ws_radio,R.id.http_radio};
+        for (int r : rb) {
+            ((RadioButton) v.findViewById(r)).setButtonTintList(ColorStateList.valueOf(mConfig.getColorAccent()));
+        }
+        int[] txtly = {R.id.TextInputLayout1,R.id.TextInputLayout2,R.id.TextInputLayout3,R.id.TextInputLayout4,R.id.TextInputLayout5,R.id.TextInputLayout6,R.id.etNetworkPayloadInput};
+        for (int tl : txtly) {
+            ((TextInputLayout) v.findViewById(tl)).setBoxStrokeColor(mConfig.getColorAccent());
+        }
+        ckUseDefProxy.setChecked(true);
+        etSquidProxy.setEnabled(false);
+        server_type.check(R.id.cf_radio);
         ckUseDefProxy.setOnClickListener(p1 -> {
             if (ckUseDefProxy.isChecked()){
                 etSquidProxy.setText("[Default]");
@@ -313,7 +315,6 @@ public class PayloadDialog implements SettingsConstants{
         for (int tl : txtly) {
             ((TextInputLayout) v.findViewById(tl)).setBoxStrokeColor(mConfig.getColorAccent());
         }
-        proto_spin.setEnabled(false);
         proto_spin.setSelection(mPref.getInt(network_spin_mSelection_key,0));
         payload_v2ray_type_spinner.setEnabled(false);
         payload_v2ray_type_spinner.setSelection(mPref.getInt(v2ray_payload_type_mSelection_key,0));

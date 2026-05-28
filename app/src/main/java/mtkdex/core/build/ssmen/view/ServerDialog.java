@@ -14,6 +14,8 @@ import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import com.v2ray.ang.R;
 import mtkdex.core.build.ssmen.adapter.SerAdapter;
@@ -51,7 +53,8 @@ public class ServerDialog implements SettingsConstants{
     private TextView sName_xp;
     private TextInputLayout server_web_renew_lay;
     private EditText sName,sUdpObfs,etServerIP,etV2rayID,etServerCloudFront,etServerHTTP,etTcpPort,etSSLPort,etUser,etPass,etCertificate, etProxyHost,etProxyPort,edServerWebRenew;
-    private Spinner sFlag,category, serverType, serverV2rayMode;
+    private Spinner sFlag, serverType, serverV2rayMode;
+    private RadioGroup category;
     private CheckBox ckUseLogin, ckMultiCert, protegerCheck;
     private View v;
     private final ConfigUtil mConfig;
@@ -77,9 +80,9 @@ public class ServerDialog implements SettingsConstants{
         ((TextView)v.findViewById(R.id.cancel_tv)).setTextColor(mConfig.getColorAccent());
         v.findViewById(R.id.save).setBackgroundTintList(ColorStateList.valueOf(mConfig.getColorAccent()));
         sName = v.findViewById(R.id.etServerName);
-        sName = v.findViewById(R.id.etServerName);
         sFlag = v.findViewById(R.id.flagspin);
         category = v.findViewById(R.id.categorySpinner);
+        serverType = v.findViewById(R.id.server_sptype);
         serverV2rayMode = v.findViewById(R.id.server_v2ray_type_spinner);
         etV2rayID = v.findViewById(R.id.etV2rayID);
         etServerIP = v.findViewById(R.id.etServerIP);
@@ -117,6 +120,10 @@ public class ServerDialog implements SettingsConstants{
             ((TextView) v.findViewById(t)).setTextColor(mConfig.getAppThemeUtil()? Color.BLACK:Color.WHITE);
             v.findViewById(t).setBackgroundColor(mConfig.getColorAccent());
         }
+        int[] rb = {R.id.rb_cat_ovpn,R.id.rb_cat_v2ray,R.id.rb_cat_ssh,R.id.rb_cat_dns,R.id.rb_cat_udp};
+        for (int r : rb) {
+            ((RadioButton) v.findViewById(r)).setButtonTintList(ColorStateList.valueOf(mConfig.getColorAccent()));
+        }
         int[] txtly = {R.id.TextInputLayout1,R.id.TextInputLayout2,R.id.TextInputLayout3,R.id.TextInputLayout4,R.id.etServerIP_ly,R.id.etServerCloudFront_ly,R.id.etTcpPort_ly,R.id.etSSLPort_ly,R.id.etServerProxyHost_ly,R.id.etServerProxyPort_ly,R.id.etCertificate_ly};
         for (int tl : txtly) {
             ((TextInputLayout) v.findViewById(tl)).setBoxStrokeColor(mConfig.getColorAccent());
@@ -129,11 +136,13 @@ public class ServerDialog implements SettingsConstants{
         } catch (Exception e) {
             util.showToast("Server Dialog",e.getMessage());
         }
-        serverType = v.findViewById(R.id.server_sptype);
-        serverType.setEnabled(false);
-        serverType.setSelection(mPref.getInt(server_spin_mSelection_key,0));
+        
+        serverType.setSelection(mPref.getInt(server_spin_mSelection_key, 0));
+        category.check(R.id.rb_cat_ovpn); // Default
+        
         serverV2rayMode.setEnabled(false);
         serverV2rayMode.setSelection(mPref.getInt(v2ray_server_type_mSelection_key,0));
+        
         serverType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -167,6 +176,7 @@ public class ServerDialog implements SettingsConstants{
                 }else if (position==3){
                     v.findViewById(R.id.etServerIP_ly).setVisibility(View.GONE);
                     ((TextInputLayout)v.findViewById(R.id.etServerCloudFront_ly)).setHint("v2ray Config");
+                    ((TextInputLayout)v.findViewById(R.id.etV2rayID_ly)).setHint("V2ray encrypted ID, Can be add only!");
                     v.findViewById(R.id.http_ly).setVisibility(View.GONE);
                     v.findViewById(R.id.server_v2ray_type_ly).setVisibility(View.VISIBLE);
                     v.findViewById(R.id.etV2rayID_ly).setVisibility(View.VISIBLE);
@@ -263,6 +273,10 @@ public class ServerDialog implements SettingsConstants{
             ((TextView) v.findViewById(t)).setTextColor(mConfig.getAppThemeUtil()? Color.BLACK:Color.WHITE);
             v.findViewById(t).setBackgroundColor(mConfig.getColorAccent());
         }
+        int[] rb = {R.id.rb_cat_ovpn,R.id.rb_cat_v2ray,R.id.rb_cat_ssh,R.id.rb_cat_dns,R.id.rb_cat_udp};
+        for (int r : rb) {
+            ((RadioButton) v.findViewById(r)).setButtonTintList(ColorStateList.valueOf(mConfig.getColorAccent()));
+        }
         int[] txtly = {R.id.TextInputLayout1,R.id.TextInputLayout2,R.id.TextInputLayout3,R.id.TextInputLayout4,R.id.etServerIP_ly,R.id.etServerCloudFront_ly,R.id.etTcpPort_ly,R.id.etSSLPort_ly,R.id.etServerProxyHost_ly,R.id.etServerProxyPort_ly,R.id.etCertificate_ly};
         for (int tl : txtly) {
             ((TextInputLayout) v.findViewById(tl)).setBoxStrokeColor(mConfig.getColorAccent());
@@ -278,10 +292,7 @@ public class ServerDialog implements SettingsConstants{
             util.showToast("Server Dialog",e.getMessage());
         }
         serverType = v.findViewById(R.id.server_sptype);
-        serverType.setEnabled(false);
-        serverType.setSelection(mPref.getInt(server_spin_mSelection_key,0));
-        serverV2rayMode.setEnabled(false);
-        serverV2rayMode.setSelection(mPref.getInt(v2ray_server_type_mSelection_key,0));
+        serverV2rayMode = v.findViewById(R.id.server_v2ray_type_spinner);
         serverType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -386,7 +397,16 @@ public class ServerDialog implements SettingsConstants{
             }
             edServerWebRenew.setText(json.has("server_web_renew")? json.getString("server_web_renew"):"");
             serverType.setSelection(json.getInt("serverType"));
-            category.setSelection(json.getInt("Category"));
+            
+            int catSelEditSaved = json.getInt("Category");
+            switch (catSelEditSaved) {
+                case 0: category.check(R.id.rb_cat_ovpn); break;
+                case 1: category.check(R.id.rb_cat_v2ray); break;
+                case 2: category.check(R.id.rb_cat_ssh); break;
+                case 3: category.check(R.id.rb_cat_dns); break;
+                case 4: category.check(R.id.rb_cat_udp); break;
+            }
+            
             serverV2rayMode.setSelection(json.getInt("V2rayType"));
             v.findViewById(R.id.Account_ly).setVisibility(json.getBoolean("AutoLogIn")?View.VISIBLE:View.GONE);
             if(json.getInt("serverType")==0&&json.has("MultiCert")){
@@ -424,12 +444,23 @@ public class ServerDialog implements SettingsConstants{
             try {
                 int position2 = sFlag.getSelectedItemPosition();
                 String[] list = c.getAssets().list("flags");
-                boolean x = serverType.getSelectedItemPosition()==0;
+                
+                int sType = serverType.getSelectedItemPosition();
+                
+                int sCat = 0;
+                int checkedCatId = category.getCheckedRadioButtonId();
+                if (checkedCatId == R.id.rb_cat_ovpn) sCat = 0;
+                else if (checkedCatId == R.id.rb_cat_v2ray) sCat = 1;
+                else if (checkedCatId == R.id.rb_cat_ssh) sCat = 2;
+                else if (checkedCatId == R.id.rb_cat_dns) sCat = 3;
+                else if (checkedCatId == R.id.rb_cat_udp) sCat = 4;
+                
+                boolean x = sType==0;
                 boolean y = x && ckMultiCert.isChecked();
                 jo.put("Name", sName.getText().toString());
-                jo.put("serverType", serverType.getSelectedItemPosition());
+                jo.put("serverType", sType);
                 jo.put("FLAG", list[position2].replace("flag_","").replace(".png",""));
-                jo.put("Category", category.getSelectedItemPosition());
+                jo.put("Category", sCat);
                 jo.put("V2rayType", serverV2rayMode.getSelectedItemPosition());
                 jo.put("V2rayID", c_01.encrypt(c_01.encrypt(c_01.encodeID(etV2rayID.getText().toString()))));
                 jo.put("ServerIP", c_01.encrypt(etServerIP.getText().toString()));

@@ -30,12 +30,13 @@ public class SSLDialog implements SettingsConstants{
     private final AlertDialog a;
     private final Context c;
     private RadioGroup server_type;
-    private Spinner pLogo,sslmethod;
+    private Spinner pLogo, sslmethod;
     private CheckBox ckUseDefProxy;
     private View v;
     private EditText etSSLName,etSSLSNI,etSSLPayload,etSSLInfo,etSquidProxy,etSquidPort,etSSLPort;
     private final ConfigUtil mConfig;
     private boolean isAddOrEdited = false;
+
     public SSLDialog(Context c) {
         this.c = c;
         mConfig = ConfigUtil.getInstance(c);
@@ -96,6 +97,7 @@ public class SSLDialog implements SettingsConstants{
         etSquidProxy.setEnabled(false);
         etSquidPort.setEnabled(false);
         server_type.check(R.id.cf_radio);
+        
         sslmethod.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
