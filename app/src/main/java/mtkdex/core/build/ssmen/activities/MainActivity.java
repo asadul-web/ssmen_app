@@ -499,6 +499,11 @@ public class MainActivity extends MainBaseActivity implements
             }
             liveDataDot.setAlpha(0.9f);
         }
+
+        // Update Duration Timer instantly
+        if (duration_view != null && active && getUpDateBytes() != null && getUpDateBytes().isConnected()) {
+            duration_view.setText(getUpDateBytes().elapsedTimeToDisplay(getUpDateBytes().getElapsedTime()));
+        }
         
         // Show current speed labels when active
         if (graphLabelsLayout != null) {
@@ -546,6 +551,8 @@ public class MainActivity extends MainBaseActivity implements
                     }
                 } else if (serverType.equals(SERVER_TYPE_V2RAY)) {
                     // Handled via broadcasts from NotificationManager (MainViewModel)
+                    // We just refresh the UI to keep the timer ticking
+                    runOnUiThread(this::updateLiveStatusLabels);
                 } else {
                     // For SSH/UDP types that might update StatisticGraphData
                     hLogStatus.updateByteCount(getUpDateBytes().getTotalBytesReceived(), getUpDateBytes().getTotalBytesSent());
@@ -2311,40 +2318,46 @@ public class MainActivity extends MainBaseActivity implements
             if (mDataOutTv != null) mDataOutTv.setText("0 bit");
             if (val1 != null) val1.setText("0 bit");
             if (val2 != null) val2.setText("0 bit");
+            if (duration_view != null) duration_view.setText("00h:00m:00s");
             if (trafficGraph != null) {
                 trafficGraph.clear();
                 trafficGraph.setShowPath(true);
+                trafficGraph.setFrozen(false);
             }
             if (getConfig().getAutoClearLog()) mAdapter.clearLog();
             
             if (checkConfiguration()) {
-                validateAccountBeforeConnect();
+                // 1. Start stats and timer instantly
+                hLogStatus.updateStateString(hLogStatus.VPN_CONNECTING, getString(R.string.state_connecting));
+                hLogStatus.resetTrafficHistory();
+                hLogStatus.updateByteCount(0, 0);
+                StatisticGraphData.getStatisticData().getDataTransferStats().startConnected();
+                schedule_stats();
+                show_stats();
+
+                // 2. Start connection process IMMEDIATELY (Instant connection)
+                start_connect();
+
+                // 3. Validate account in parallel without blocking the UI
+                validateAccountParallel();
             }
         }
     }
 
-    private void validateAccountBeforeConnect() {
+    private void validateAccountParallel() {
         String api = new appUtil().x_api;
         String user = getStoredUsername();
         String pass = getStoredPassword();
 
-        if (user.isEmpty() || pass.isEmpty()) {
-            util.showToast(resString(R.string.app_name), "Username or Password is empty");
-            return;
-        }
+        if (user.isEmpty() || pass.isEmpty()) return;
 
-        showProgrss();
-        ((TextView) findViewById(R.id.progTv)).setText("Verifying account...");
-        btn_connector.setEnabled(false);
-
+        // Note: No showProgrss() here to keep it instant
         String model = Build.MODEL;
         @SuppressLint("HardwareIds") String id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         String jsonUrl = api + "?username=" + user + "&password=" + pass + "&device_id=" + id + "&device_model=" + model;
 
         StringRequest req = new StringRequest(jsonUrl,
                 response -> {
-                    hideProgrss();
-                    btn_connector.setEnabled(true);
                     try {
                         JSONObject js = new JSONObject(response);
                         boolean auth = js.optBoolean("auth", false) || js.optString("auth").equals("true");
@@ -2353,52 +2366,62 @@ public class MainActivity extends MainBaseActivity implements
                         String expiry = js.optString("expiry", "none");
 
                         if (!auth) {
-                            showPreConnectError("Authentication Failed - Account not found or suspended.");
+                            handleAccountError("Authentication Failed - Account not found or suspended.");
                             return;
                         }
 
                         if (!deviceMatch || deviceMatchStr.equals("none")) {
-                            showPreConnectError("Authentication Failed - Account is logged in on another device.");
+                            handleAccountError("Authentication Failed - Account is logged in on another device.");
                             return;
                         }
 
                         if (expiry.equals("none")) {
-                            showPreConnectError("Authentication Failed - Account not found.");
+                            handleAccountError("Authentication Failed - Account not found.");
                             return;
                         }
 
                         if (util.getDaysLeft(expiry).equals("Expired")) {
-                            showPreConnectError("Authentication Failed - Your account has expired.");
+                            handleAccountError("Authentication Failed - Your account has expired.");
                             return;
                         }
 
-                        // Success -> Proceed to connect
+                        // Success -> Just update expiry info, VPN is already starting/started
                         onExpireDate(expiry);
-                        if (!getPref().getString("Network_info", "").isEmpty() && !getConfig().getServerType().equals(SERVER_TYPE_V2RAY)) {
-                            start_connect();
-                        } else {
-                            start_connect();
-                        }
 
                     } catch (Exception e) {
-                        showPreConnectError("Authentication Failed - Invalid server response.");
+                        // Silently ignore or log parsing errors if VPN is already working, 
+                        // or handle as failure if strictness is required.
                     }
                 },
                 error -> {
-                    hideProgrss();
-                    btn_connector.setEnabled(true);
-                    showPreConnectError("Authentication Failed - Cannot verify account. Check internet connection.");
+                    // Optional: handle network error for validation
                 });
 
         MainApplication.getRequestQueue().add(req);
     }
 
+    private void handleAccountError(String message) {
+        // If account is invalid, we MUST stop the VPN that we started optimistically
+        stopTunnelService();
+        showPreConnectError(message);
+    }
+
+    private void validateAccountBeforeConnect() {
+        // Keeping this for potential legacy use, but redirected to parallel for now
+        validateAccountParallel();
+    }
+
     private void showPreConnectError(String message) {
+        cancel_stats();
+        StatisticGraphData.getStatisticData().getDataTransferStats().stop();
+        hLogStatus.updateStateString(hLogStatus.VPN_DISCONNECTED, "Disconnected");
+        
         new AlertDialog.Builder(this)
                 .setTitle("Connection Rejected")
                 .setMessage(message)
                 .setPositiveButton("OK", null)
                 .show();
+        btn_connector.setEnabled(true);
     }
 
     public void stopTunnelService() {
@@ -2551,26 +2574,7 @@ public class MainActivity extends MainBaseActivity implements
 
     private void startTunnelService() {
         isDisconnecting = false;
-        m_SentBytes = 0;
-        m_ReceivedBytes = 0;
-        hLogStatus.resetTrafficHistory();
-        StatisticGraphData.getStatisticData().getDataTransferStats().stop();
-        if (byteIn_view != null) byteIn_view.setText("0 B");
-        if (byteOut_view != null) byteOut_view.setText("0 B");
-        if (mDataInTv != null) mDataInTv.setText("0 bit");
-        if (mDataOutTv != null) mDataOutTv.setText("0 bit");
-        if (val1 != null) val1.setText("0 bit");
-        if (val2 != null) val2.setText("0 bit");
-        if (duration_view != null) duration_view.setText("00h:00m:00s");
-
-        if (trafficGraph != null) {
-            trafficGraph.clear();
-            trafficGraph.setShowPath(true);
-            trafficGraph.setFrozen(false);
-        }
-
-        // 1. Give immediate UI feedback
-        hLogStatus.updateStateString(hLogStatus.VPN_CONNECTING, getString(R.string.state_connecting));
+        // Resets and stats start moved to startOrStopTunnel for instant feedback
         
         // 2. Start Authentication in parallel (Instant fire)
         // Only fetch if we don't have it or it's needed
@@ -2579,8 +2583,7 @@ public class MainActivity extends MainBaseActivity implements
         }
         
         TunnelUtils.restartRotateAndRandom();
-        StatisticGraphData.getStatisticData().getDataTransferStats().startConnected();
-        schedule_stats();
+        // startConnected and schedule_stats already called in startOrStopTunnel
         show_stats(); // Trigger first UI update immediately
         
         // 3. Move heavy config loading and service start to background to avoid UI lag
