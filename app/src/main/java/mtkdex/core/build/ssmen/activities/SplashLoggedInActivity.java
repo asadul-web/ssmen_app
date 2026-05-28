@@ -25,15 +25,10 @@ import mtkdex.core.build.ssmen.utils.util;
 
 public class SplashLoggedInActivity extends AppCompatActivity {
 
-    private TextView statusText;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_logged_in);
-
-        statusText = findViewById(R.id.splash_status); // Make sure this ID exists in XML or add it
-        if (statusText != null) statusText.setText("Verifying account...");
 
         validateAndProceed();
     }
