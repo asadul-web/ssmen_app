@@ -35,11 +35,12 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="serif"
+                        android:fontFamily="@font/google_sans_flex"
                         android:text="FIGHTER V2RAY"
                         android:textColor="@color/white"
                         android:textSize="23sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        app:fontVariationSettings="'wght' 300"/>
 
                 </LinearLayout>
             </LinearLayout>
