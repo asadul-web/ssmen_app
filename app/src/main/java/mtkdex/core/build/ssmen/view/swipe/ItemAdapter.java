@@ -169,12 +169,16 @@ public class ItemAdapter extends DragItemAdapter<Pair<Long, JSONObject>, ItemAda
 
             holder.mDragBtn.setVisibility(isConfigSearch ? View.GONE : View.VISIBLE);
             
-            // Highlight selected item - using cached selectedPosition
+            // Highlight selected item
             long currentId = mItemList.get(position).first;
-            if (currentId == (long)selectedPosition) {
-                 holder.item_layout.setBackgroundResource(R.drawable.border_item_selected);
-            } else {
-                 holder.item_layout.setBackgroundResource(R.drawable.border_item_normal);
+            holder.item_layout.setSelected(currentId == (long)selectedPosition);
+            
+            // Set stroke width programmatically if needed, or keep 1dp from XML
+            if (holder.item_layout instanceof com.google.android.material.card.MaterialCardView) {
+                ((com.google.android.material.card.MaterialCardView) holder.item_layout)
+                    .setStrokeWidth(currentId == (long)selectedPosition ? 
+                        (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, mContext.getResources().getDisplayMetrics()) : 
+                        (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, mContext.getResources().getDisplayMetrics()));
             }
             
         } catch (Exception e) {
@@ -334,6 +338,9 @@ public class ItemAdapter extends DragItemAdapter<Pair<Long, JSONObject>, ItemAda
             mImageMenu = itemView.findViewById(R.id.image_menu);
 
             mImageMenu.setOnClickListener(view -> showPopupMenu(view));
+            
+            // Redirect clicks on the card to onItemClicked
+            item_layout.setOnClickListener(v -> onItemClicked(v));
         }
 
         private void showPopupMenu(View view) {
