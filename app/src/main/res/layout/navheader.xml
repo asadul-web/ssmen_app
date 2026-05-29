@@ -21,17 +21,17 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="50dp"
             android:layout_height="50dp"
-            app:cardCornerRadius="27dp"
+            app:cardCornerRadius="10dp"
             app:cardElevation="0dp"
             app:strokeWidth="1.5dp"
-            app:strokeColor="#FFFFFF"
-            app:cardBackgroundColor="#FFFFFF">
+            app:strokeColor="@color/transparent"
+            app:cardBackgroundColor="@color/transparent">
 
             <ImageView
                 android:id="@+id/ivicon"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="6dp"
+                android:padding="5dp"
                 android:scaleType="centerInside"
                 android:src="@drawable/icon_icon" />
         </com.google.android.material.card.MaterialCardView>
@@ -39,7 +39,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="14dp"
+            android:layout_marginStart="5dp"
             android:orientation="vertical">
 
             <LinearLayout
@@ -84,7 +84,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="-2dp"
                 android:fontFamily="@font/google_sans_flex"
-                android:text="VIRTUAL PRIVATE NETWORK"
+                android:text="SWIFT. SECURE. SAVAGE."
                 android:textColor="#FFFFFF"
                 android:alpha="0.85"
                 android:textSize="10sp"

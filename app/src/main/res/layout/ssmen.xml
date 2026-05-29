@@ -76,7 +76,7 @@
                 android:fontFamily="@font/google_sans_flex"
                 app:fontVariationSettings="'wght' 300"
                 android:letterSpacing="0.05"
-                android:text="lightening and multiverse xm"
+                android:text="Swift. Secure. Savage. xm"
                 android:textColor="@color/colorTextSecondary"
                 android:textSize="10sp" />
 
