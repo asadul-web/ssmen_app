@@ -38,7 +38,7 @@ public class dex004 extends VpnService implements SettingsConstants {
 
     public static final String x = "https://www.facebook.com/mohammad.abdula24";
     private ConfigUtil mConfig;
-    private int mMtu = 1500;
+    private int mMtu = 1400;
     private Thread mBuilderThread;
     private Pdnsd mPdnsd;
     private static final String VPN_INTERFACE_NETMASK = "255.255.255.0";

@@ -853,6 +853,19 @@ object V2rayConfigManager {
                 outbound.mux?.concurrency = -1
             }
 
+            // Optimize socket options for buffer-free smooth speed
+            if (outbound.streamSettings == null) {
+                outbound.streamSettings = V2rayConfig.OutboundBean.StreamSettingsBean()
+            }
+            if (outbound.streamSettings?.sockopt == null) {
+                outbound.streamSettings?.sockopt = V2rayConfig.OutboundBean.StreamSettingsBean.SockoptBean()
+            }
+            outbound.streamSettings?.sockopt?.apply {
+                TcpNoDelay = true
+                tcpFastOpen = true
+                tcpKeepAliveIdle = 30
+            }
+
             // Force User Level 8 to enable statistics collection
             outbound.settings?.vnext?.firstOrNull()?.users?.firstOrNull()?.level = 8
             outbound.settings?.servers?.firstOrNull()?.level = 8
