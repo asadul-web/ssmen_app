@@ -207,12 +207,6 @@ public class LoginActivity extends MainBaseActivity {
             return;
         }
 
-        // Check internet connection
-        if (!isConnected()) {
-            util.showToast(resString(R.string.app_name), "Authentication Failed");
-            return;
-        }
-
         // Mark as logged in
         mConfig.setHasAccount(true);
         navigateToMain();
@@ -318,19 +312,6 @@ public class LoginActivity extends MainBaseActivity {
 
 
 
-
-    private boolean isConnected() {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            NetworkCapabilities cap = cm.getNetworkCapabilities(cm.getActiveNetwork());
-            return cap != null && (cap.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
-                    || cap.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
-                    || cap.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET));
-        } else {
-            android.net.NetworkInfo info = cm.getActiveNetworkInfo();
-            return info != null && info.isConnected();
-        }
-    }
 
     private String getDaysLeft(String thatDate) {
         return util.getDaysLeft(thatDate);

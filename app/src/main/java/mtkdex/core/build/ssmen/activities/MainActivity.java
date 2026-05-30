@@ -2282,9 +2282,6 @@ public class MainActivity extends MainBaseActivity implements
         } else if (!reLoad_Configs()) {
             showToast("Oppss...!", "Config load error!");
             return false;
-        } else if (!util.isNetworkAvailable(MainActivity.this)) {
-            showToast("Oppss...!", "Please connect to the internet");
-            return false;
         }
 
         String rawExpiry = getPref().getString("_AccountRawXp", "");
