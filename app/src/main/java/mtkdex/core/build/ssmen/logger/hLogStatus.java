@@ -136,8 +136,16 @@ public class hLogStatus
 
     public synchronized static void updateByteCount(long in, long out) {
         if (mIsFirstByteCount && (in > 0 || out > 0)) {
-            mStartIn = in;
-            mStartOut = out;
+            // Optimization: If the first readings are small, they are likely for the current session.
+            // Don't subtract them so the UI shows activity instantly.
+            // If they are large (e.g. > 10MB), they are likely cumulative system stats since boot.
+            if (in > 10 * 1024 * 1024 || out > 10 * 1024 * 1024) {
+                mStartIn = in;
+                mStartOut = out;
+            } else {
+                mStartIn = 0;
+                mStartOut = 0;
+            }
             mIsFirstByteCount = false;
         }
 

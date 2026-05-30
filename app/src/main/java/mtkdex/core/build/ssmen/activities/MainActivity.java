@@ -713,6 +713,8 @@ public class MainActivity extends MainBaseActivity implements
                     String success = "V2ray Connected";
                     hLogStatus.logInfo(success);
                     layout_test.setVisibility(View.GONE);
+                    // Start real ping instantly after connection
+                    mainViewModel.testCurrentServerRealPing();
                 } else {
                     layout_test.setVisibility(View.GONE);
                 }
@@ -863,17 +865,24 @@ public class MainActivity extends MainBaseActivity implements
         }).start();
     }
 
+    private long lastByteCountTime = 0;
+
     @Override
     public void updateByteCount(long in, long out, long diffIn, long diffOut) {
         boolean active = hLogStatus.isTunnelActive();
         
         if (active) {
-            // Multiply by 8 to convert bytes to bits for the graph labels
-            inValue = (float) diffIn * 8;
-            outValue = (float) diffOut * 8;
+            long now = System.currentTimeMillis();
+            double seconds = (lastByteCountTime > 0) ? (now - lastByteCountTime) / 1000.0 : 1.0;
+            if (seconds <= 0) seconds = 1.0;
+            lastByteCountTime = now;
 
-            final String inStr = ConfigUtil.render_bandwidth(diffIn, true);
-            final String outStr = ConfigUtil.render_bandwidth(diffOut, true);
+            // Calculate bits per second for more accurate real-time speed
+            inValue = (float) (diffIn * 8 / seconds);
+            outValue = (float) (diffOut * 8 / seconds);
+
+            final String inStr = ConfigUtil.render_bandwidth((long) (diffIn / seconds), true);
+            final String outStr = ConfigUtil.render_bandwidth((long) (diffOut / seconds), true);
             final String totalInStr = ConfigUtil.render_bandwidth(in, false);
             final String totalOutStr = ConfigUtil.render_bandwidth(out, false);
 
@@ -2334,6 +2343,7 @@ public class MainActivity extends MainBaseActivity implements
 
             m_SentBytes = 0;
             m_ReceivedBytes = 0;
+            lastByteCountTime = System.currentTimeMillis();
             if (byteIn_view != null) byteIn_view.setText("0 B");
             if (byteOut_view != null) byteOut_view.setText("0 B");
             if (mDataInTv != null) mDataInTv.setText("0 bit");

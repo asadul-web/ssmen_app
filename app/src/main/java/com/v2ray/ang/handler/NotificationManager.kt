@@ -79,6 +79,7 @@ object NotificationManager {
             while (isActive) {
                 val now = System.currentTimeMillis()
                 val elapsedSinceStart = now - loopStartTime
+                // Update exactly every second for steady traffic display
                 val nextTick = ((elapsedSinceStart / 1000) + 1) * 1000
                 delay(nextTick - elapsedSinceStart)
                 
