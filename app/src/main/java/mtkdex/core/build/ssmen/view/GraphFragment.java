@@ -1,6 +1,7 @@
 package mtkdex.core.build.ssmen.view;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Fragment;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -33,7 +34,7 @@ import mtkdex.core.build.ssmen.logger.hLogStatus;
 import mtkdex.core.build.ssmen.service.dex002;
 import mtkdex.core.build.ssmen.utils.RetrieveData;
 
-public class GraphFragment extends Fragment implements SettingsConstants {
+public class GraphFragment extends Fragment implements SettingsConstants, hLogStatus.ByteCountListener {
 
 	private LineChart mChart;
 	private Thread mGraphThread;
@@ -301,41 +302,40 @@ public class GraphFragment extends Fragment implements SettingsConstants {
 		}*/
 	}
 
+	@Override
+	public void onResume() {
+		super.onResume();
+		hLogStatus.addByteCountListener(this);
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		hLogStatus.removeByteCountListener(this);
+	}
+
+	@Override
+	public void updateByteCount(long in, long out, long diffIn, long diffOut) {
+		if (mGraphStats == null) return;
+		
+		mGraphStats.addBytesReceived(diffIn);
+		mGraphStats.addBytesSent(diffOut);
+		
+		Activity activity = getActivity();
+		if (activity != null) {
+			activity.runOnUiThread(() -> {
+				if (hLogStatus.isTunnelActive() || mConfig.getServerType().equals(SERVER_TYPE_V2RAY)) {
+					try {
+						addDataSet();
+					} catch (Exception ignored) {}
+				}
+			});
+		}
+	}
+
 	private void updateByteCount()
 	{
-		isRunning = true;
-		mGraphThread = new Thread(() -> {
-            while (isRunning) {
-                if (getActivity() == null) {
-                    return;
-                }
-                List<Long> findData = RetrieveData.findData();
-                Long l = findData.get(0);
-                Long l2 = findData.get(1);
-                l.longValue();
-                l2.longValue();
-                mGraphStats.addBytesReceived(l);
-                mGraphStats.addBytesSent(l2);
-                getActivity().runOnUiThread(() -> {
-                    if(hLogStatus.isTunnelActive()|| mConfig.getServerType().equals(SERVER_TYPE_V2RAY)){
-                        try {
-                            addDataSet();
-                        } catch (Exception e) {}
-                    }
-                    if (dex002.isVPNRunning()) {
-                        try {
-                            addDataSet();
-                        } catch (Exception e) {}
-                    }
-                });
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-
-                }
-            }
-            // TODO: Implement this method
-        });
-		mGraphThread.start();
+		// Legacy method kept for compatibility but no longer uses its own thread
+		// The update logic is now in the @Override updateByteCount above
 	}
 }

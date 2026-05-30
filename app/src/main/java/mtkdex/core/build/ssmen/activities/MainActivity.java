@@ -363,6 +363,7 @@ public class MainActivity extends MainBaseActivity implements
     private LinearLayout graphLabelsLayout;
     private ExecutorService statsExecutor;
     private boolean liveDataBlink = false;
+    private long statsLoopStartTime = 0;
     private final Runnable stats_timer_task = new Runnable() {
         public void run() {
             // This loop triggers stat fetching for services
@@ -543,11 +544,31 @@ public class MainActivity extends MainBaseActivity implements
 
     private void cancel_stats() {
         this.stats_timer_handler.removeCallbacks(this.stats_timer_task);
+        if (!hLogStatus.isTunnelActive()) {
+            statsLoopStartTime = 0;
+        }
     }
 
     private void schedule_stats() {
         cancel_stats();
-        this.stats_timer_handler.postDelayed(this.stats_timer_task, 1000);
+        
+        long now = System.currentTimeMillis();
+        if (statsLoopStartTime == 0) {
+            statsLoopStartTime = now;
+        }
+
+        // Calculate next tick to maintain exactly 1 second consistency
+        long elapsedSinceStart = now - statsLoopStartTime;
+        long nextTick = ((elapsedSinceStart / 1000) + 1) * 1000;
+        long delay = nextTick - elapsedSinceStart;
+        
+        // Safety check if we somehow get out of bounds
+        if (delay < 0 || delay > 1000) {
+            delay = 1000;
+            statsLoopStartTime = now;
+        }
+
+        this.stats_timer_handler.postDelayed(this.stats_timer_task, delay);
     }
 
     public void show_stats() {
