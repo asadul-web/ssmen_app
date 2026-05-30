@@ -628,8 +628,13 @@ public class MainActivity extends MainBaseActivity implements
         runOnUiThread(() -> {
             updateLiveStatusLabels();
             
-            if (byteIn_view != null) byteIn_view.setText(totalInStr);
-            if (byteOut_view != null) byteOut_view.setText(totalOutStr);
+            // Only update total byte views if we are actually connected or moving data
+            // This prevents jumping to 0 immediately when starting a new connection
+            if (isConnected || currentIn > 0 || currentOut > 0) {
+                if (byteIn_view != null) byteIn_view.setText(totalInStr);
+                if (byteOut_view != null) byteOut_view.setText(totalOutStr);
+            }
+            
             if (mDataInTv != null) mDataInTv.setText(inStr);
             if (mDataOutTv != null) mDataOutTv.setText(outStr);
             if (val1 != null) val1.setText(inStr);
@@ -2392,7 +2397,6 @@ public class MainActivity extends MainBaseActivity implements
                 // hLogStatus.updateByteCount(0, 0); // Removed to avoid zeroing the display
                 StatisticGraphData.getStatisticData().getDataTransferStats().startConnected();
                 schedule_stats();
-                show_stats();
 
                 // 2. Start connection process IMMEDIATELY (Instant connection)
                 start_connect();
