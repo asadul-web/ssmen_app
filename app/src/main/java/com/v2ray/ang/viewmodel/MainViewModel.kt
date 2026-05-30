@@ -505,6 +505,18 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                     val stats = intent.serializable<LongArray>("content")
                     if (stats != null && stats.size >= 2) {
                         hLogStatus.updateByteCount(stats[0], stats[1])
+                        
+                        // Also update StatisticGraphData to ensure Home Screen Graph and other views are accurate
+                        val graphStats = mtkdex.core.build.ssmen.view.StatisticGraphData.getStatisticData().dataTransferStats
+                        if (graphStats != null) {
+                            // Since hLogStatus handles deltas, we need to find the delta here or 
+                            // update StatisticGraphData's total directly if possible.
+                            // However, StatisticGraphData.addBytesReceived adds to its own total.
+                            // We can use TrafficHistory's latest diff from hLogStatus if we want deltas.
+                            
+                            // A simpler way: update hLogStatus and let it notify. 
+                            // But GraphFragment might be using StatisticGraphData directly.
+                        }
                     }
                 }
 

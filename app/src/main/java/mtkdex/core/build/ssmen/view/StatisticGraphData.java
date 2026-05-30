@@ -254,9 +254,13 @@ public class StatisticGraphData
 
         public synchronized long getBytesSent() {
             long newTotalUpload, incUpload;
+            int uid = android.os.Process.myUid();
+            long currentUidTx = TrafficStats.getUidTxBytes(uid);
+            if (currentUidTx == TrafficStats.UNSUPPORTED) currentUidTx = TrafficStats.getTotalTxBytes();
+
             if (mSent == 0)
-                mSent = TrafficStats.getTotalTxBytes();
-            newTotalUpload = TrafficStats.getTotalTxBytes();
+                mSent = currentUidTx;
+            newTotalUpload = currentUidTx;
             incUpload = newTotalUpload - mSent;
             mSent = newTotalUpload;
             return incUpload;
@@ -264,13 +268,16 @@ public class StatisticGraphData
 
         public synchronized long getBytesReceived() {
             long newTotalDownload, incDownload;
-            if (mReceived==0)
-                mReceived = TrafficStats.getTotalRxBytes();
-            newTotalDownload = TrafficStats.getTotalRxBytes();
+            int uid = android.os.Process.myUid();
+            long currentUidRx = TrafficStats.getUidRxBytes(uid);
+            if (currentUidRx == TrafficStats.UNSUPPORTED) currentUidRx = TrafficStats.getTotalRxBytes();
+
+            if (mReceived == 0)
+                mReceived = currentUidRx;
+            newTotalDownload = currentUidRx;
             incDownload = newTotalDownload - mReceived;
             mReceived = newTotalDownload;
             return incDownload;
-
         }
     }
 

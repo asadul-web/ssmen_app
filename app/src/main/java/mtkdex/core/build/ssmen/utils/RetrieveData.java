@@ -16,17 +16,26 @@ public class RetrieveData {
         List<Long> allData = new ArrayList<>();
 
         long newTotalDownload, incDownload, newTotalUpload, incUpload;
+        int uid = android.os.Process.myUid();
+
+        // Use Uid stats instead of total stats for more accuracy in VPN traffic tracking
+        long currentUidRx = TrafficStats.getUidRxBytes(uid);
+        long currentUidTx = TrafficStats.getUidTxBytes(uid);
+        
+        // Fallback to total if UID stats are not supported (though they should be)
+        if (currentUidRx == TrafficStats.UNSUPPORTED) currentUidRx = TrafficStats.getTotalRxBytes();
+        if (currentUidTx == TrafficStats.UNSUPPORTED) currentUidTx = TrafficStats.getTotalTxBytes();
 
         if (totalDownload == 0)
-            totalDownload = TrafficStats.getTotalRxBytes();
+            totalDownload = currentUidRx;
 
         if (totalUpload == 0)
-            totalUpload = TrafficStats.getTotalTxBytes();
+            totalUpload = currentUidTx;
 
-        newTotalDownload = TrafficStats.getTotalRxBytes();
+        newTotalDownload = currentUidRx;
         incDownload = newTotalDownload - totalDownload;
 
-        newTotalUpload = TrafficStats.getTotalTxBytes();
+        newTotalUpload = currentUidTx;
         incUpload = newTotalUpload - totalUpload;
 
         totalDownload = newTotalDownload;
@@ -41,17 +50,22 @@ public class RetrieveData {
     public static long getNotificationData() {
 
         long newTotalDownload, incDownload, newTotalUpload, incUpload;
+        int uid = android.os.Process.myUid();
+        long currentUidRx = TrafficStats.getUidRxBytes(uid);
+        long currentUidTx = TrafficStats.getUidTxBytes(uid);
+        if (currentUidRx == TrafficStats.UNSUPPORTED) currentUidRx = TrafficStats.getTotalRxBytes();
+        if (currentUidTx == TrafficStats.UNSUPPORTED) currentUidTx = TrafficStats.getTotalTxBytes();
 
         if (totalDownload_n == 0)
-            totalDownload_n = TrafficStats.getTotalRxBytes();
+            totalDownload_n = currentUidRx;
 
         if (totalUpload_n == 0)
-            totalUpload_n = TrafficStats.getTotalTxBytes();
+            totalUpload_n = currentUidTx;
 
-        newTotalDownload = TrafficStats.getTotalRxBytes();
+        newTotalDownload = currentUidRx;
         incDownload = newTotalDownload - totalDownload_n;
 
-        newTotalUpload = TrafficStats.getTotalTxBytes();
+        newTotalUpload = currentUidTx;
         incUpload = newTotalUpload - totalUpload_n;
 
         totalDownload_n = newTotalDownload;

@@ -12,6 +12,8 @@ import android.graphics.Color
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import android.net.TrafficStats
+import android.os.Process
 import com.v2ray.ang.AppConfig
 import com.v2ray.ang.R
 import com.v2ray.ang.dto.ProfileItem
@@ -38,6 +40,11 @@ object NotificationManager {
     private var lastQueryTime = 0L
     private var lastUp = 0L
     private var lastDown = 0L
+    
+    // Track UID stats to get accurate overall traffic
+    private var startUidUp = 0L
+    private var startUidDown = 0L
+    
     private var sessionTotalUp = 0L
     private var sessionTotalDown = 0L
     private var mBuilder: NotificationCompat.Builder? = null
@@ -52,6 +59,13 @@ object NotificationManager {
         if (speedNotificationJob != null || !V2RayServiceManager.isRunning()) return
 
         lastQueryTime = System.currentTimeMillis()
+        
+        // Initialize UID stats snapshots
+        val uid = Process.myUid()
+        startUidDown = TrafficStats.getUidRxBytes(uid).coerceAtLeast(0L)
+        startUidUp = TrafficStats.getUidTxBytes(uid).coerceAtLeast(0L)
+        
+        // Initial V2Ray stats snapshot for speed calculation
         lastUp = V2RayServiceManager.queryStats(AppConfig.TAG_PROXY, AppConfig.UPLINK)
         lastDown = V2RayServiceManager.queryStats(AppConfig.TAG_PROXY, AppConfig.DOWNLINK)
 
@@ -72,26 +86,31 @@ object NotificationManager {
                 val sinceLastQueryInSeconds = (queryTime - lastQueryTime) / 1000.0
                 if (sinceLastQueryInSeconds < 0.1) continue
 
-                val currentUpProxy = V2RayServiceManager.queryStats(AppConfig.TAG_PROXY, AppConfig.UPLINK)
-                val currentDownProxy = V2RayServiceManager.queryStats(AppConfig.TAG_PROXY, AppConfig.DOWNLINK)
+                // 1. Calculate Session Totals using TrafficStats (Most Accurate for total volume)
+                val currentUidDown = TrafficStats.getUidRxBytes(uid).coerceAtLeast(0L)
+                val currentUidUp = TrafficStats.getUidTxBytes(uid).coerceAtLeast(0L)
                 
-                // Fallback to system traffic if proxy tag returns 0
-                val currentUpRaw = if (currentUpProxy > 0) currentUpProxy else V2RayServiceManager.queryStats("", AppConfig.UPLINK)
-                val currentDownRaw = if (currentDownProxy > 0) currentDownProxy else V2RayServiceManager.queryStats("", AppConfig.DOWNLINK)
-                
-                // Track monotonic session totals (handles core restarts)
-                // If core restarts, currentUpRaw will be less than lastUp (reset to 0)
-                if (currentUpRaw >= lastUp) {
-                    sessionTotalUp += (currentUpRaw - lastUp)
-                } else {
-                    sessionTotalUp += currentUpRaw
+                if (currentUidDown >= startUidDown) {
+                    sessionTotalDown = currentUidDown - startUidDown
+                }
+                if (currentUidUp >= startUidUp) {
+                    sessionTotalUp = currentUidUp - startUidUp
+                }
+
+                // 2. Calculate Real-time Speed using V2Ray core stats (More responsive for speed)
+                val tags = mutableListOf(AppConfig.TAG_PROXY, AppConfig.TAG_DIRECT, AppConfig.TAG_FRAGMENT, AppConfig.TAG_DNS, "dns-out")
+                for (i in 1..8) tags.add("${AppConfig.TAG_PROXY}-$i")
+
+                var currentUpRaw = 0L
+                var currentDownRaw = 0L
+                for (tag in tags) {
+                    currentUpRaw += V2RayServiceManager.queryStats(tag, AppConfig.UPLINK)
+                    currentDownRaw += V2RayServiceManager.queryStats(tag, AppConfig.DOWNLINK)
                 }
                 
-                if (currentDownRaw >= lastDown) {
-                    sessionTotalDown += (currentDownRaw - lastDown)
-                } else {
-                    sessionTotalDown += currentDownRaw
-                }
+                // Fallback for speed query
+                if (currentUpRaw <= 0) currentUpRaw = V2RayServiceManager.queryStats("", AppConfig.UPLINK)
+                if (currentDownRaw <= 0) currentDownRaw = V2RayServiceManager.queryStats("", AppConfig.DOWNLINK)
 
                 val upSpeed = ((currentUpRaw - lastUp).coerceAtLeast(0L) / sinceLastQueryInSeconds).coerceAtLeast(0.0).toLong()
                 val downSpeed = ((currentDownRaw - lastDown).coerceAtLeast(0L) / sinceLastQueryInSeconds).coerceAtLeast(0.0).toLong()

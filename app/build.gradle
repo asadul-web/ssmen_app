@@ -67,12 +67,12 @@ android {
         release {
 
             // KEEP TRUE FOR TESTING
-            debuggable false
+            debuggable true
 
             // DISABLE FOR NOW
             // Prevent release issues
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled false
+            shrinkResources false
 
             signingConfig signingConfigs.release
 
