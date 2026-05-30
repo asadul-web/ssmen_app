@@ -53,6 +53,9 @@ public class LoginActivity extends MainBaseActivity {
     private ImageView mPoint, mTogglePassword;
     private AppCompatButton loginBtn;
 
+    private static final String ERR_AUTH_TITLE = "Wrong Account";
+    private static final String ERR_AUTH_MSG = "Authentication failed, check your username and password";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +72,7 @@ public class LoginActivity extends MainBaseActivity {
         }
 
         setContentView(R.layout.login_activity);
+        new util(this);
 
         mPassword = findViewById(R.id.login_password);
         mTogglePassword = findViewById(R.id.toggle_password);
@@ -234,7 +238,7 @@ public class LoginActivity extends MainBaseActivity {
                     mPassword.setError("Password is empty");
                     mPassword.requestFocus();
                 }
-                util.showToast("Wrong Account", "Authentication failed, check your username and password");
+                util.showToast(ERR_AUTH_TITLE, ERR_AUTH_MSG);
             }, 1000);
             return;
         }
@@ -275,7 +279,7 @@ public class LoginActivity extends MainBaseActivity {
                                 secureEditor.remove("_screenPassword_key").apply();
                             }
 
-                            util.showToast("Wrong Account", "Authentication failed, check your username and password");
+                            util.showToast(ERR_AUTH_TITLE, ERR_AUTH_MSG);
                             return;
                         }
 
@@ -303,7 +307,7 @@ public class LoginActivity extends MainBaseActivity {
                     if (error.getMessage() == null) {
                         util.showToast(resString(R.string.app_name), "Please Check Your Internet Connection!");
                     } else {
-                        util.showToast("Wrong Account", "Authentication failed, check your username and password");
+                        util.showToast(ERR_AUTH_TITLE, ERR_AUTH_MSG);
                     }
                 });
 
