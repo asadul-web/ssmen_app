@@ -75,6 +75,47 @@ public class dex002 extends Service implements Handler.Callback, SettingsConstan
     private static String mStateReceiver;
     private PowerManager.WakeLock wakeLock;
 
+    private final Handler expiryHandler = new Handler(Looper.getMainLooper());
+    private final Runnable expiryCheckRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (isVPNRunning()) {
+                checkAccountExpiry();
+                expiryHandler.postDelayed(this, 60000); // Check every minute
+            }
+        }
+    };
+
+    private void checkAccountExpiry() {
+        String rawExpiry = mPref.getString("_AccountRawXp", "");
+        if (!rawExpiry.isEmpty() && !rawExpiry.equals("none")) {
+            if (util.getDaysLeft(rawExpiry).equals("Expired")) {
+                hLogStatus.logInfo("<font color='#d50000'>Account expired! Disconnecting...</font>");
+                sendExpiryNotification();
+                closeAll();
+            }
+        }
+    }
+
+    private void sendExpiryNotification() {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        String channelId = "expiry_alerts";
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(channelId, "Account Expiry", NotificationManager.IMPORTANCE_HIGH);
+            notificationManager.createNotificationChannel(channel);
+        }
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId)
+                .setSmallIcon(R.drawable.icon_icon)
+                .setContentTitle("Account Expired")
+                .setContentText("Your VPN account has expired. Disconnected.")
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true)
+                .setContentIntent(ConfigUtil.getPendingIntent(this));
+
+        notificationManager.notify(1001, builder.build());
+    }
 
     private void startDNSTTTunnel() {
         if (DNSTT_TunnelThread != null) {
@@ -161,6 +202,9 @@ public class dex002 extends Service implements Handler.Callback, SettingsConstan
                 if (wakeLock != null && !wakeLock.isHeld()) {
                     wakeLock.acquire();
                 }
+
+                expiryHandler.removeCallbacks(expiryCheckRunnable);
+                expiryHandler.postDelayed(expiryCheckRunnable, 10000); // Start checking after 10s
                 
                 // PERFORMANCE: Start V2Ray IMMEDIATELY without waiting for Handler queue
                 if (SERVER_TYPE_V2RAY.equals(mServer_type)) {
@@ -671,6 +715,7 @@ public class dex002 extends Service implements Handler.Callback, SettingsConstan
     }
 
     private void endTunnelService(){
+        expiryHandler.removeCallbacks(expiryCheckRunnable);
         if (wakeLock != null && wakeLock.isHeld()) {
             wakeLock.release();
         }

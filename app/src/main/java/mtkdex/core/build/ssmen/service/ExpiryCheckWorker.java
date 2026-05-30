@@ -3,6 +3,7 @@ package mtkdex.core.build.ssmen.service;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.provider.Settings;
 import androidx.annotation.NonNull;
@@ -84,9 +85,20 @@ public class ExpiryCheckWorker extends Worker {
         // Show notification
         sendExpiryNotification(context);
         
-        // If VPN is running, we should stop it, but Workers don't easily have access to UI or Service control without broadcasts.
-        // We can send a broadcast to MainActivity if it's alive, or just rely on the next app open.
-        // However, Problem 6 says disconnect VPN on expiry.
+        // Stop VPN service if running
+        Intent intent = new Intent(context, dex002.class);
+        intent.setAction(dex002.STOP_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // We can't always startForegroundService from background, but dex002 might already be running.
+            // If it's already running, startService is fine for an existing foreground service.
+            try {
+                context.startService(intent);
+            } catch (Exception e) {
+                // Fallback or ignore if background start restricted
+            }
+        } else {
+            context.startService(intent);
+        }
     }
 
     private void sendExpiryNotification(Context context) {

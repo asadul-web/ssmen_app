@@ -373,7 +373,8 @@ public class MainActivity extends MainBaseActivity implements
             if (!rawExpiry.isEmpty() && !rawExpiry.equals("none")) {
                 String daysLeft = util.getDaysLeft(rawExpiry);
                 if (daysLeft.equals("Expired")) {
-                    if (hLogStatus.isTunnelActive()) {
+                    if (hLogStatus.isTunnelActive() && !hasShownExpired) {
+                        hasShownExpired = true;
                         addlogInfo("<font color = #d50000>Account expired! Disconnecting...");
                         showNoticePopup("Account Expired", "Your account has expired. You have been disconnected.", true);
                     }
@@ -406,7 +407,6 @@ public class MainActivity extends MainBaseActivity implements
                 }
             }
             
-            // Trigger server auth check every 60 seconds while VPN is active
             if (hLogStatus.isTunnelActive()) {
                 authCheckCounter++;
                 if (authCheckCounter >= 60) {
@@ -415,6 +415,7 @@ public class MainActivity extends MainBaseActivity implements
                 }
             } else {
                 authCheckCounter = 0;
+                hasShownExpired = false; // Reset when VPN is not active
             }
 
             i11++;
@@ -424,7 +425,7 @@ public class MainActivity extends MainBaseActivity implements
 
     private void showNoticePopup(String title, String message, final boolean isFatal) {
         runOnUiThread(() -> {
-            if (cBuiler != null && cBuiler.isShowing()) cBuiler.dismiss();
+            if (cBuiler != null && cBuiler.isShowing()) return;
             View inflate = LayoutInflater.from(this).inflate(R.layout.notif2, null);
             cBuiler = new AlertDialog.Builder(this).create();
 
@@ -443,16 +444,25 @@ public class MainActivity extends MainBaseActivity implements
             btnText.setText("OKA'Y");
             inflate.findViewById(R.id.appButton1).setVisibility(View.GONE);
 
+            if (isFatal && hLogStatus.isTunnelActive()) {
+                stopTunnelService();
+            }
+
             btn.setOnClickListener(p1 -> {
                 cBuiler.dismiss();
                 if (isFatal) {
-                    if (hLogStatus.isTunnelActive()) stopTunnelService();
+                    // Clear all account data for full logout
+                    ConfigUtil.getInstance(this).logout();
                     if (secureEditor != null) {
                         secureEditor.remove("_screenUsername_key").apply();
                         secureEditor.remove("_screenPassword_key").apply();
                     }
-                    ConfigUtil.getInstance(this).setHasAccount(false);
-                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                    getEditor().remove("_AccountXp").apply();
+                    getEditor().remove("_AccountRawXp").apply();
+                    
+                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
                     finish();
                 }
             });
@@ -525,6 +535,7 @@ public class MainActivity extends MainBaseActivity implements
     private int authCheckCounter = 0;
     private int authRetryCount = 0;
     private boolean hasShownExpiringSoon = false;
+    private boolean hasShownExpired = false;
 
     public static void updateMainViews(Context context, String str) {
         Intent mIntent = new Intent(str);
@@ -3560,7 +3571,7 @@ public class MainActivity extends MainBaseActivity implements
                 }, error -> {
                     if (hLogStatus.isTunnelActive()) {
                         authRetryCount++;
-                        if (authRetryCount >= 3) {
+                        if (authRetryCount >= 10) {
                             showNoticePopup("Account Disconnected", "Connection to server failed after multiple attempts.", true);
                         }
                     }
@@ -3575,19 +3586,23 @@ public class MainActivity extends MainBaseActivity implements
                 stopTunnelService();
             }
 
-            // Clear credentials from secure storage
+            // Clear credentials for full logout
+            ConfigUtil.getInstance(this).logout();
             if (secureEditor != null) {
                 secureEditor.remove("_screenUsername_key").apply();
                 secureEditor.remove("_screenPassword_key").apply();
             }
-            ConfigUtil.getInstance(this).setHasAccount(false);
+            getEditor().remove("_AccountXp").apply();
+            getEditor().remove("_AccountRawXp").apply();
 
             new AlertDialog.Builder(this)
                     .setTitle("Account Disconnected")
                     .setMessage(message)
                     .setCancelable(false)
                     .setPositiveButton("OK", (dialog, which) -> {
-                        startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
                         finish();
                     })
                     .show();
@@ -3612,7 +3627,7 @@ public class MainActivity extends MainBaseActivity implements
         ac_xp.setText(date);
 
         if (daysLeft.equals("Expired")) {
-            if (hLogStatus.isTunnelActive()) stopTunnelService();
+            showNoticePopup("Account Expired", "Your account has expired. Please login again.", true);
         }
 
         shouldFetchAccountDetails = false;
