@@ -533,7 +533,6 @@ public class MainActivity extends MainBaseActivity implements
     }
     private int i11 = 0;
     private int authCheckCounter = 0;
-    private int authRetryCount = 0;
     private boolean hasShownExpiringSoon = false;
     private boolean hasShownExpired = false;
 
@@ -3539,7 +3538,6 @@ public class MainActivity extends MainBaseActivity implements
         StringRequest req = new StringRequest(
                 jsonUrl,
                 response -> {
-                    authRetryCount = 0; // Reset retry count on success
                     try {
                         JSONObject js = new JSONObject(response);
 
@@ -3569,12 +3567,6 @@ public class MainActivity extends MainBaseActivity implements
                     } catch (Exception ignored) {
                     }
                 }, error -> {
-                    if (hLogStatus.isTunnelActive()) {
-                        authRetryCount++;
-                        if (authRetryCount >= 10) {
-                            showNoticePopup("Account Disconnected", "Connection to server failed after multiple attempts.", true);
-                        }
-                    }
                 });
 
         MainApplication.getRequestQueue().add(req);
