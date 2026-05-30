@@ -48,6 +48,10 @@ public class dex004 extends VpnService implements SettingsConstants {
     private final IBinder mBinder = new LocalBinder();
     private VpnUtils.PrivateAddress mPrivateAddress;
     private AtomicReference<ParcelFileDescriptor> mTunFd;
+
+    // Use a larger buffer for system-wide socket operations to improve throughput
+    private final String mBufferSend = "65536";
+    private final String mBufferReceive = "131072";
     private AtomicBoolean mRoutingThroughTunnel;
     private NetworkSpace mRoutes;
     public class LocalBinder extends Binder {

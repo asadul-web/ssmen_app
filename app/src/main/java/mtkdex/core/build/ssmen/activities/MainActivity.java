@@ -250,6 +250,9 @@ public class MainActivity extends MainBaseActivity implements
     private boolean showFrozenOnDisconnect = false;
     private static long m_SentBytes = 0;
     private static long m_ReceivedBytes = 0;
+    private long lastIn = 0;
+    private long lastOut = 0;
+    private long lastByteCountTime = 0;
     private final Handler stats_timer_handler = new Handler();
     public DrawerLayout mDrawerLayout;
     float inValue = 0;
@@ -581,16 +584,68 @@ public class MainActivity extends MainBaseActivity implements
                         hLogStatus.updateByteCount(stats.bytes_in, stats.bytes_out);
                     }
                 } else if (serverType.equals(SERVER_TYPE_V2RAY)) {
-                    // Handled via broadcasts from NotificationManager (MainViewModel)
-                    // We just refresh the UI to keep the timer ticking
-                    runOnUiThread(this::updateLiveStatusLabels);
+                    // Handled via broadcasts pushed to updateByteCount
                 } else {
-                    // For SSH/UDP types that might update StatisticGraphData
                     hLogStatus.updateByteCount(getUpDateBytes().getTotalBytesReceived(), getUpDateBytes().getTotalBytesSent());
                 }
+                
+                // Synchronized UI Update: Triggers exactly once per second
+                refreshTrafficUI();
             }
         } catch (Exception ignored) {
         }
+    }
+
+    private void refreshTrafficUI() {
+        if (!hLogStatus.isTunnelActive()) {
+            inValue = 0f;
+            outValue = 0f;
+            return;
+        }
+
+        long currentIn = m_ReceivedBytes;
+        long currentOut = m_SentBytes;
+
+        // interval is exactly 1 second due to Master Clock timer
+        long diffIn = currentIn - lastIn;
+        long diffOut = currentOut - lastOut;
+
+        if (diffIn < 0) diffIn = 0;
+        if (diffOut < 0) diffOut = 0;
+
+        lastIn = currentIn;
+        lastOut = currentOut;
+
+        // bits per second
+        inValue = (float) (diffIn * 8);
+        outValue = (float) (diffOut * 8);
+
+        final String inStr = ConfigUtil.render_bandwidth(diffIn, true);
+        final String outStr = ConfigUtil.render_bandwidth(diffOut, true);
+        final String totalInStr = ConfigUtil.render_bandwidth(currentIn, false);
+        final String totalOutStr = ConfigUtil.render_bandwidth(currentOut, false);
+
+        runOnUiThread(() -> {
+            updateLiveStatusLabels();
+            
+            if (byteIn_view != null) byteIn_view.setText(totalInStr);
+            if (byteOut_view != null) byteOut_view.setText(totalOutStr);
+            if (mDataInTv != null) mDataInTv.setText(inStr);
+            if (mDataOutTv != null) mDataOutTv.setText(outStr);
+            if (val1 != null) val1.setText(inStr);
+            if (val2 != null) val2.setText(outStr);
+            
+            if (trafficGraph != null) {
+                if (!isDisconnecting) {
+                    trafficGraph.setShowPath(true);
+                    trafficGraph.setFrozen(false);
+                } else {
+                    trafficGraph.setShowPath(showFrozenOnDisconnect);
+                    trafficGraph.setFrozen(true);
+                }
+                trafficGraph.addValues(inValue, outValue);
+            }
+        });
     }
 
     private void doUpdateLayout() {
@@ -886,63 +941,10 @@ public class MainActivity extends MainBaseActivity implements
         }).start();
     }
 
-    private long lastByteCountTime = 0;
-
     @Override
     public void updateByteCount(long in, long out, long diffIn, long diffOut) {
-        boolean active = hLogStatus.isTunnelActive();
-        
-        if (active) {
-            long now = System.currentTimeMillis();
-            double seconds = (lastByteCountTime > 0) ? (now - lastByteCountTime) / 1000.0 : 1.0;
-            if (seconds <= 0) seconds = 1.0;
-            lastByteCountTime = now;
-
-            // Calculate bits per second for more accurate real-time speed
-            inValue = (float) (diffIn * 8 / seconds);
-            outValue = (float) (diffOut * 8 / seconds);
-
-            final String inStr = ConfigUtil.render_bandwidth((long) (diffIn / seconds), true);
-            final String outStr = ConfigUtil.render_bandwidth((long) (diffOut / seconds), true);
-            final String totalInStr = ConfigUtil.render_bandwidth(in, false);
-            final String totalOutStr = ConfigUtil.render_bandwidth(out, false);
-
-            runOnUiThread(() -> {
-                // Update all values in a single UI frame to ensure synchronization
-                updateLiveStatusLabels();
-                
-                if (byteIn_view != null) byteIn_view.setText(totalInStr);
-                if (byteOut_view != null) byteOut_view.setText(totalOutStr);
-                if (mDataInTv != null) mDataInTv.setText(inStr);
-                if (mDataOutTv != null) mDataOutTv.setText(outStr);
-                if (val1 != null) val1.setText(inStr);
-                if (val2 != null) val2.setText(outStr);
-                
-                // Keep timer updating with every traffic tick
-                if (duration_view != null && getUpDateBytes().isConnected()) {
-                    duration_view.setText(getUpDateBytes().elapsedTimeToDisplay(getUpDateBytes().getElapsedTime()));
-                }
-            });
-        } else {
-            // Only reset if NOT active.
-            inValue = 0f;
-            outValue = 0f;
-        }
-
-        if (trafficGraph != null) {
-            if (active && !isDisconnecting) {
-                // Normal active state
-                trafficGraph.setShowPath(true);
-                trafficGraph.setFrozen(false);
-            } else {
-                // Disconnected or currently disconnecting
-                // showFrozenOnDisconnect is only true if we successfully connected before
-                trafficGraph.setShowPath(showFrozenOnDisconnect);
-                trafficGraph.setFrozen(true);
-            }
-
-            trafficGraph.addValues(inValue, outValue);
-        }
+        m_ReceivedBytes = in;
+        m_SentBytes = out;
     }
 
     @Override
@@ -2383,6 +2385,10 @@ public class MainActivity extends MainBaseActivity implements
                 addlogInfo("<b>Tunnel Type:</b> " + getConfig().getServerType());
 
                 hLogStatus.resetTrafficHistory();
+                m_ReceivedBytes = 0;
+                m_SentBytes = 0;
+                lastIn = 0;
+                lastOut = 0;
                 // hLogStatus.updateByteCount(0, 0); // Removed to avoid zeroing the display
                 StatisticGraphData.getStatisticData().getDataTransferStats().startConnected();
                 schedule_stats();
