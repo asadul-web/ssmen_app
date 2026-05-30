@@ -2341,18 +2341,9 @@ public class MainActivity extends MainBaseActivity implements
                 }
             }
 
-            m_SentBytes = 0;
-            m_ReceivedBytes = 0;
             lastByteCountTime = System.currentTimeMillis();
-            if (byteIn_view != null) byteIn_view.setText("0 B");
-            if (byteOut_view != null) byteOut_view.setText("0 B");
-            if (mDataInTv != null) mDataInTv.setText("0 bit");
-            if (mDataOutTv != null) mDataOutTv.setText("0 bit");
-            if (val1 != null) val1.setText("0 bit");
-            if (val2 != null) val2.setText("0 bit");
-            if (duration_view != null) duration_view.setText("00h:00m:00s");
             if (trafficGraph != null) {
-                trafficGraph.clear();
+                // Keep the path visible and un-frozen, but don't clear it
                 trafficGraph.setShowPath(true);
                 trafficGraph.setFrozen(false);
             }
@@ -2371,7 +2362,7 @@ public class MainActivity extends MainBaseActivity implements
                 addlogInfo("<b>Tunnel Type:</b> " + getConfig().getServerType());
 
                 hLogStatus.resetTrafficHistory();
-                hLogStatus.updateByteCount(0, 0);
+                // hLogStatus.updateByteCount(0, 0); // Removed to avoid zeroing the display
                 StatisticGraphData.getStatisticData().getDataTransferStats().startConnected();
                 schedule_stats();
                 show_stats();

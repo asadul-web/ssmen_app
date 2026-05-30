@@ -484,7 +484,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                     if (!mtkdex.core.build.ssmen.view.StatisticGraphData.getStatisticData().dataTransferStats.isConnected) {
                         mtkdex.core.build.ssmen.view.StatisticGraphData.getStatisticData().dataTransferStats.startConnected()
                     }
-                  //  getApplication<AngApplication>().toastSuccess(R.string.toast_services_success)
+
                     isRunning.value = true
                 }
 

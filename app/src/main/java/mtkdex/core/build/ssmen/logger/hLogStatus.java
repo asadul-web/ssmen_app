@@ -123,43 +123,45 @@ public class hLogStatus
         trafficHistory = _trafficHistory;
     }
 
-    public synchronized static void resetTrafficHistory() {
-        trafficHistory = new TrafficHistory();
-        mIsFirstByteCount = true;
-        mStartIn = 0;
-        mStartOut = 0;
-    }
-
     public interface ByteCountListener {
         public void updateByteCount(long in, long out, long diffIn, long diffOut);
     }
 
+    private static long mBaselineIn = 0;
+    private static long mBaselineOut = 0;
+    private static long mSessionIn = 0;
+    private static long mSessionOut = 0;
+
     public synchronized static void updateByteCount(long in, long out) {
-        if (mIsFirstByteCount && (in > 0 || out > 0)) {
-            // Optimization: If the first readings are small, they are likely for the current session.
-            // Don't subtract them so the UI shows activity instantly.
-            // If they are large (e.g. > 10MB), they are likely cumulative system stats since boot.
-            if (in > 10 * 1024 * 1024 || out > 10 * 1024 * 1024) {
-                mStartIn = in;
-                mStartOut = out;
-            } else {
-                mStartIn = 0;
-                mStartOut = 0;
-            }
+        if (mIsFirstByteCount) {
+            mBaselineIn = in;
+            mBaselineOut = out;
             mIsFirstByteCount = false;
+            // Do not call listeners on the first tick to prevent resetting the UI to 0.
+            // This allows the UI to stay at the "frozen" old value until new data arrives.
+            return;
         }
 
         // Handle underlying counter reset (e.g. core restart)
-        if (in < mStartIn && in > 0) mStartIn = 0;
-        if (out < mStartOut && out > 0) mStartOut = 0;
+        if (in < mBaselineIn) mBaselineIn = 0;
+        if (out < mBaselineOut) mBaselineOut = 0;
 
-        long resetIn = (in >= mStartIn) ? (in - mStartIn) : in;
-        long resetOut = (out >= mStartOut) ? (out - mStartOut) : out;
+        mSessionIn = in - mBaselineIn;
+        mSessionOut = out - mBaselineOut;
 
-        TrafficHistory.LastDiff diff = trafficHistory.add(resetIn, resetOut);
+        TrafficHistory.LastDiff diff = trafficHistory.add(mSessionIn, mSessionOut);
         for (ByteCountListener bcl : byteCountListener) {
-            bcl.updateByteCount(resetIn, resetOut, diff.getDiffIn(), diff.getDiffOut());
+            bcl.updateByteCount(mSessionIn, mSessionOut, diff.getDiffIn(), diff.getDiffOut());
         }
+    }
+
+    public synchronized static void resetTrafficHistory() {
+        trafficHistory = new TrafficHistory();
+        mIsFirstByteCount = true;
+        mBaselineIn = 0;
+        mBaselineOut = 0;
+        mSessionIn = 0;
+        mSessionOut = 0;
     }
 
     public static void addByteCountListener(ByteCountListener bcl) {

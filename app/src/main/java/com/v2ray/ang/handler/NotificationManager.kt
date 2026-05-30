@@ -41,9 +41,9 @@ object NotificationManager {
     private var lastUp = 0L
     private var lastDown = 0L
     
-    // Track UID stats to get accurate overall traffic
-    private var startUidUp = 0L
-    private var startUidDown = 0L
+    // Track UID stats to get accurate session traffic
+    private var startUidUp = -1L
+    private var startUidDown = -1L
     
     private var sessionTotalUp = 0L
     private var sessionTotalDown = 0L
@@ -60,16 +60,21 @@ object NotificationManager {
 
         lastQueryTime = System.currentTimeMillis()
         
-        // Initialize UID stats snapshots
+        // Initialize session totals to 0 for the start of connection
+        // But we won't reset startUid yet to avoid zeroing UI before data arrives
+        // sessionTotalUp = 0L
+        // sessionTotalDown = 0L
+
+        // Initialize UID stats snapshots for delta calculation
         val uid = Process.myUid()
-        startUidDown = TrafficStats.getUidRxBytes(uid).coerceAtLeast(0L)
-        startUidUp = TrafficStats.getUidTxBytes(uid).coerceAtLeast(0L)
+        startUidDown = -1L
+        startUidUp = -1L
         
         // Initial V2Ray stats snapshot for speed calculation
         lastUp = V2RayServiceManager.queryStats(AppConfig.TAG_PROXY, AppConfig.UPLINK)
         lastDown = V2RayServiceManager.queryStats(AppConfig.TAG_PROXY, AppConfig.DOWNLINK)
 
-        // Send initial stats immediately to UI
+        // Send initial stats immediately to UI (Old values will persist until first tick)
         getService()?.let {
             MessageUtil.sendMsg2UI(it, AppConfig.MSG_STATE_STATS, longArrayOf(sessionTotalDown, sessionTotalUp))
         }
@@ -87,16 +92,22 @@ object NotificationManager {
                 val sinceLastQueryInSeconds = (queryTime - lastQueryTime) / 1000.0
                 if (sinceLastQueryInSeconds < 0.1) continue
 
-                // 1. Calculate Session Totals using TrafficStats (Most Accurate for total volume)
+                // 1. Calculate Session Totals using TrafficStats
                 val currentUidDown = TrafficStats.getUidRxBytes(uid).coerceAtLeast(0L)
                 val currentUidUp = TrafficStats.getUidTxBytes(uid).coerceAtLeast(0L)
                 
-                if (currentUidDown >= startUidDown) {
-                    sessionTotalDown = currentUidDown - startUidDown
+                if (startUidDown == -1L) {
+                    startUidDown = currentUidDown
+                    startUidUp = currentUidUp
+                    sessionTotalDown = 0
+                    sessionTotalUp = 0
+                    // Skip the first update to avoid sending "0" to the UI.
+                    // This keeps the UI at the last frozen value until the next second.
+                    continue
                 }
-                if (currentUidUp >= startUidUp) {
-                    sessionTotalUp = currentUidUp - startUidUp
-                }
+
+                sessionTotalDown = (currentUidDown - startUidDown).coerceAtLeast(0L)
+                sessionTotalUp = (currentUidUp - startUidUp).coerceAtLeast(0L)
 
                 // 2. Calculate Real-time Speed using V2Ray core stats (More responsive for speed)
                 val tags = mutableListOf(AppConfig.TAG_PROXY, AppConfig.TAG_DIRECT, AppConfig.TAG_FRAGMENT, AppConfig.TAG_DNS, "dns-out")
