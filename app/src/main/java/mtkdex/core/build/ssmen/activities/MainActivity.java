@@ -628,7 +628,9 @@ public class MainActivity extends MainBaseActivity implements
         runOnUiThread(() -> {
             updateLiveStatusLabels();
             
-            if (currentIn > 0 || currentOut > 0) {
+            // Only update total byte views if we are actually connected or moving data
+            // This prevents jumping to 0 immediately when starting a new connection
+            if (isConnected || currentIn > 0 || currentOut > 0) {
                 if (byteIn_view != null) byteIn_view.setText(totalInStr);
                 if (byteOut_view != null) byteOut_view.setText(totalOutStr);
             }
