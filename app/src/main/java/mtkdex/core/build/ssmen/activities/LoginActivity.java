@@ -284,6 +284,13 @@ public class LoginActivity extends MainBaseActivity {
                             secureEditor.putString("_screenUsername_key", user).apply();
                             secureEditor.putString("_screenPassword_key", pass).apply();
 
+                            // Save user's personal xray UUID for V2Ray connection
+                            try {
+                                if (js.has("xray_uuid") && !js.getString("xray_uuid").isEmpty()) {
+                                    secureEditor.putString("_xray_uuid_key", js.getString("xray_uuid")).apply();
+                                }
+                            } catch (Exception ignored) {}
+
                             mWarningText.setTextColor(ContextCompat.getColor(this, R.color.dataIn));
                             onExpireDate(js.getString("expiry"));
                             doLogin();

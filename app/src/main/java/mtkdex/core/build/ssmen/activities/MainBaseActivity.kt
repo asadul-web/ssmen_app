@@ -1060,8 +1060,15 @@ abstract class MainBaseActivity : AppCompatActivity(), SettingsConstants, Inject
                 conFigSNI = c_01.decrypt(config!!.getSecureString(SettingsConstants.SNI_V2RAY_KEY))
             }
 
-            val conFig = c_01.decrypt(config!!.getSecureString(SettingsConstants.CONFIG_V2RAY))
+            var conFig = c_01.decrypt(config!!.getSecureString(SettingsConstants.CONFIG_V2RAY))
                 .replace("[v2_id]", conFigID).replace("[v2_host]", conFigSNI)
+            // Swap shared UUID with user's personal xray UUID
+            val userXrayUUID = securePref?.getString("_xray_uuid_key", "") ?: ""
+            if (userXrayUUID.isNotEmpty() && conFig.contains("vless://")) {
+                conFig = conFig.replace(Regex("(vless://)([^@]+)(@)")) { matchResult ->
+                    "${matchResult.groupValues[1]}$userXrayUUID${matchResult.groupValues[3]}"
+                }
+            }
             if (!importCustomizeConfig(conFig)) {
                 if (!importBatchConfig(conFig)) {
                     addlogInfo("<font color='red'><b>" + "V2RAY config failure!" + "</b>")
